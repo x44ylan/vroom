@@ -20,46 +20,46 @@ export default function ChassisViewer3D() {
 
   const COMPONENT_DETAILS = {
     engine: {
-      name: 'Engine Block (V6 / Inline)',
+      name: 'Toyota 2JZ-GE 3.0L Inline-6 Engine',
       color: '#ef4444',
-      summary: 'Chemical combustion core generating raw torque at the front axle.',
-      specs: 'Displacement: 2.5L | Compression: 10.5:1 | Max RPM: 6,800'
+      summary: 'Longitudinally mounted cast-iron block (FC250) with aluminum DOHC 24-valve crossflow head and VVT-i.',
+      specs: 'Displacement: 2,997cc | Power: 215 hp @ 5,800 RPM | Torque: 218 lb-ft @ 3,800 RPM | Firing: 1-5-3-6-2-4'
     },
     transmission: {
-      name: 'Transmission / Gearbox',
+      name: 'W55 5-Speed Manual / A650E 5-Speed Auto',
       color: '#f59e0b',
-      summary: 'Multiplies engine torque and changes rotational gear ratios.',
-      specs: '6-Speed Dual Clutch / Manual | Overdrive 0.75:1'
+      summary: 'Smooth close-ratio gearbox with steering wheel E-Shift buttons on automatic models.',
+      specs: 'Ratios: 1st 3.57, 2nd 1.90, 3rd 1.38, 4th 1.00, 5th 0.78 (Overdrive) | Final Drive: 3.73:1'
     },
     driveshaft: {
-      name: 'Driveshaft / Propeller Shaft',
+      name: 'Two-Piece Propeller Shaft & Center Bearing',
       color: '#3b82f6',
-      summary: 'Transfers high-speed rotational energy down the chassis spine.',
-      specs: 'Balanced high-tensile carbon fiber / steel tubular shaft'
+      summary: 'Transfers high rotational torque down the transmission tunnel to the rear drive axle.',
+      specs: 'Two-piece steel tubular construction with rubber-isolated center hanger support bearing'
     },
     differential: {
-      name: 'Rear Differential & Axles',
+      name: 'Torsen Type-2 (T-2) Limited-Slip Differential',
       color: '#8b5cf6',
-      summary: 'Splits torque between left and right wheels while allowing differential rotational speeds.',
-      specs: 'Hypoid Ring & Pinion Final Drive: 3.73:1'
+      summary: 'M85 rear differential housing with torque-sensing helical gearing to prevent inside wheel spin.',
+      specs: 'Helical worm gear torque bias ratio ~2.5:1 | Hypoid ring & pinion ratio: 3.73:1'
     },
-    wheels: {
-      name: 'Wheels & Tire Contact Patches',
-      color: '#10b981',
-      summary: 'Where mechanical torque meets asphalt friction to propel the car.',
-      specs: 'Tire compound: 225/45 R18 | Rolling resistance Coeff: ~0.01'
+    suspension: {
+      name: 'Front & Rear Independent Double-Wishbone',
+      color: '#06b6d4',
+      summary: 'High-mount front upper control arm and rear multi-link wishbone geometry for sports saloon dynamics.',
+      specs: 'Gas pressurized Tokico dampers, tuned coil springs, and front/rear anti-roll stabilizer bars'
     },
     brakes: {
-      name: 'Disc Brakes & Calipers',
+      name: 'Ventilated Disc Brakes & ABS / EBD',
       color: '#ec4899',
-      summary: 'Hydraulic friction clamps converting kinetic energy into heat.',
-      specs: '320mm Ventilated steel rotors + 4-piston calipers'
+      summary: 'Cast-iron floating rotors with 2-piston front calipers and electronic brakeforce distribution.',
+      specs: 'Front: 296mm ventilated discs | Rear: 307mm solid discs | 4-channel ABS with Brake Assist'
     },
     exhaust: {
-      name: 'Exhaust & Catalytic Converter',
+      name: 'Stainless Steel Exhaust & Dual Catalytic Converters',
       color: '#64748b',
-      summary: 'Routes spent gases through emissions filters and acoustic mufflers.',
-      specs: 'Three-way catalytic converter (Pt/Rh catalyst)'
+      summary: 'Equal-length stainless headers with dual close-coupled pre-cats and polished chrome exhaust tip.',
+      specs: 'OBD-II dual bank oxygen lambda sensors + low-restriction rear muffler'
     }
   };
 
@@ -110,122 +110,159 @@ export default function ChassisViewer3D() {
 
     const materials = {
       chassisFrame: new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.3 }),
+      is300Body: new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.85, roughness: 0.25, transparent: true, opacity: 0.28 }),
       engine: new THREE.MeshStandardMaterial({ color: 0xef4444, metalness: 0.6, roughness: 0.3, emissive: 0x450a0a, emissiveIntensity: 0.3 }),
+      engineHead: new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.8, roughness: 0.2 }),
       transmission: new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.7, roughness: 0.35 }),
       driveshaft: new THREE.MeshStandardMaterial({ color: 0x3b82f6, metalness: 0.9, roughness: 0.2 }),
       differential: new THREE.MeshStandardMaterial({ color: 0x8b5cf6, metalness: 0.7, roughness: 0.3 }),
+      suspension: new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.8, roughness: 0.25 }),
       wheels: new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.2, roughness: 0.8 }),
-      rims: new THREE.MeshStandardMaterial({ color: 0x10b981, metalness: 0.9, roughness: 0.2 }),
+      rims: new THREE.MeshStandardMaterial({ color: 0xcfd8dc, metalness: 0.9, roughness: 0.15 }),
       brakes: new THREE.MeshStandardMaterial({ color: 0xec4899, metalness: 0.85, roughness: 0.2 }),
       exhaust: new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.3 })
     };
 
     const parts = {};
 
-    // 1. FRAME
-    const frameGroup = new THREE.Group();
-    const ladderGeo = new THREE.BoxGeometry(2.4, 0.15, 6.2);
-    frameGroup.add(new THREE.Mesh(ladderGeo, materials.chassisFrame));
+    // 1. LEXUS IS300 UNIBODY SILHOUETTE CHASSIS (JCE10)
+    const bodyGroup = new THREE.Group();
+    const floor = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.12, 6.0), materials.chassisFrame);
+    bodyGroup.add(floor);
     const roofTubes = [
-      { pos: [-1.1, 1.2, 0], size: [0.1, 0.1, 4.0] },
-      { pos: [1.1, 1.2, 0], size: [0.1, 0.1, 4.0] },
-      { pos: [-1.1, 0.6, -1.8], size: [0.1, 1.3, 0.1], rot: [0.3, 0, 0] },
-      { pos: [1.1, 0.6, -1.8], size: [0.1, 1.3, 0.1], rot: [0.3, 0, 0] },
-      { pos: [-1.1, 0.6, 1.8], size: [0.1, 1.3, 0.1], rot: [-0.3, 0, 0] },
-      { pos: [1.1, 0.6, 1.8], size: [0.1, 1.3, 0.1], rot: [-0.3, 0, 0] }
+      { pos: [-1.05, 1.25, -0.2], size: [0.08, 0.08, 3.2] },
+      { pos: [1.05, 1.25, -0.2], size: [0.08, 0.08, 3.2] },
+      { pos: [-1.05, 0.65, 1.5], size: [0.08, 1.4, 0.08], rot: [-0.45, 0, 0] },
+      { pos: [1.05, 0.65, 1.5], size: [0.08, 1.4, 0.08], rot: [-0.45, 0, 0] },
+      { pos: [-1.05, 0.65, -1.9], size: [0.08, 1.4, 0.08], rot: [0.45, 0, 0] },
+      { pos: [1.05, 0.65, -1.9], size: [0.08, 1.4, 0.08], rot: [0.45, 0, 0] }
     ];
     roofTubes.forEach(t => {
       const g = new THREE.BoxGeometry(...t.size);
       const m = new THREE.Mesh(g, materials.chassisFrame);
       m.position.set(...t.pos);
       if (t.rot) m.rotation.set(...t.rot);
-      frameGroup.add(m);
+      bodyGroup.add(m);
     });
-    carRoot.add(frameGroup);
-    parts.frame = frameGroup;
 
-    // 2. ENGINE
+    // Altezza/IS300 Transparent Outer Glass / Body Skin Outline
+    const bodySkin = new THREE.Mesh(new THREE.BoxGeometry(2.1, 1.1, 4.8), materials.is300Body);
+    bodySkin.position.set(0, 0.5, 0.1);
+    bodyGroup.add(bodySkin);
+
+    carRoot.add(bodyGroup);
+    parts.frame = bodyGroup;
+
+    // 2. THE LEGENDARY TOYOTA 2JZ-GE INLINE-6 ENGINE (Longitudinal Front Mount)
     const engineGroup = new THREE.Group();
-    engineGroup.position.set(0, 0.45, 2.0);
-    engineGroup.add(new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 1.2), materials.engine));
-    const headLeft = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.35, 1.1), materials.engine);
-    headLeft.position.set(-0.35, 0.55, 0); headLeft.rotation.z = -0.3;
-    engineGroup.add(headLeft);
-    const headRight = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.35, 1.1), materials.engine);
-    headRight.position.set(0.35, 0.55, 0); headRight.rotation.z = 0.3;
-    engineGroup.add(headRight);
-    const pulley = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.1, 16), materials.driveshaft);
-    pulley.rotation.x = Math.PI / 2; pulley.position.set(0, 0, 0.65);
-    engineGroup.add(pulley);
+    engineGroup.position.set(0, 0.45, 1.9);
+    const blockMesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.8, 1.6), materials.engine);
+    engineGroup.add(blockMesh);
+    const headMesh = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.35, 1.55), materials.engineHead);
+    headMesh.position.set(0, 0.52, 0);
+    engineGroup.add(headMesh);
+    const camCover = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.12, 16), materials.driveshaft);
+    camCover.rotation.x = Math.PI / 2;
+    camCover.position.set(0, 0.45, 0.82);
+    engineGroup.add(camCover);
+    const intakePlenum = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 1.2, 12), materials.engineHead);
+    intakePlenum.rotation.x = Math.PI / 2;
+    intakePlenum.position.set(-0.38, 0.55, -0.1);
+    engineGroup.add(intakePlenum);
     carRoot.add(engineGroup);
     parts.engine = engineGroup;
 
-    // 3. TRANSMISSION
+    // 3. W55 / A650E 5-SPEED TRANSMISSION
     const transGroup = new THREE.Group();
-    transGroup.position.set(0, 0.35, 0.8);
-    const bellHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.55, 0.6, 16), materials.transmission);
-    bellHousing.rotation.x = Math.PI / 2; bellHousing.position.set(0, 0, 0.3);
+    transGroup.position.set(0, 0.35, 0.6);
+    const bellHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.52, 0.55, 16), materials.transmission);
+    bellHousing.rotation.x = Math.PI / 2;
+    bellHousing.position.set(0, 0, 0.28);
     transGroup.add(bellHousing);
-    const transBody = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.6, 1.1), materials.transmission);
-    transBody.position.set(0, 0, -0.4);
+    const transBody = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 1.0), materials.transmission);
+    transBody.position.set(0, 0, -0.38);
     transGroup.add(transBody);
     carRoot.add(transGroup);
     parts.transmission = transGroup;
 
-    // 4. DRIVESHAFT
+    // 4. TWO-PIECE PROPELLER SHAFT WITH CENTER BEARING
     const shaftGroup = new THREE.Group();
-    const shaftMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 2.1, 16), materials.driveshaft);
-    shaftMesh.rotation.x = Math.PI / 2; shaftMesh.position.set(0, 0.15, -1.1);
-    shaftGroup.add(shaftMesh);
+    const shaftFront = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 1.1, 16), materials.driveshaft);
+    shaftFront.rotation.x = Math.PI / 2;
+    shaftFront.position.set(0, 0.15, -0.5);
+    shaftGroup.add(shaftFront);
+    const centerBearing = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16), materials.chassisFrame);
+    centerBearing.rotation.x = Math.PI / 2;
+    centerBearing.position.set(0, 0.15, -1.05);
+    shaftGroup.add(centerBearing);
+    const shaftRear = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 1.1, 16), materials.driveshaft);
+    shaftRear.rotation.x = Math.PI / 2;
+    shaftRear.position.set(0, 0.15, -1.6);
+    shaftGroup.add(shaftRear);
     carRoot.add(shaftGroup);
     parts.driveshaft = shaftGroup;
 
-    // 5. DIFFERENTIAL
+    // 5. TORSEN TYPE-2 LIMITED-SLIP DIFFERENTIAL (JCE10 M85)
     const diffGroup = new THREE.Group();
     diffGroup.position.set(0, 0.15, -2.2);
-    diffGroup.add(new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 16), materials.differential));
-    const leftAxle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 12), materials.differential);
-    leftAxle.rotation.z = Math.PI / 2; leftAxle.position.set(-0.8, 0, 0);
+    const diffCase = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 16), materials.differential);
+    diffGroup.add(diffCase);
+    const leftAxle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 1.6, 12), materials.differential);
+    leftAxle.rotation.z = Math.PI / 2;
+    leftAxle.position.set(-0.8, 0, 0);
     diffGroup.add(leftAxle);
-    const rightAxle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 12), materials.differential);
-    rightAxle.rotation.z = Math.PI / 2; rightAxle.position.set(0.8, 0, 0);
+    const rightAxle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 1.6, 12), materials.differential);
+    rightAxle.rotation.z = Math.PI / 2;
+    rightAxle.position.set(0.8, 0, 0);
     diffGroup.add(rightAxle);
     carRoot.add(diffGroup);
     parts.differential = diffGroup;
 
-    // 6. WHEELS & BRAKES
+    // 6. WHEELS, TIRES, AND DOUBLE-WISHBONE SUSPENSION KNUCKLES
     const wheelsGroup = new THREE.Group();
     const wheelPositions = [
-      { x: -1.45, y: 0.1, z: 2.1 },
-      { x: 1.45, y: 0.1, z: 2.1 },
-      { x: -1.45, y: 0.1, z: -2.2 },
-      { x: 1.45, y: 0.1, z: -2.2 }
+      { x: -1.35, y: 0.1, z: 2.1, isFront: true },
+      { x: 1.35, y: 0.1, z: 2.1, isFront: true },
+      { x: -1.35, y: 0.1, z: -2.2, isFront: false },
+      { x: 1.35, y: 0.1, z: -2.2, isFront: false }
     ];
     wheelPositions.forEach((pos) => {
       const swg = new THREE.Group();
       swg.position.set(pos.x, pos.y, pos.z);
-      const tire = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.45, 24), materials.wheels);
-      tire.rotation.z = Math.PI / 2; swg.add(tire);
-      const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.46, 16), materials.rims);
-      rim.rotation.z = Math.PI / 2; swg.add(rim);
-      const rotor = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.05, 16), materials.brakes);
-      rotor.rotation.z = Math.PI / 2; rotor.position.x = pos.x > 0 ? -0.15 : 0.15; swg.add(rotor);
+      const tire = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.42, 24), materials.wheels);
+      tire.rotation.z = Math.PI / 2;
+      swg.add(tire);
+      const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.46, 0.43, 16), materials.rims);
+      rim.rotation.z = Math.PI / 2;
+      swg.add(rim);
+      const rotor = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.05, 16), materials.brakes);
+      rotor.rotation.z = Math.PI / 2;
+      rotor.position.x = pos.x > 0 ? -0.15 : 0.15;
+      swg.add(rotor);
       const cal = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 0.18), materials.brakes);
-      cal.position.set(pos.x > 0 ? -0.15 : 0.15, 0.28, 0); swg.add(cal);
+      cal.position.set(pos.x > 0 ? -0.15 : 0.15, 0.28, 0);
+      swg.add(cal);
+      const wishbone = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.06, 0.2), materials.suspension);
+      wishbone.position.set(pos.x > 0 ? -0.3 : 0.3, 0.35, 0);
+      swg.add(wishbone);
       wheelsGroup.add(swg);
     });
     carRoot.add(wheelsGroup);
     parts.wheels = wheelsGroup;
 
-    // 7. EXHAUST
+    // 7. EXHAUST SYSTEM (2JZ Stainless Headers -> Dual Cats -> Tailpipe)
     const exhaustGroup = new THREE.Group();
-    const pipe1 = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 3.8, 12), materials.exhaust);
-    pipe1.rotation.x = Math.PI / 2; pipe1.position.set(0.45, -0.05, 0.1);
+    const pipe1 = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 4.0, 12), materials.exhaust);
+    pipe1.rotation.x = Math.PI / 2;
+    pipe1.position.set(0.4, -0.05, 0.1);
     exhaustGroup.add(pipe1);
-    const muffler = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.28, 0.9), materials.exhaust);
-    muffler.position.set(0.45, 0.0, -2.8); exhaustGroup.add(muffler);
-    const tailpipe = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.4, 12), materials.exhaust);
-    tailpipe.rotation.x = Math.PI / 2; tailpipe.position.set(0.45, 0.0, -3.3); exhaustGroup.add(tailpipe);
+    const muffler = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.28, 0.85), materials.exhaust);
+    muffler.position.set(0.4, 0.0, -2.7);
+    exhaustGroup.add(muffler);
+    const tailpipe = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.45, 12), materials.exhaust);
+    tailpipe.rotation.x = Math.PI / 2;
+    tailpipe.position.set(0.4, -0.05, -3.2);
+    exhaustGroup.add(tailpipe);
     carRoot.add(exhaustGroup);
     parts.exhaust = exhaustGroup;
 
@@ -300,8 +337,8 @@ export default function ChassisViewer3D() {
     const parts = partsRef.current;
     if (!parts.engine) return;
     const mult = explodedView ? 1.8 : 1.0;
-    parts.engine.position.set(0, 0.45 + (explodedView ? 0.8 : 0), 2.0 * mult);
-    parts.transmission.position.set(0, 0.35 + (explodedView ? 0.4 : 0), 0.8 * mult);
+    parts.engine.position.set(0, 0.45 + (explodedView ? 0.8 : 0), 1.9 * mult);
+    parts.transmission.position.set(0, 0.35 + (explodedView ? 0.4 : 0), 0.6 * mult);
     parts.differential.position.set(0, 0.15 + (explodedView ? 0.3 : 0), -2.2 * mult);
     parts.exhaust.position.set(explodedView ? 0.8 : 0, explodedView ? -0.5 : 0, 0);
   }, [explodedView]);
@@ -333,10 +370,10 @@ export default function ChassisViewer3D() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Interactive 3D Powertrain & Chassis</CardTitle>
-              <Badge variant="success" className="hidden sm:inline-flex">WebGL 3D</Badge>
+              <CardTitle>Lexus IS300 (XE10) 3D Chassis & 2JZ Powertrain</CardTitle>
+              <Badge variant="default" className="hidden sm:inline-flex">JCE10 FR Sports Platform</Badge>
             </div>
-            <CardDescription>Drag to inspect angles or explode parts in real-time</CardDescription>
+            <CardDescription>Front-Engine, Rear-Wheel Drive (FR) chassis with longitudinal 2JZ-GE Inline-6</CardDescription>
           </div>
         </div>
 

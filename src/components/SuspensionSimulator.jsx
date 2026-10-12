@@ -6,7 +6,7 @@ import { Badge } from './ui/badge.jsx';
 
 export default function SuspensionSimulator() {
   const [springStiffness, setSpringStiffness] = useState(60);
-  const [damperRate, setDamperRate] = useState(50);
+  const [damperRate, setDamperRate] = useState(55);
   const [roadBumpType, setRoadBumpType] = useState('pothole');
   const [isBumping, setIsBumping] = useState(false);
 
@@ -28,10 +28,10 @@ export default function SuspensionSimulator() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Suspension Dynamics: Springs & Dampers</CardTitle>
-              <Badge variant="info" className="hidden sm:inline-flex">Damping</Badge>
+              <CardTitle>Lexus IS300 4-Wheel Double-Wishbone Suspension</CardTitle>
+              <Badge variant="info" className="hidden sm:inline-flex">Double-Wishbone Geometry</Badge>
             </div>
-            <CardDescription>Spring rate and shock absorber orifice damping keep tires glued to the road</CardDescription>
+            <CardDescription>High-mount front upper control arms and rear multi-link wishbones isolate road bumps</CardDescription>
           </div>
         </div>
 
@@ -67,10 +67,15 @@ export default function SuspensionSimulator() {
               >
                 <rect x="-140" y="-30" width="280" height="40" rx="6" fill="url(#chassisWeightGrad)" stroke="#7dd3fc" strokeWidth="2" />
                 <text x="0" y="-8" fill="#ffffff" fontSize="11" textAnchor="middle" fontWeight="bold">
-                  SPRUNG MASS (Chassis ~400 kg/corner)
+                  IS300 MONOCOQUE SHELL (1,475 kg Curb Weight)
                 </text>
               </g>
 
+              {/* Upper Wishbone Control Arm */}
+              <line x1="150" y1="95" x2="220" y2="110" stroke="#06b6d4" strokeWidth="6" strokeLinecap="round" />
+              <text x="140" y="90" fill="#67e8f9" fontSize="8" fontWeight="bold">HIGH-MOUNT UPPER A-ARM</text>
+
+              {/* Coil Spring */}
               <g transform="translate(170, 75)">
                 <path
                   d={`M 0 0 L 15 15 L -15 30 L 15 45 L -15 60 L 15 75 L -15 90 L 15 105 L 0 120`}
@@ -80,15 +85,17 @@ export default function SuspensionSimulator() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                <text x="-25" y="65" fill="#fde047" fontSize="9" textAnchor="end" fontWeight="bold">SPRING (k)</text>
+                <text x="-25" y="65" fill="#fde047" fontSize="9" textAnchor="end" fontWeight="bold">SPRING</text>
               </g>
 
+              {/* Tokico Gas Damper */}
               <g transform="translate(270, 75)">
                 <rect x="-14" y="45" width="28" height="75" rx="3" fill="#1e293b" stroke="#06b6d4" strokeWidth="2" />
                 <rect x="-5" y="0" width="10" height="60" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
-                <text x="25" y="65" fill="#67e8f9" fontSize="9" fontWeight="bold">DAMPER (c)</text>
+                <text x="25" y="65" fill="#67e8f9" fontSize="9" fontWeight="bold">TOKICO GAS DAMPER</text>
               </g>
 
+              {/* Lower Control Arm */}
               <line x1="140" y1="210" x2="220" y2="195" stroke="#94a3b8" strokeWidth="8" strokeLinecap="round" />
 
               <g
@@ -107,16 +114,16 @@ export default function SuspensionSimulator() {
 
             <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
               <span className="text-slate-300 font-medium truncate">
-                Damping: {isUnderdamped ? 'Underdamped (Bouncy)' : isHarsh ? 'Overdamped (Stiff Track)' : 'Critically Damped (Optimal)'}
+                Damping: {isUnderdamped ? 'Float / Underdamped' : isHarsh ? 'Track Stiff' : 'Factory Lexus Sport Tuned'}
               </span>
-              <span className="font-mono text-cyan-400 font-bold shrink-0">{isBumping ? 'Impulse!' : 'Ride Height'}</span>
+              <span className="font-mono text-cyan-400 font-bold shrink-0">{isBumping ? 'Impulse!' : '54:46 Weight Dist'}</span>
             </div>
           </div>
 
           <div className="w-full mt-4 grid grid-cols-2 gap-4">
             <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800">
               <div className="flex justify-between text-xs mb-1.5">
-                <span className="text-slate-400">Spring Rate (k):</span>
+                <span className="text-slate-400">IS300 Spring Rate:</span>
                 <span className="text-amber-400 font-mono font-bold">{springStiffness} N/mm</span>
               </div>
               <input
@@ -149,10 +156,13 @@ export default function SuspensionSimulator() {
         <div className="lg:col-span-5 space-y-4">
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-cyan-400">
-              Springs Store Energy; Dampers Dissipate It
+              Double-Wishbone Camber Gain
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Springs support the car's weight. Hydraulic dampers force fluid through microscopic shim valves, turning bounce oscillations into heat within 1-2 cycles.
+              Economy commuter cars use single-pivot MacPherson struts that lose tire contact as the chassis rolls.
+            </p>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              The Lexus IS300 uses unequal-length double wishbones: as the suspension compresses under hard cornering, the upper control arm pulls the top of the wheel inward, generating <strong>negative camber gain</strong> that keeps the 215/45 R17 tire footprint planted flat against the asphalt.
             </p>
           </div>
         </div>

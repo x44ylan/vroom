@@ -1,266 +1,123 @@
-export const CAR_SYSTEMS = [
-  {
-    id: 'chassis-overview',
-    title: 'Complete Vehicle Architecture',
-    subtitle: 'From powertrain to contact patch: how power flows and components integrate',
-    category: 'overview',
-    badge: '3D Chassis Explorer',
-    summary: 'A car is an integrated synergy of structural, thermodynamic, kinematic, and electrical subsystems working in microsecond coordination.',
-    keyStats: [
-      { label: 'Avg Curb Weight', value: '1,500 - 1,900 kg' },
-      { label: 'Weight Dist (Ideal)', value: '50:50 Front:Rear' },
-      { label: 'Typical Parts Count', value: '~30,000 components' },
-      { label: 'Thermal Efficiency (ICE)', value: '30% - 40%' }
-    ],
-    principles: [
-      {
-        title: 'Rigid Monocoque Chassis',
-        desc: 'Modern unibody design merges the frame and body into one single stress-bearing shell made of high-strength steel and aluminum, engineered with crumple zones that absorb kinetic energy.'
-      },
-      {
-        title: 'Energy Transformation Chain',
-        desc: 'Chemical energy (fuel/battery) -> Mechanical torque (engine/motor) -> Transmission gearing -> Driveshaft/Axles -> Differential split -> Wheel traction.'
-      },
-      {
-        title: 'Dynamic Equilibrium',
-        desc: 'Acceleration, braking, and steering dynamically shift normal load between all 4 tires (weight transfer), governed by suspension geometry and anti-roll bars.'
-      }
-    ]
+export const LEXUS_IS300_SPECS = {
+  model: 'Lexus IS300 (XE10 / JCE10)',
+  generation: 'First Generation (2001 - 2005)',
+  chassisCode: 'JCE10',
+  japaneseSibling: 'Toyota Altezza Gita / RS200 (SXE10)',
+  engine: {
+    code: '2JZ-GE',
+    type: 'Naturally Aspirated DOHC 24-Valve Inline-6 with VVT-i',
+    displacement: '2,997 cc (3.0 Liters)',
+    boreStroke: '86.0 mm × 86.0 mm (Square 1:1 bore-to-stroke)',
+    blockHead: 'Cast Iron (FC250) Deep-Skirt Block / Aluminum Crossflow Cylinder Head',
+    compressionRatio: '10.5:1',
+    horsepower: '215 hp (160 kW) @ 5,800 RPM',
+    torque: '218 lb-ft (296 Nm) @ 3,800 RPM',
+    redline: '6,400 RPM (Fuel cut at 6,500 RPM)',
+    firingOrder: '1 - 5 - 3 - 6 - 2 - 4 (Perfect primary & secondary harmonic balance)',
+    valvetrain: 'Belt-driven DOHC, 4 valves per cylinder, VVT-i on intake cam'
   },
-  {
-    id: 'four-stroke-engine',
-    title: 'Four-Stroke Internal Combustion Engine',
-    subtitle: 'The thermodynamic Otto Cycle: Intake, Compression, Power, and Exhaust',
-    category: 'engine',
-    badge: 'Thermodynamics & Kinematics',
-    summary: 'Converts chemical energy from fuel and oxygen into reciprocal linear piston motion, converted into rotational crankshaft torque.',
-    strokeData: [
-      {
-        name: 'Intake',
-        pistonMovement: 'Downwards (TDC -> BDC)',
-        valves: 'Intake valve open, exhaust closed',
-        process: 'Piston creates a vacuum depression inside the cylinder. Atmospheric pressure forces the stoichiometric air-fuel mixture (14.7:1 for gasoline) into the combustion chamber.',
-        color: '#38bdf8', // blue
-        crankAngle: '0° - 180°'
-      },
-      {
-        name: 'Compression',
-        pistonMovement: 'Upwards (BDC -> TDC)',
-        valves: 'Both valves sealed shut',
-        process: 'Both valves seal tightly. Piston compresses the trapped mixture to ~1/10th its volume (compression ratio ~10:1), raising mixture pressure and temperature close to auto-ignition threshold.',
-        color: '#a855f7', // purple
-        crankAngle: '180° - 360°'
-      },
-      {
-        name: 'Power (Combustion)',
-        pistonMovement: 'Downwards (TDC -> BDC)',
-        valves: 'Both valves sealed shut',
-        process: 'Spark plug discharges at ~15°-20° before TDC. Flame front expands rapidly, gas temperatures surge to >2,000°C, and pressure reaches 60+ bar, violently forcing the piston down. This stroke creates ALL the positive mechanical work.',
-        color: '#ef4444', // red/flame
-        crankAngle: '360° - 540°'
-      },
-      {
-        name: 'Exhaust',
-        pistonMovement: 'Upwards (BDC -> TDC)',
-        valves: 'Exhaust valve open, intake closed',
-        process: 'Exhaust valve cracks open before BDC. Spent combustion gases (CO2, H2O, N2, traces of CO/NOx) are swept out by the rising piston into the exhaust manifold and catalytic converter.',
-        color: '#f59e0b', // amber/orange
-        crankAngle: '540° - 720°'
-      }
-    ],
-    technicalDeepDive: {
-      ratio: 'Stoichiometric AFR: 14.7 kg Air to 1 kg Gasoline',
-      rpmMath: 'At 6,000 RPM, each cylinder fires 50 times every single second (1 stroke takes only 2.5 milliseconds!).',
-      valvesTiming: 'Camshaft spins at exactly 1/2 crankshaft speed via timing belt or chain to synchronize valve lift with piston position.'
+  transmission: {
+    manual: 'Toyota W55 5-Speed Manual (Close-ratio)',
+    automatic: 'Aisin A650E 5-Speed Automatic with Steering Wheel E-Shift Buttons',
+    clutch: 'Hydraulic dry single-plate with dual-mass flywheel',
+    ratios: {
+      first: 3.57,
+      second: 1.90,
+      third: 1.38,
+      fourth: 1.00,
+      fifth: 0.78,
+      reverse: 4.04,
+      finalDrive: 3.73 // 3.91 on automatic models
     }
   },
-  {
-    id: 'transmission-gears',
-    title: 'Transmission & Gear Ratios',
-    subtitle: 'Torque multiplication, RPM matching, and mechanical advantage',
-    category: 'drivetrain',
-    badge: 'Torque & Leverage',
-    summary: 'Internal combustion engines have a narrow power band (typically 2,000 - 6,500 RPM). Transmissions exchange rotational speed for torque leverage.',
-    gears: [
-      { gear: '1st Gear', ratio: 3.8, desc: 'Maximum torque multiplication for launching from standstill against rolling resistance.', speedRange: '0 - 45 km/h', torqueMult: '3.8x Engine Torque' },
-      { gear: '2nd Gear', ratio: 2.2, desc: 'Moderate torque for town acceleration and hill climbing.', speedRange: '30 - 80 km/h', torqueMult: '2.2x Engine Torque' },
-      { gear: '3rd Gear', ratio: 1.5, desc: 'Intermediate gear balancing engine load and vehicular inertia.', speedRange: '50 - 110 km/h', torqueMult: '1.5x Engine Torque' },
-      { gear: '4th Gear', ratio: 1.0, desc: 'Direct drive: crankshaft and transmission output spin at identical speed.', speedRange: '70 - 140 km/h', torqueMult: '1.0x Engine Torque' },
-      { gear: '5th / Overdrive', ratio: 0.75, desc: 'Driveshaft turns faster than engine; drops engine RPM at highway speeds for peak fuel economy.', speedRange: '90 - 200+ km/h', torqueMult: '0.75x Engine Torque' }
-    ],
-    principles: [
-      {
-        title: 'Mechanical Work Conservation',
-        desc: 'Power = Torque × Angular Velocity. Ignoring small frictional drag, mechanical power in equals mechanical power out. If a gear cuts wheel RPM in half, it doubles wheel torque.'
-      },
-      {
-        title: 'The Clutch / Torque Converter',
-        desc: 'Permits the engine to decouple from stationary drive wheels so it does not stall when stopped at traffic lights.'
-      }
-    ]
+  drivetrain: {
+    layout: 'FR (Front-Engine, Rear-Wheel Drive)',
+    driveshaft: 'Two-piece steel propeller shaft with center support bearing',
+    differential: 'Optional / Manual-standard Torsen Type-2 (T-2) Torque-Sensing LSD (M85 casing)'
   },
-  {
-    id: 'differential-system',
-    title: 'The Open Differential',
-    subtitle: 'Why outer wheels must rotate faster than inner wheels in a corner',
-    category: 'drivetrain',
-    badge: 'Epicyclic Planetary Magic',
-    summary: 'When turning a curve, the outside wheel travels along an arc with a larger radius than the inside wheel. Without a differential, tires would violently skip, chirp, or shatter axle shafts.',
-    corneringGeometry: {
-      innerArc: 'Shorter distance = slower rotational RPM required',
-      outerArc: 'Longer distance = faster rotational RPM required',
-      diffMechanism: 'Spider gears mesh between side axle gears. In a straight line, spider gears don’t spin on their pins—both wheels turn together. In a turn, spider gears rotate, transferring RPM differential without losing drive torque.'
-    },
-    keyFormula: 'Wheel Speed (Left) + Wheel Speed (Right) = 2 × Ring Gear Speed'
+  chassisSuspension: {
+    platform: 'Compact FR Sports Platform (derived from Toyota Crown / Mark II)',
+    frontSuspension: 'Double Wishbone with high-mount upper arm, coil springs, gas dampers & anti-roll bar',
+    rearSuspension: 'Multi-link / Double Wishbone with toe control link & anti-roll bar',
+    steering: 'Engine-speed sensitive rack-and-pinion power steering (Ratio 15.7:1)',
+    turningCircle: '10.4 m (34.1 ft)'
   },
-  {
-    id: 'braking-system',
-    title: 'Hydraulic Disc Brakes & ABS',
-    subtitle: 'Pascal’s Law, hydraulic amplification, and threshold traction control',
-    category: 'chassis',
-    badge: 'Fluid Dynamics & Friction',
-    summary: 'Vehicle brakes convert 100% of kinetic energy (0.5 * m * v²) into thermal heat through high-friction composite pads pressed against ventilated cast iron or carbon rotors.',
-    brakingStages: [
-      {
-        stage: 'Pedal & Brake Booster',
-        desc: 'Driver pushes brake pedal (~200 N). Vacuum booster amplifies force 4x - 6x using engine intake manifold vacuum depression against an internal diaphragm.'
-      },
-      {
-        stage: 'Master Cylinder (Pascal’s Principle)',
-        desc: 'Hydraulic fluid (DOT 4) is incompressible. Piston pressurizes closed fluid circuits equally throughout the car lines (up to 120 bar / 1,700 psi).'
-      },
-      {
-        stage: 'Caliper Piston Clamping',
-        desc: 'Hydraulic pressure acts on larger caliper piston area, creating massive clamping force (10,000+ N) pinching brake pads against rotor.'
-      },
-      {
-        stage: 'ABS (Anti-lock Braking System)',
-        desc: 'Wheel speed sensors monitor slip. If a wheel begins to lock up (skid), ABS solenoid valves pulse pressure up to 20 times per second to keep tire in peak static friction zone.'
-      }
-    ]
+  brakes: {
+    front: '296 mm (11.7 in) Ventilated cast-iron discs with 2-piston sliding calipers',
+    rear: '307 mm (12.1 in) Solid discs with single-piston calipers',
+    systems: '4-sensor 3-channel ABS with Electronic Brakeforce Distribution (EBD) and Brake Assist (BA)'
   },
-  {
-    id: 'steering-suspension',
-    title: 'Steering Geometry & Suspension',
-    subtitle: 'Ackermann angle, MacPherson struts, double wishbones, and tire contact patches',
-    category: 'chassis',
-    badge: 'Vehicle Kinematics',
-    summary: 'Maintains maximum tire contact patch on uneven asphalt while isolating chassis vibrations and providing accurate directional control.',
-    geometryTerms: [
-      {
-        term: 'Ackermann Steering',
-        explanation: 'Steering arms angle inward so the inside front wheel turns sharper than the outside wheel, aligning with concentric turning radii.'
-      },
-      {
-        term: 'Camber Angle',
-        explanation: 'Inward (negative) or outward (positive) tilt of the wheel from vertical. Negative camber offsets tire roll in high-g cornering.'
-      },
-      {
-        term: 'Caster Angle',
-        explanation: 'Tilt of steering axis forward/backward. Positive caster creates a self-centering torque returning wheels to straight-ahead automatically.'
-      },
-      {
-        term: 'Spring & Damper (Shock Absorber)',
-        explanation: 'Spring holds vehicle weight and absorbs impact; shock absorber uses hydraulic valving to dissipate kinetic bounce into fluid heat.'
-      }
-    ]
+  dimensionsWeight: {
+    curbWeight: '1,475 kg (3,255 lbs) Manual / 1,515 kg (3,340 lbs) Auto',
+    weightDistribution: '54 : 46 Front:Rear',
+    wheelbase: '2,670 mm (105.1 in)',
+    length: '4,485 mm (176.6 in)',
+    width: '1,720 mm (67.7 in)',
+    height: '1,420 mm (55.9 in)',
+    fuelTank: '66 Liters (17.4 US gal)'
   },
-  {
-    id: 'ev-vs-ice',
-    title: 'Electric Vehicles (EV) vs ICE Architecture',
-    subtitle: 'Comparing internal combustion powertrains with modern EV skateboard architectures',
-    category: 'future',
-    badge: 'Modern Powertrain Comparison',
-    summary: 'EVs replace complex mechanical reciprocal drivetrains with instant electromagnetic stator-rotor flux, single-speed reduction, and regenerative braking.',
-    comparisons: [
-      {
-        metric: 'Energy Source',
-        ice: 'Hydrocarbon Fuel (Gasoline / Diesel)',
-        ev: 'Lithium-ion Battery Pack (400V / 800V DC)'
-      },
-      {
-        metric: 'Moving Parts in Powertrain',
-        ice: '~2,000+ moving mechanical parts (pistons, valves, crankshafts, cams)',
-        ev: '~20 moving parts (motor rotor, bearings, reduction gear)'
-      },
-      {
-        metric: 'Torque Delivery',
-        ice: 'Requires RPM climb; peak torque typically between 2,500 - 4,500 RPM',
-        ev: '100% maximum torque available instantly from 0 RPM'
-      },
-      {
-        metric: 'Transmission',
-        ice: 'Multi-ratio gearbox (6 to 10 speeds or CVT) with clutch / torque converter',
-        ev: 'Single-speed reduction gearbox (typically ~9:1 fixed ratio)'
-      },
-      {
-        metric: 'Energy Efficiency',
-        ice: '25% - 35% tank-to-wheel (65%+ wasted as engine heat and friction)',
-        ev: '85% - 93% battery-to-wheel efficiency'
-      },
-      {
-        metric: 'Center of Gravity',
-        ice: 'Higher CoG due to heavy engine block and transmission mounted high',
-        ev: 'Ultra-low CoG due to flat floor skateboard battery pack'
-      }
-    ]
-  }
-];
+  specialFeatures: [
+    'Chronograph watch-style instrument gauge cluster with built-in battery volt meter and fuel flow gauge',
+    'Altezza clear-lens jewel taillights that sparked an entire 2000s automotive styling movement',
+    'Legendary 2JZ cast-iron bottom end capable of supporting 500+ WHP on stock internals with turbo (NA-T) kit',
+    'Perfect primary & secondary rotational harmonic balance inherent to Inline-6 cylinder architecture'
+  ]
+};
 
 export const QUIZ_QUESTIONS = [
   {
     id: 1,
-    question: "Why do car engines need a transmission with multiple gear ratios?",
+    question: "What makes the Lexus IS300's 2JZ-GE Inline-6 engine renowned among automotive tuners?",
     options: [
-      { text: "Because the fuel pump can only deliver fuel at one constant pressure.", isCorrect: false },
-      { text: "Because combustion engines produce usable torque only within a narrow RPM band, requiring torque multiplication at low speeds.", isCorrect: true },
-      { text: "Because tires can only rotate at discrete stepped speeds.", isCorrect: false },
-      { text: "To reverse the rotation of the crankshaft whenever the car brakes.", isCorrect: false }
+      { text: "It uses a rotary wankel core with no pistons.", isCorrect: false },
+      { text: "Its ultra-strong cast-iron (FC250) deep-skirt engine block can handle 500+ horsepower on stock internals when turbocharged (NA-T builds).", isCorrect: true },
+      { text: "It was the first engine made entirely of plastic composites.", isCorrect: false },
+      { text: "It does not require motor oil or cooling radiators.", isCorrect: false }
     ],
-    explanation: "Internal combustion engines cannot produce torque at 0 RPM and have a limited power band (typically 1,500-6,000 RPM). First gear multiplies engine torque by ~3-4x to overcome vehicle inertia from a dead stop."
+    explanation: "The 2JZ-GE in the IS300 shares its cast-iron cylinder block architecture with the twin-turbo Mk4 Toyota Supra (JZA80). Its heavy-duty deep-skirt block and forged steel crankshaft provide legendary durability for aftermarket turbocharging."
   },
   {
     id: 2,
-    question: "In a standard four-stroke internal combustion engine, which stroke produces POSITIVE mechanical power?",
+    question: "Why does the Lexus IS300 Inline-6 have inherently smoother running harmonics than a V6 or Inline-4?",
     options: [
-      { text: "The Compression Stroke", isCorrect: false },
-      { text: "The Intake Stroke", isCorrect: false },
-      { text: "The Power / Combustion Stroke", isCorrect: true },
-      { text: "The Exhaust Stroke", isCorrect: false }
+      { text: "Because it uses three spark plugs per cylinder.", isCorrect: false },
+      { text: "Because an Inline-6 has inherent perfect primary and secondary harmonic balance, with mirror-image piston motions canceling out reciprocating vibrations.", isCorrect: true },
+      { text: "Because the transmission spins in the opposite direction.", isCorrect: false },
+      { text: "Because it only fires when the car turns right.", isCorrect: false }
     ],
-    explanation: "Only the Power Stroke creates positive mechanical work when the spark ignites the fuel-air charge, rapidly heating gases to push the piston down. The other three strokes consume momentum from the flywheel."
+    explanation: "In an inline-6 with firing order 1-5-3-6-2-4, cylinders 1&6, 2&5, and 3&4 move in tandem pairs 120° apart. All primary and secondary vertical forces and rocking moments naturally cancel each other out without needing heavy balance shafts."
   },
   {
     id: 3,
-    question: "What happens when a car without a differential tries to take a tight turn on dry pavement?",
+    question: "What is the purpose of the Torsen Type-2 (T-2) Limited-Slip Differential equipped on sport-package Lexus IS300s?",
     options: [
-      { text: "Both wheels rotate smoothly at identical speeds with no tire wear.", isCorrect: false },
-      { text: "The outside tire and inside tire are forced to rotate at identical RPMs, causing tires to scrub, chirp, and straining axles.", isCorrect: true },
-      { text: "The engine immediately shuts down due to exhaust backpressure.", isCorrect: false },
-      { text: "The steering wheel locks in place automatically.", isCorrect: false }
+      { text: "It permanently locks the rear wheels at all times for drifting only.", isCorrect: false },
+      { text: "It uses crossed helical worm gears to mechanically bias torque to the rear wheel with traction without using wearing clutch plates.", isCorrect: true },
+      { text: "It cuts engine fuel whenever cornering g-forces exceed 0.2g.", isCorrect: false },
+      { text: "It redirects exhaust gas into the rear tires to heat them up.", isCorrect: false }
     ],
-    explanation: "The outside wheel covers a larger radius arc and must spin faster. A locked axle forces wheels to rotate at identical rates, forcing one tire to break traction and scrub across the tarmac."
+    explanation: "The Torsen (TORque-SENsing) differential uses helical gears to multiply torque toward the tire that has grip, preventing the open-diff 'one-wheel peel' while preserving smooth, chirp-free street cornering."
   },
   {
     id: 4,
-    question: "How does an Anti-Lock Braking System (ABS) reduce braking distance and preserve steering control?",
+    question: "What iconic interior design feature was uniquely created for the first-generation Lexus IS300 (XE10)?",
     options: [
-      { text: "By permanently locking all four wheels so tires dig into the asphalt.", isCorrect: false },
-      { text: "By rapidly pulsing hydraulic brake pressure on wheels about to lock, keeping tires in peak static friction rather than kinetic sliding friction.", isCorrect: true },
-      { text: "By shifting the transmission into neutral whenever brakes are pressed.", isCorrect: false },
-      { text: "By pumping cold air onto the brake rotors to cool them down.", isCorrect: false }
+      { text: "A heads-up holographic windshield laser projector.", isCorrect: false },
+      { text: "The Chronograph luxury wristwatch-style gauge cluster with inset voltage, water temperature, and MPG sub-dials.", isCorrect: true },
+      { text: "A digital CRT television built into the center console.", isCorrect: false },
+      { text: "A steering wheel with an integrated joystick instead of pedals.", isCorrect: false }
     ],
-    explanation: "Static friction between rubber and road is higher than kinetic (sliding) friction. If wheels lock up, steering capability is completely lost. ABS modulates pressure up to 20 times per second to prevent skidding."
+    explanation: "Chief engineer Nobuaki Katayama designed the IS300 instrument cluster to mimic a Swiss chronograph sports watch, featuring sub-dials for battery voltage, engine temperature, and instantaneous fuel economy nested inside the central speedometer."
   },
   {
     id: 5,
-    question: "Why do electric vehicles (EVs) typically NOT require multi-speed transmissions?",
+    question: "What suspension design gives the Lexus IS300 its celebrated sports car road handling and tire contact patch control?",
     options: [
-      { text: "Electric motors produce max torque immediately from 0 RPM and can spin smoothly up to 18,000+ RPM.", isCorrect: true },
-      { text: "Because gears cannot withstand electric magnetic currents.", isCorrect: false },
-      { text: "Because EVs only operate at speeds below 80 km/h.", isCorrect: false },
-      { text: "Because EV batteries change voltage to change mechanical gear ratios directly.", isCorrect: false }
+      { text: "Four-wheel independent double-wishbone suspension front and rear.", isCorrect: true },
+      { text: "Solid beam live truck axles front and back.", isCorrect: false },
+      { text: "Pneumatic air bladders with no control arms.", isCorrect: false },
+      { text: "Leaf springs mounted transversely.", isCorrect: false }
     ],
-    explanation: "Electric traction motors deliver maximum torque from 0 RPM and have broad efficient operating bands (0 to 18,000+ RPM), allowing a single fixed reduction gear to cover both standstill launch and highway cruising."
+    explanation: "Unlike economy sedans with cheap MacPherson struts, the Lexus IS300 utilizes high-mount double wishbones at the front and a sophisticated multi-link double-wishbone setup at the rear, keeping tire contact patches optimal under high lateral g-loads."
   }
 ];

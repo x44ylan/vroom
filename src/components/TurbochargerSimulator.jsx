@@ -5,17 +5,20 @@ import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
 
 export default function TurbochargerSimulator() {
-  const [engineRpm, setEngineRpm] = useState(2400);
+  const [engineRpm, setEngineRpm] = useState(2600);
   const [wastegateOpen, setWastegateOpen] = useState(false);
   const [intercoolerActive, setIntercoolerActive] = useState(true);
   const [animAngle, setAnimAngle] = useState(0);
   const animRef = useRef(null);
   const lastTimeRef = useRef(performance.now());
 
-  const spoolFactor = Math.min(1.0, Math.max(0, (engineRpm - 1600) / 2800));
+  // 2JZ-GE NA-T (Naturally Aspirated to Turbo conversion) simulation:
+  // Stock 2JZ-GE: 215 HP naturally aspirated.
+  // With BorgWarner / Garrett T4 turbo setup at 14 PSI: ~450+ WHP on stock cast-iron internals!
+  const spoolFactor = Math.min(1.0, Math.max(0, (engineRpm - 2000) / 2600));
   const turboRpm = Math.round(spoolFactor * 165000 + (engineRpm > 1000 ? 15000 : 0));
   
-  const targetBoostPsi = wastegateOpen ? Math.min(6, spoolFactor * 12) : spoolFactor * 22.5;
+  const targetBoostPsi = wastegateOpen ? Math.min(5, spoolFactor * 8) : spoolFactor * 16.5;
   const boostPsi = Math.round(targetBoostPsi * 10) / 10;
   const boostBar = Math.round((boostPsi / 14.7) * 100) / 100;
 
@@ -27,7 +30,8 @@ export default function TurbochargerSimulator() {
   const manifoldPressureRatio = (14.7 + boostPsi) / 14.7;
   const volumetricEfficiency = Math.round(manifoldPressureRatio * 95);
   const densityBonus = (273 + 25) / (273 + intakeAirTempC);
-  const estimatedHorsepower = Math.round(200 * manifoldPressureRatio * Math.min(1.15, densityBonus));
+  // 2JZ-GE baseline: 215 HP
+  const estimatedHorsepower = Math.round(215 * manifoldPressureRatio * Math.min(1.15, densityBonus));
 
   useEffect(() => {
     const loop = (now) => {
@@ -50,10 +54,10 @@ export default function TurbochargerSimulator() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Turbocharger & Forced Induction Physics</CardTitle>
-              <Badge variant="destructive" className="hidden sm:inline-flex">Boost</Badge>
+              <CardTitle>2JZ-GE Turbo Conversion (NA-T Build Simulator)</CardTitle>
+              <Badge variant="destructive" className="hidden sm:inline-flex">2JZ-GTE Turbo Power</Badge>
             </div>
-            <CardDescription>Harness waste exhaust enthalpy to compress air density and elevate horsepower</CardDescription>
+            <CardDescription>How bolting a turbo kit to the IS300's cast-iron 2JZ doubles its horsepower output</CardDescription>
           </div>
         </div>
 
@@ -90,7 +94,7 @@ export default function TurbochargerSimulator() {
               </defs>
 
               <path d="M 20 220 L 100 220 C 130 220, 150 200, 150 170" fill="none" stroke="url(#exhaustFlow)" strokeWidth="18" strokeLinecap="round" />
-              <text x="35" y="240" fill="#f87171" fontSize="9" fontWeight="bold">EXHAUST GAS (&gt;800°C)</text>
+              <text x="35" y="240" fill="#f87171" fontSize="9" fontWeight="bold">2JZ EXHAUST MANIFOLD (&gt;850°C)</text>
 
               <path d="M 80 220 C 80 260, 170 260, 190 220" fill="none" stroke={wastegateOpen ? '#f97316' : '#334155'} strokeWidth="8" strokeDasharray={wastegateOpen ? 'none' : '4 4'} />
 
@@ -133,7 +137,7 @@ export default function TurbochargerSimulator() {
 
           <div className="w-full mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">Engine Exhaust Flow (RPM):</span>
+              <span className="text-slate-400 font-medium">2JZ Engine Speed:</span>
               <span className="text-orange-400 font-mono font-bold">{engineRpm} RPM</span>
             </div>
             <input
@@ -152,13 +156,13 @@ export default function TurbochargerSimulator() {
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5" />
-              Dynamic Performance Telemetry
+              2JZ-GE NA-T Performance Output
             </h4>
 
             <div className="space-y-2 text-xs">
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-slate-400">Power Output:</span>
-                <span className="text-sm font-mono font-bold text-amber-400">{estimatedHorsepower} HP</span>
+                <span className="text-slate-400">Tuned Engine Power:</span>
+                <span className="text-sm font-mono font-bold text-amber-400">{estimatedHorsepower} HP (Stock: 215 HP)</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
                 <span className="text-slate-400">Volumetric Efficiency:</span>
@@ -171,6 +175,10 @@ export default function TurbochargerSimulator() {
                 </span>
               </div>
             </div>
+
+            <p className="text-[11px] text-slate-400 leading-relaxed pt-2 border-t border-slate-800">
+              The factory Lexus IS300 cast-iron 2JZ-GE block features the exact same reinforced external webbing as the 2JZ-GTE Supra, easily handling 400-500 WHP without cracking pistons or sleeve walls.
+            </p>
           </div>
         </div>
       </CardContent>

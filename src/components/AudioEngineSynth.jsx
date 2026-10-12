@@ -7,14 +7,18 @@ import { Badge } from './ui/badge.jsx';
 export default function AudioEngineSynth() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [rpm, setRpm] = useState(1500);
-  const [engineType, setEngineType] = useState('v8');
+  const [engineType, setEngineType] = useState('2jz'); // '2jz', '3sge', '1uz'
 
   const audioCtxRef = useRef(null);
   const osc1Ref = useRef(null);
   const osc2Ref = useRef(null);
   const gainNodeRef = useRef(null);
 
-  const cylindersPerRev = engineType === 'i4' ? 2 : engineType === 'v6' ? 3 : 4;
+  // Firing pulses per revolution for 4-stroke engines:
+  // 2JZ-GE Inline-6: 3 firings per rev (120° spacing)
+  // 3S-GE Inline-4 (Altezza RS200): 2 firings per rev (180° spacing)
+  // 1UZ-FE V8: 4 firings per rev (90° crossplane spacing)
+  const cylindersPerRev = engineType === '3sge' ? 2 : engineType === '2jz' ? 3 : 4;
   const fundamentalFreqHz = (rpm / 60) * cylindersPerRev;
 
   useEffect(() => {
@@ -80,10 +84,10 @@ export default function AudioEngineSynth() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Acoustic Engine Harmonic Synthesizer</CardTitle>
-              <Badge variant="destructive" className="hidden sm:inline-flex">Acoustics</Badge>
+              <CardTitle>2JZ-GE Acoustic Exhaust Harmonics Synthesizer</CardTitle>
+              <Badge variant="destructive" className="hidden sm:inline-flex">Inline-6 Firing</Badge>
             </div>
-            <CardDescription>Hear how cylinder firing orders and RPM shape acoustic harmonics</CardDescription>
+            <CardDescription>Experience the silk-smooth acoustic harmonics of the 2JZ Inline-6 vs 4-cyl and V8</CardDescription>
           </div>
         </div>
 
@@ -100,12 +104,12 @@ export default function AudioEngineSynth() {
 
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
         <div className="p-3 sm:p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-          <span className="text-xs text-slate-400 font-medium">Cylinder Layout:</span>
+          <span className="text-xs text-slate-400 font-medium">Engine Sound Profile:</span>
           <div className="grid grid-cols-3 gap-1.5">
             {[
-              { id: 'i4', label: 'Inline-4' },
-              { id: 'v6', label: 'V6 (60°)' },
-              { id: 'v8', label: 'V8 (90°)' }
+              { id: '2jz', label: '2JZ-GE I6' },
+              { id: '3sge', label: '3S-GE I4' },
+              { id: '1uz', label: '1UZ V8' }
             ].map((type) => (
               <Button
                 key={type.id}
@@ -122,13 +126,13 @@ export default function AudioEngineSynth() {
 
         <div className="p-3 sm:p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
           <div className="flex justify-between text-xs">
-            <span className="text-slate-400">Rev Engine:</span>
+            <span className="text-slate-400">Rev 2JZ-GE Engine:</span>
             <span className="text-amber-400 font-mono font-bold">{rpm} RPM</span>
           </div>
           <input
             type="range"
             min="700"
-            max="7000"
+            max="6500"
             step="100"
             value={rpm}
             onChange={(e) => setRpm(Number(e.target.value))}
@@ -142,7 +146,7 @@ export default function AudioEngineSynth() {
             {fundamentalFreqHz.toFixed(1)} Hz
           </div>
           <p className="text-[11px] text-slate-400">
-            Crossplane V8 exhaust headers create distinctive low-frequency rumble.
+            The 2JZ-GE's 1-5-3-6-2-4 firing order produces 3 pulses/rev, creating a singing brass harmonic note with zero secondary shake.
           </p>
         </div>
       </CardContent>
