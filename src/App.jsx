@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Car, Flame, Layers, ArrowLeftRight, Disc, Compass, Zap, HelpCircle, 
-  BookOpen, ChevronRight, Cpu, Sparkles, ExternalLink, Activity
+  BookOpen, ChevronRight, Cpu, Sparkles, ExternalLink, Activity, Wind,
+  ArrowDownUp, Thermometer, Volume2
 } from 'lucide-react';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
 import EngineSimulator from './components/EngineSimulator.jsx';
@@ -9,20 +10,30 @@ import TransmissionSimulator from './components/TransmissionSimulator.jsx';
 import DifferentialSimulator from './components/DifferentialSimulator.jsx';
 import BrakeSimulator from './components/BrakeSimulator.jsx';
 import SteeringSimulator from './components/SteeringSimulator.jsx';
+import TurbochargerSimulator from './components/TurbochargerSimulator.jsx';
+import SuspensionSimulator from './components/SuspensionSimulator.jsx';
+import CoolingLubricationSimulator from './components/CoolingLubricationSimulator.jsx';
+import AerodynamicsSimulator from './components/AerodynamicsSimulator.jsx';
+import ElectricalEcuSimulator from './components/ElectricalEcuSimulator.jsx';
+import AudioEngineSynth from './components/AudioEngineSynth.jsx';
 import EvVsIceComparison from './components/EvVsIceComparison.jsx';
 import CarQuiz from './components/CarQuiz.jsx';
-import { CAR_SYSTEMS } from './data/carSystems.js';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('chassis'); // 'chassis', 'engine', 'transmission', 'differential', 'brakes', 'steering', 'ev', 'quiz'
+  const [activeTab, setActiveTab] = useState('chassis');
 
   const NAVIGATION_ITEMS = [
     { id: 'chassis', label: '3D Powertrain', icon: Car, badge: 'Interactive 3D' },
     { id: 'engine', label: '4-Stroke Engine', icon: Flame, badge: 'Otto Cycle' },
+    { id: 'turbo', label: 'Turbocharger', icon: Wind, badge: 'Forced Induction' },
     { id: 'transmission', label: 'Transmission', icon: Layers, badge: 'Gear Leverage' },
     { id: 'differential', label: 'Differential', icon: ArrowLeftRight, badge: 'Epicyclic' },
     { id: 'brakes', label: 'Braking & ABS', icon: Disc, badge: 'Hydraulics' },
-    { id: 'steering', label: 'Steering & Suspension', icon: Compass, badge: 'Ackermann' },
+    { id: 'steering', label: 'Steering', icon: Compass, badge: 'Ackermann' },
+    { id: 'suspension', label: 'Suspension', icon: ArrowDownUp, badge: 'Damping' },
+    { id: 'cooling', label: 'Cooling & Oil', icon: Thermometer, badge: 'Hydrodynamic' },
+    { id: 'aero', label: 'Aerodynamics', icon: Wind, badge: 'Drag & Downforce' },
+    { id: 'electronics', label: 'ECU & CAN Bus', icon: Cpu, badge: 'OBD-II' },
     { id: 'ev', label: 'EV vs ICE', icon: Zap, badge: 'Future Tech' },
     { id: 'quiz', label: 'Knowledge Quiz', icon: HelpCircle, badge: 'Test Skills' },
   ];
@@ -40,11 +51,11 @@ export default function App() {
               <h1 className="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
                 HOW CARS WORK
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  Interactive Physics
+                  Interactive Physics Encyclopedia
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Visualizing thermodynamics, kinematics, and torque transfer
+                Visualizing thermodynamics, kinematics, torque transfer, and vehicle dynamics
               </p>
             </div>
           </div>
@@ -57,7 +68,7 @@ export default function App() {
               className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 transition px-3 py-1.5 rounded-lg hover:bg-slate-900 border border-transparent hover:border-slate-800"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Public References</span>
+              <span className="hidden md:inline">Public SAE / ISO Specs</span>
               <ExternalLink className="w-3 h-3 text-slate-500" />
             </a>
           </div>
@@ -72,7 +83,7 @@ export default function App() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 shrink-0 transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 shrink-0 transition ${
                   isActive
                     ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
@@ -101,7 +112,7 @@ export default function App() {
                 </div>
                 <h4 className="text-sm font-bold text-white">Combustion or Stored Ions</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Hydrocarbon fuel ignited at 2,000°C creates explosive expanding pressure pushing pistons downward, turning reciprocating motion into rotational torque.
+                  Hydrocarbon fuel ignited at 2,000°C creates expanding pressure pushing pistons downward, turning reciprocating motion into rotational torque.
                 </p>
               </div>
 
@@ -111,7 +122,7 @@ export default function App() {
                 </div>
                 <h4 className="text-sm font-bold text-white">Transmission & Driveshaft</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Gear teeth ratios multiply engine torque up to ~4x to overcome standstill inertia, then shift into overdrive ratios on highways to lower fuel consumption.
+                  Gear ratios multiply engine torque up to ~4x to overcome standstill inertia, then shift into overdrive ratios on highways to lower fuel consumption.
                 </p>
               </div>
 
@@ -131,6 +142,13 @@ export default function App() {
         {activeTab === 'engine' && (
           <div className="space-y-6">
             <EngineSimulator />
+            <AudioEngineSynth />
+          </div>
+        )}
+
+        {activeTab === 'turbo' && (
+          <div className="space-y-6">
+            <TurbochargerSimulator />
           </div>
         )}
 
@@ -158,6 +176,30 @@ export default function App() {
           </div>
         )}
 
+        {activeTab === 'suspension' && (
+          <div className="space-y-6">
+            <SuspensionSimulator />
+          </div>
+        )}
+
+        {activeTab === 'cooling' && (
+          <div className="space-y-6">
+            <CoolingLubricationSimulator />
+          </div>
+        )}
+
+        {activeTab === 'aero' && (
+          <div className="space-y-6">
+            <AerodynamicsSimulator />
+          </div>
+        )}
+
+        {activeTab === 'electronics' && (
+          <div className="space-y-6">
+            <ElectricalEcuSimulator />
+          </div>
+        )}
+
         {activeTab === 'ev' && (
           <div className="space-y-6">
             <EvVsIceComparison />
@@ -170,56 +212,76 @@ export default function App() {
           </div>
         )}
 
-        {/* Global Summary & Public Resources section */}
+        {/* Global Technical Resources footer */}
         <section className="mt-12 p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 space-y-4">
           <div className="flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-amber-400" />
             <h3 className="text-base font-bold text-white">
-              Public Technical References & Learning Roadmap
+              Public Technical References & Automotive Engineering Standards
             </h3>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            This interactive vehicle physics explorer synthesizes automotive engineering principles documented in public open-access textbooks, SAE International standards, and MIT OpenCourseWare engineering curricula.
+            Synthesized from SAE International standards, Bosch Automotive Handbooks, and MIT mechanical engineering lecture archives.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
             <a
               href="https://en.wikipedia.org/wiki/Internal_combustion_engine"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between text-xs group"
+              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between text-xs group"
             >
-              <span className="text-slate-300 font-medium">Internal Combustion</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition" />
+              <span className="text-slate-300 font-medium">Otto Cycle</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition mt-2 self-end" />
+            </a>
+
+            <a
+              href="https://en.wikipedia.org/wiki/Turbocharger"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between text-xs group"
+            >
+              <span className="text-slate-300 font-medium">Turbochargers</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition mt-2 self-end" />
             </a>
 
             <a
               href="https://en.wikipedia.org/wiki/Differential_(mechanical_device)"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between text-xs group"
+              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between text-xs group"
             >
-              <span className="text-slate-300 font-medium">Differential Mechanics</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition" />
+              <span className="text-slate-300 font-medium">Differentials</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition mt-2 self-end" />
             </a>
 
             <a
-              href="https://en.wikipedia.org/wiki/Ackermann_steering_geometry"
+              href="https://en.wikipedia.org/wiki/Suspension_(vehicle)"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between text-xs group"
+              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between text-xs group"
             >
-              <span className="text-slate-300 font-medium">Ackermann Steering</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition" />
+              <span className="text-slate-300 font-medium">Dampers & Springs</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition mt-2 self-end" />
             </a>
 
             <a
-              href="https://en.wikipedia.org/wiki/Anti-lock_braking_system"
+              href="https://en.wikipedia.org/wiki/CAN_bus"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between text-xs group"
+              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between text-xs group"
             >
-              <span className="text-slate-300 font-medium">ABS & Fluid Dynamics</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition" />
+              <span className="text-slate-300 font-medium">CAN Bus Network</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition mt-2 self-end" />
+            </a>
+
+            <a
+              href="https://en.wikipedia.org/wiki/Automobile_drag_coefficient"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 hover:border-slate-700 transition flex flex-col justify-between text-xs group"
+            >
+              <span className="text-slate-300 font-medium">Aerodynamic Drag</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 transition mt-2 self-end" />
             </a>
           </div>
         </section>
@@ -227,7 +289,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="mt-auto border-t border-slate-900 bg-slate-950/90 py-6 text-center text-xs text-slate-500">
-        <p>How Cars Work — Interactive Automotive Physics & Mechanical Engineering Guide</p>
+        <p>How Cars Work — Interactive Automotive Physics & Mechanical Engineering Encyclopedia</p>
       </footer>
     </div>
   );
