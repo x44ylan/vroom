@@ -11,28 +11,28 @@ test.describe('Lexus IS300 (XE10) Engineering Guide - E2E Tests', () => {
   test('navigates to 2JZ-GE Engine and tests Inline-6 Audio Synth', async ({ page }) => {
     await page.goto('/');
     await page.locator('header button:has-text("2JZ Engine")').first().click();
-    await expect(page.locator('text=Interactive 4-Stroke Engine Simulator')).toBeVisible();
-    await expect(page.locator('text=2JZ-GE Acoustic Exhaust Harmonics Synthesizer')).toBeVisible();
+    await expect(page.locator('text=4-Stroke 2JZ Cylinder Simulation')).toBeVisible();
+    await expect(page.locator('text=Exhaust Acoustic Harmonic Synthesizer')).toBeVisible();
     
-    const audioBtn = page.locator('button:has-text("Start Audio Synthesizer")');
+    const audioBtn = page.locator('button:has-text("Synthesize Audio")');
     await expect(audioBtn).toBeVisible();
     await audioBtn.click();
-    await expect(page.locator('button:has-text("Mute Engine Audio")')).toBeVisible();
+    await expect(page.locator('button:has-text("Mute")')).toBeVisible();
   });
 
   test('navigates to 2JZ Turbo (NA-T) Build Simulator', async ({ page }) => {
     await page.goto('/');
     await page.locator('header button:has-text("NA-T Turbo")').first().click();
-    await expect(page.locator('text=2JZ-GE Turbo Conversion (NA-T Build Simulator)')).toBeVisible();
-    await expect(page.locator('button:has-text("Intercooler ACTIVE")')).toBeVisible();
-    await page.click('button:has-text("Intercooler ACTIVE")');
+    await expect(page.locator('text=2JZ-GE Turbo Conversion (NA-T Simulator)')).toBeVisible();
+    await expect(page.locator('button:has-text("Intercooler ON")')).toBeVisible();
+    await page.click('button:has-text("Intercooler ON")');
     await expect(page.locator('button:has-text("Intercooler BYPASS")')).toBeVisible();
   });
 
   test('navigates to W55 5-Speed Transmission and tests gear ratios', async ({ page }) => {
     await page.goto('/');
     await page.locator('header button:has-text("Transmission")').first().click();
-    await expect(page.locator('text=Lexus IS300 W55 5-Speed Transmission')).toBeVisible();
+    await expect(page.locator('text=Toyota W55 5-Speed Transmission')).toBeVisible();
     await page.click('button:has-text("Gear 5")');
     await expect(page.locator('text=Highway Cruising')).toBeVisible();
     await expect(page.locator('text=Ratio: 0.78:1')).toBeVisible();
@@ -120,7 +120,7 @@ test.describe('Mobile Viewport & Navigation Drawer Tests', () => {
 
     await mobileBtn.click();
     await page.getByRole('button', { name: 'NA-T Turbo Boost' }).click();
-    await expect(page.locator('text=2JZ-GE Turbo Conversion (NA-T Build Simulator)')).toBeVisible();
+    await expect(page.locator('text=2JZ-GE Turbo Conversion (NA-T Simulator)')).toBeVisible();
 
     await mobileBtn.click();
     await page.getByRole('button', { name: 'Knowledge Quiz Test' }).click();

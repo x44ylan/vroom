@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Wind, Activity, Zap } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
 import { Button } from './ui/button.jsx';
-import { Badge } from './ui/badge.jsx';
 
 export default function TurbochargerSimulator() {
   const [engineRpm, setEngineRpm] = useState(2600);
@@ -12,9 +10,6 @@ export default function TurbochargerSimulator() {
   const animRef = useRef(null);
   const lastTimeRef = useRef(performance.now());
 
-  // 2JZ-GE NA-T (Naturally Aspirated to Turbo conversion) simulation:
-  // Stock 2JZ-GE: 215 HP naturally aspirated.
-  // With BorgWarner / Garrett T4 turbo setup at 14 PSI: ~450+ WHP on stock cast-iron internals!
   const spoolFactor = Math.min(1.0, Math.max(0, (engineRpm - 2000) / 2600));
   const turboRpm = Math.round(spoolFactor * 165000 + (engineRpm > 1000 ? 15000 : 0));
   
@@ -30,7 +25,6 @@ export default function TurbochargerSimulator() {
   const manifoldPressureRatio = (14.7 + boostPsi) / 14.7;
   const volumetricEfficiency = Math.round(manifoldPressureRatio * 95);
   const densityBonus = (273 + 25) / (273 + intakeAirTempC);
-  // 2JZ-GE baseline: 215 HP
   const estimatedHorsepower = Math.round(215 * manifoldPressureRatio * Math.min(1.15, densityBonus));
 
   useEffect(() => {
@@ -47,98 +41,81 @@ export default function TurbochargerSimulator() {
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20 shrink-0">
-            <Wind className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <CardTitle>2JZ-GE Turbo Conversion (NA-T Build Simulator)</CardTitle>
-              <Badge variant="destructive" className="hidden sm:inline-flex">2JZ-GTE Turbo Power</Badge>
-            </div>
-            <CardDescription>How bolting a turbo kit to the IS300's cast-iron 2JZ doubles its horsepower output</CardDescription>
-          </div>
+      <CardHeader className="flex-row items-center justify-between gap-3 p-4 sm:p-5">
+        <div>
+          <CardTitle>2JZ-GE Turbo Conversion (NA-T Simulator)</CardTitle>
+          <CardDescription>Compressing intake air density using waste exhaust enthalpy</CardDescription>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-1.5">
           <Button
             size="sm"
-            variant={intercoolerActive ? "primary" : "secondary"}
+            variant={intercoolerActive ? "default" : "secondary"}
             onClick={() => setIntercoolerActive(!intercoolerActive)}
-            className="flex-1 sm:flex-none text-xs"
           >
-            {intercoolerActive ? 'Intercooler ACTIVE' : 'Intercooler BYPASS'}
+            {intercoolerActive ? 'Intercooler ON' : 'Intercooler BYPASS'}
           </Button>
 
           <Button
             size="sm"
             variant={wastegateOpen ? "default" : "secondary"}
             onClick={() => setWastegateOpen(!wastegateOpen)}
-            className="flex-1 sm:flex-none text-xs"
           >
-            {wastegateOpen ? 'Wastegate DUMPING' : 'Wastegate SHUT'}
+            {wastegateOpen ? 'Wastegate OPEN' : 'Wastegate SHUT'}
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+      <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-center p-4 sm:p-5">
         <div className="lg:col-span-7 flex flex-col items-center">
-          <div className="relative w-full aspect-[16/11] bg-slate-950/80 rounded-2xl border border-slate-800 p-4 flex items-center justify-center overflow-hidden">
+          <div className="relative w-full aspect-[16/11] bg-[#0c0d0e] rounded-lg border border-[#222428] p-3 flex items-center justify-center overflow-hidden">
             <svg viewBox="0 0 460 300" className="w-full h-full select-none">
-              <defs>
-                <linearGradient id="exhaustFlow" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#ef4444" />
-                  <stop offset="100%" stopColor="#f97316" />
-                </linearGradient>
-              </defs>
+              <path d="M 20 220 L 100 220 C 130 220, 150 200, 150 170" fill="none" stroke="#71717a" strokeWidth="16" strokeLinecap="round" />
+              <text x="35" y="240" fill="#a1a1aa" fontSize="9" fontWeight="medium">2JZ EXHAUST MANIFOLD</text>
 
-              <path d="M 20 220 L 100 220 C 130 220, 150 200, 150 170" fill="none" stroke="url(#exhaustFlow)" strokeWidth="18" strokeLinecap="round" />
-              <text x="35" y="240" fill="#f87171" fontSize="9" fontWeight="bold">2JZ EXHAUST MANIFOLD (&gt;850°C)</text>
+              <path d="M 80 220 C 80 260, 170 260, 190 220" fill="none" stroke={wastegateOpen ? '#a1a1aa' : '#27272a'} strokeWidth="6" strokeDasharray={wastegateOpen ? 'none' : '4 4'} />
 
-              <path d="M 80 220 C 80 260, 170 260, 190 220" fill="none" stroke={wastegateOpen ? '#f97316' : '#334155'} strokeWidth="8" strokeDasharray={wastegateOpen ? 'none' : '4 4'} />
-
-              <circle cx="160" cy="150" r="48" fill="#1e293b" stroke="#ef4444" strokeWidth="3" />
+              <circle cx="160" cy="150" r="46" fill="#18181b" stroke="#3f3f46" strokeWidth="2" />
               <g transform={`translate(160, 150) rotate(${animAngle})`}>
                 {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-                  <path key={deg} d="M 0 0 L 12 -38 L 4 -40 Z" fill="#f87171" transform={`rotate(${deg})`} />
+                  <path key={deg} d="M 0 0 L 10 -36 L 4 -38 Z" fill="#71717a" transform={`rotate(${deg})`} />
                 ))}
-                <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#ef4444" strokeWidth="2" />
+                <circle cx="0" cy="0" r="8" fill="#0c0d0e" stroke="#52525b" strokeWidth="1.5" />
               </g>
 
-              <rect x="200" y="142" width="60" height="16" rx="3" fill="#64748b" stroke="#cbd5e1" strokeWidth="1.5" />
+              <rect x="200" y="143" width="60" height="14" rx="2" fill="#3f3f46" stroke="#52525b" strokeWidth="1" />
 
-              <circle cx="300" cy="150" r="48" fill="#1e293b" stroke="#38bdf8" strokeWidth="3" />
+              <circle cx="300" cy="150" r="46" fill="#18181b" stroke="#3f3f46" strokeWidth="2" />
               <g transform={`translate(300, 150) rotate(${animAngle})`}>
                 {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-                  <path key={deg} d="M 0 0 L 12 -38 L 4 -40 Z" fill="#38bdf8" transform={`rotate(${deg})`} />
+                  <path key={deg} d="M 0 0 L 10 -36 L 4 -38 Z" fill="#a1a1aa" transform={`rotate(${deg})`} />
                 ))}
-                <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#38bdf8" strokeWidth="2" />
+                <circle cx="0" cy="0" r="8" fill="#0c0d0e" stroke="#52525b" strokeWidth="1.5" />
               </g>
 
-              <path d="M 440 150 L 348 150" fill="none" stroke="#60a5fa" strokeWidth="16" strokeLinecap="round" />
-              <path d="M 300 198 L 300 240 C 300 250, 310 260, 320 260 L 370 260" fill="none" stroke={intercoolerActive ? '#0284c7' : '#f59e0b'} strokeWidth="14" strokeLinecap="round" />
+              <path d="M 440 150 L 346 150" fill="none" stroke="#52525b" strokeWidth="14" strokeLinecap="round" />
+              <path d="M 300 196 L 300 240 C 300 250, 310 260, 320 260 L 370 260" fill="none" stroke={intercoolerActive ? '#71717a' : '#a1a1aa'} strokeWidth="12" strokeLinecap="round" />
 
-              <rect x="370" y="240" width="70" height="40" rx="4" fill="#0f172a" stroke="#38bdf8" strokeWidth="2" />
+              <rect x="370" y="240" width="70" height="40" rx="3" fill="#16171a" stroke="#27272a" strokeWidth="1.5" />
               {[380, 390, 400, 410, 420, 430].map((x) => (
-                <line key={x} x1={x} y1="243" x2={x} y2="277" stroke="#38bdf8" strokeWidth="1.5" />
+                <line key={x} x1={x} y1="243" x2={x} y2="277" stroke="#27272a" strokeWidth="1.5" />
               ))}
             </svg>
 
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
-              <span className="text-slate-300 font-medium">
-                Shaft: <span className="text-amber-400 font-mono font-bold">{turboRpm.toLocaleString()} RPM</span>
+            <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-xs bg-[#121316] p-2 rounded border border-[#222428]">
+              <span className="text-zinc-400 font-mono">
+                Shaft: <span className="text-zinc-100">{turboRpm.toLocaleString()} RPM</span>
               </span>
-              <span className="font-mono text-sky-400 font-bold">
+              <span className="font-mono text-zinc-200">
                 Boost: +{boostPsi} PSI ({boostBar} Bar)
               </span>
             </div>
           </div>
 
-          <div className="w-full mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">2JZ Engine Speed:</span>
-              <span className="text-orange-400 font-mono font-bold">{engineRpm} RPM</span>
+          <div className="w-full mt-3 p-3 rounded-lg bg-[#0e0f11] border border-[#222428]">
+            <div className="flex justify-between text-xs mb-1.5">
+              <span className="text-zinc-400">2JZ Engine Speed:</span>
+              <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
             </div>
             <input
               type="range"
@@ -147,37 +124,34 @@ export default function TurbochargerSimulator() {
               step="50"
               value={engineRpm}
               onChange={(e) => setEngineRpm(Number(e.target.value))}
-              className="w-full accent-orange-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#222428] rounded"
             />
           </div>
         </div>
 
-        <div className="lg:col-span-5 space-y-4">
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5" />
-              2JZ-GE NA-T Performance Output
-            </h4>
+        <div className="lg:col-span-5 space-y-3">
+          <div className="p-3.5 rounded-lg bg-[#0e0f11] border border-[#222428] space-y-2.5 text-xs">
+            <span className="font-medium text-zinc-200 block">Calculated Performance Output</span>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-slate-400">Tuned Engine Power:</span>
-                <span className="text-sm font-mono font-bold text-amber-400">{estimatedHorsepower} HP (Stock: 215 HP)</span>
+            <div className="space-y-1.5 font-mono">
+              <div className="flex justify-between p-2 rounded bg-[#16171a] border border-[#222428]">
+                <span className="text-zinc-400">Estimated Power:</span>
+                <span className="text-zinc-100 font-bold">{estimatedHorsepower} HP</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-slate-400">Volumetric Efficiency:</span>
-                <span className="text-sm font-mono font-bold text-emerald-400">{volumetricEfficiency}%</span>
+              <div className="flex justify-between p-2 rounded bg-[#16171a] border border-[#222428]">
+                <span className="text-zinc-400">Volumetric Efficiency:</span>
+                <span className="text-zinc-200">{volumetricEfficiency}%</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-                <span className="text-slate-400">Intake Air Charge Temp:</span>
-                <span className={`text-sm font-mono font-bold ${intakeAirTempC > 65 ? 'text-red-400' : 'text-sky-400'}`}>
+              <div className="flex justify-between p-2 rounded bg-[#16171a] border border-[#222428]">
+                <span className="text-zinc-400">Intake Air Temp:</span>
+                <span className={intakeAirTempC > 65 ? 'text-red-400' : 'text-zinc-200'}>
                   {intakeAirTempC}°C
                 </span>
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400 leading-relaxed pt-2 border-t border-slate-800">
-              The factory Lexus IS300 cast-iron 2JZ-GE block features the exact same reinforced external webbing as the 2JZ-GTE Supra, easily handling 400-500 WHP without cracking pistons or sleeve walls.
+            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#1e2024]">
+              The factory cast-iron 2JZ-GE block features the exact same reinforced external webbing as the twin-turbo 2JZ-GTE Supra, easily handling 400-500 WHP without cracking sleeves.
             </p>
           </div>
         </div>

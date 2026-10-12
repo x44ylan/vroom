@@ -19,7 +19,6 @@ import AudioEngineSynth from './components/AudioEngineSynth.jsx';
 import EvVsIceComparison from './components/EvVsIceComparison.jsx';
 import CarQuiz from './components/CarQuiz.jsx';
 import { Button } from './components/ui/button.jsx';
-import { Badge } from './components/ui/badge.jsx';
 import { Card, CardContent } from './components/ui/card.jsx';
 
 export default function App() {
@@ -53,14 +52,14 @@ export default function App() {
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-950">
       {/* Minimal Top Header */}
       <header className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="font-semibold text-sm tracking-tight text-zinc-100">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-13 sm:h-14 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-xs sm:text-sm tracking-tight text-zinc-100">
               Lexus IS300 <span className="text-zinc-500 font-normal">/ XE10 2JZ-GE</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <a
               href="https://en.wikipedia.org/wiki/Lexus_IS_(XE10)"
               target="_blank"
@@ -85,7 +84,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Minimal Desktop Clean Tab Rail */}
+        {/* Desktop Clean Tab Rail */}
         <div className="hidden lg:flex max-w-7xl mx-auto px-4 sm:px-6 items-center gap-1 overflow-x-auto py-1.5 scrollbar-none border-t border-zinc-900">
           {NAVIGATION_ITEMS.map((item) => {
             const isActive = activeTab === item.id;
@@ -107,7 +106,7 @@ export default function App() {
 
         {/* Mobile menu drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-zinc-950 border-b border-zinc-800 p-3 space-y-1 max-h-[70vh] overflow-y-auto">
+          <div className="lg:hidden bg-zinc-950 border-b border-zinc-800 p-2.5 space-y-1 max-h-[70vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-1">
               {NAVIGATION_ITEMS.map((item) => {
                 const isActive = activeTab === item.id;
@@ -122,7 +121,7 @@ export default function App() {
                     }`}
                   >
                     <span>{item.label}</span>
-                    <span className="text-[10px] text-zinc-500">{item.badge}</span>
+                    <span className="text-[10px] text-zinc-500 font-mono">{item.badge}</span>
                   </button>
                 );
               })}
@@ -132,15 +131,15 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {activeTab === 'chassis' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <ChassisViewer3D />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
               <Card>
-                <CardContent className="space-y-1.5 p-4">
-                  <div className="text-xs font-semibold text-zinc-200">
+                <CardContent className="space-y-1 p-3.5 sm:p-4">
+                  <div className="text-xs font-medium text-zinc-200">
                     1. Longitudinal 2JZ-GE Engine
                   </div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
@@ -150,8 +149,8 @@ export default function App() {
               </Card>
 
               <Card>
-                <CardContent className="space-y-1.5 p-4">
-                  <div className="text-xs font-semibold text-zinc-200">
+                <CardContent className="space-y-1 p-3.5 sm:p-4">
+                  <div className="text-xs font-medium text-zinc-200">
                     2. Front-Engine, Rear-Drive (FR)
                   </div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
@@ -161,8 +160,8 @@ export default function App() {
               </Card>
 
               <Card>
-                <CardContent className="space-y-1.5 p-4">
-                  <div className="text-xs font-semibold text-zinc-200">
+                <CardContent className="space-y-1 p-3.5 sm:p-4">
+                  <div className="text-xs font-medium text-zinc-200">
                     3. Double-Wishbone & Torsen LSD
                   </div>
                   <p className="text-xs text-zinc-400 leading-relaxed">
@@ -175,88 +174,88 @@ export default function App() {
         )}
 
         {activeTab === 'engine' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <EngineSimulator />
             <AudioEngineSynth />
           </div>
         )}
 
         {activeTab === 'turbo' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <TurbochargerSimulator />
           </div>
         )}
 
         {activeTab === 'transmission' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <TransmissionSimulator />
           </div>
         )}
 
         {activeTab === 'differential' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <DifferentialSimulator />
           </div>
         )}
 
         {activeTab === 'brakes' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <BrakeSimulator />
           </div>
         )}
 
         {activeTab === 'steering' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <SteeringSimulator />
           </div>
         )}
 
         {activeTab === 'suspension' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <SuspensionSimulator />
           </div>
         )}
 
         {activeTab === 'cooling' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <CoolingLubricationSimulator />
           </div>
         )}
 
         {activeTab === 'aero' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <AerodynamicsSimulator />
           </div>
         )}
 
         {activeTab === 'electronics' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <ElectricalEcuSimulator />
           </div>
         )}
 
         {activeTab === 'ev' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <EvVsIceComparison />
           </div>
         )}
 
         {activeTab === 'quiz' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <CarQuiz />
           </div>
         )}
 
         {/* Minimal Footer Info */}
-        <section className="pt-6 border-t border-zinc-800/80 text-xs text-zinc-500 space-y-2">
+        <section className="pt-4 border-t border-zinc-800/80 text-xs text-zinc-500 space-y-1.5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span>Lexus IS300 (XE10 / JCE10) Technical Architecture</span>
+            <span>Lexus IS300 (XE10 / JCE10) Architecture</span>
             <div className="flex items-center gap-3">
               <a href="https://en.wikipedia.org/wiki/Toyota_JZ_engine#2JZ-GE" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300">
                 2JZ-GE
               </a>
               <a href="https://en.wikipedia.org/wiki/Toyota_W_transmission#W55" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300">
-                W55 Transmission
+                W55 Gearbox
               </a>
               <a href="https://en.wikipedia.org/wiki/Torsen" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300">
                 Torsen T-2 LSD
@@ -267,7 +266,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-[11px] text-zinc-600 border-t border-zinc-900">
+      <footer className="py-3 text-center text-[10px] text-zinc-600 border-t border-zinc-900">
         Lexus IS300 (XE10) Automotive Physics Guide
       </footer>
     </div>

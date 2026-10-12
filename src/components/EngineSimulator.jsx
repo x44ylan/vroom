@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Flame, Wind, Gauge, Sparkles, RefreshCw } from 'lucide-react';
+import { Play, Pause, RefreshCw } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
 import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
@@ -27,7 +27,6 @@ export default function EngineSimulator() {
 
   let currentStroke = 'Intake';
   let strokeIndex = 0;
-  let strokeColor = '#38bdf8';
   let valveIntakeOpen = false;
   let valveExhaustOpen = false;
   let isCombustionActive = false;
@@ -35,21 +34,17 @@ export default function EngineSimulator() {
   if (cycleAngle < 180) {
     currentStroke = '1. Intake Stroke';
     strokeIndex = 0;
-    strokeColor = '#38bdf8';
     valveIntakeOpen = true;
   } else if (cycleAngle < 360) {
     currentStroke = '2. Compression Stroke';
     strokeIndex = 1;
-    strokeColor = '#a855f7';
   } else if (cycleAngle < 540) {
     currentStroke = '3. Power / Combustion';
     strokeIndex = 2;
-    strokeColor = '#ef4444';
     if (cycleAngle < 430) isCombustionActive = true;
   } else {
     currentStroke = '4. Exhaust Stroke';
     strokeIndex = 3;
-    strokeColor = '#f59e0b';
     valveExhaustOpen = true;
   }
 
@@ -68,124 +63,103 @@ export default function EngineSimulator() {
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 shrink-0">
-            <Flame className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <CardTitle>Interactive 4-Stroke Engine Simulator</CardTitle>
-              <Badge variant="destructive" className="hidden sm:inline-flex">Otto Cycle</Badge>
-            </div>
-            <CardDescription>Piston kinematics, valve events, and cylinder combustion pressure</CardDescription>
-          </div>
+      <CardHeader className="flex-row items-center justify-between gap-3 p-4 sm:p-5">
+        <div>
+          <CardTitle>4-Stroke 2JZ Cylinder Simulation</CardTitle>
+          <CardDescription>Piston kinematics, valve events, and combustion cycle</CardDescription>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-1.5">
           <Button
             size="sm"
-            variant={isPlaying ? "default" : "success"}
+            variant={isPlaying ? "secondary" : "default"}
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex-1 sm:flex-none"
           >
-            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {isPlaying ? 'Pause Motion' : 'Start Engine'}
+            {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            <span>{isPlaying ? 'Pause' : 'Start'}</span>
           </Button>
 
           <Button
             size="icon"
-            variant="secondary"
+            variant="outline"
             onClick={() => setCycleAngle(0)}
-            title="Reset to Top Dead Center"
+            title="Reset"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-3.5 h-3.5" />
           </Button>
         </div>
       </CardHeader>
 
-      <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
+      <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-center p-4 sm:p-5">
         {/* SVG Engine Cross Section */}
         <div className="lg:col-span-6 flex flex-col items-center">
-          <div className="relative w-full max-w-[320px] aspect-[4/5] bg-slate-950/80 rounded-2xl border border-slate-800 p-2 shadow-inner overflow-hidden">
+          <div className="relative w-full max-w-[320px] aspect-[4/5] bg-[#0c0d0e] rounded-lg border border-[#222428] p-2 overflow-hidden">
             <svg viewBox="0 0 320 380" className="w-full h-full select-none">
               <defs>
                 <radialGradient id="combustionFlame" cx="50%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#fef08a" stopOpacity="0.95" />
-                  <stop offset="40%" stopColor="#f97316" stopOpacity="0.85" />
-                  <stop offset="80%" stopColor="#ef4444" stopOpacity="0.6" />
-                  <stop offset="100%" stopColor="#7f1d1d" stopOpacity="0.0" />
+                  <stop offset="0%" stopColor="#fafafa" stopOpacity="0.9" />
+                  <stop offset="50%" stopColor="#d4d4d8" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="#27272a" stopOpacity="0.0" />
                 </radialGradient>
-                <linearGradient id="intakeAir" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.7" />
-                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0.2" />
-                </linearGradient>
-                <linearGradient id="exhaustGas" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#b45309" stopOpacity="0.3" />
-                </linearGradient>
               </defs>
 
-              <rect x="70" y="40" width="180" height="230" rx="8" fill="#1e293b" stroke="#334155" strokeWidth="4" />
-              <rect x="115" y="60" width="90" height="190" fill="#0f172a" stroke="#475569" strokeWidth="2" />
+              <rect x="70" y="40" width="180" height="230" rx="4" fill="#16171a" stroke="#27272a" strokeWidth="2" />
+              <rect x="115" y="60" width="90" height="190" fill="#0c0d0e" stroke="#27272a" strokeWidth="1.5" />
 
-              <path d="M 60 70 C 85 70, 115 80, 130 95" fill="none" stroke={valveIntakeOpen ? "#38bdf8" : "#334155"} strokeWidth="16" strokeLinecap="round" />
-              <path d="M 260 70 C 235 70, 205 80, 190 95" fill="none" stroke={valveExhaustOpen ? "#f59e0b" : "#334155"} strokeWidth="16" strokeLinecap="round" />
+              <path d="M 60 70 C 85 70, 115 80, 130 95" fill="none" stroke={valveIntakeOpen ? "#a1a1aa" : "#27272a"} strokeWidth="14" strokeLinecap="round" />
+              <path d="M 260 70 C 235 70, 205 80, 190 95" fill="none" stroke={valveExhaustOpen ? "#a1a1aa" : "#27272a"} strokeWidth="14" strokeLinecap="round" />
 
-              {isCombustionActive && <rect x="116" y="62" width="88" height={Math.max(10, pistonTopY - 60)} fill="url(#combustionFlame)" className="animate-pulse" />}
-              {cycleAngle < 180 && <rect x="116" y="62" width="88" height={Math.max(10, pistonTopY - 60)} fill="url(#intakeAir)" />}
-              {cycleAngle >= 540 && <rect x="116" y="62" width="88" height={Math.max(10, pistonTopY - 60)} fill="url(#exhaustGas)" />}
+              {isCombustionActive && <rect x="116" y="62" width="88" height={Math.max(10, pistonTopY - 60)} fill="url(#combustionFlame)" />}
+              {cycleAngle < 180 && <rect x="116" y="62" width="88" height={Math.max(10, pistonTopY - 60)} fill="#27272a" opacity="0.4" />}
+              {cycleAngle >= 540 && <rect x="116" y="62" width="88" height={Math.max(10, pistonTopY - 60)} fill="#27272a" opacity="0.6" />}
 
-              <rect x="156" y="32" width="8" height="28" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1" />
-              <line x1="160" y1="20" x2="160" y2="40" stroke="#f59e0b" strokeWidth="3" />
+              <rect x="156" y="32" width="8" height="28" fill="#d4d4d8" stroke="#18181b" strokeWidth="1" />
+              <line x1="160" y1="20" x2="160" y2="40" stroke="#71717a" strokeWidth="2" />
               {(cycleAngle >= 350 && cycleAngle <= 375) && (
-                <circle cx="160" cy="62" r="7" fill="#fbbf24" stroke="#ffffff" strokeWidth="2" className="animate-ping" />
+                <circle cx="160" cy="62" r="5" fill="#fafafa" stroke="#71717a" strokeWidth="1" />
               )}
 
-              <g transform={`translate(0, ${valveIntakeOpen ? 10 : 0})`} className="transition-transform duration-75">
-                <line x1="130" y1="45" x2="130" y2="78" stroke="#94a3b8" strokeWidth="4" />
-                <polygon points="120,78 140,78 130,88" fill="#cbd5e1" />
+              <g transform={`translate(0, ${valveIntakeOpen ? 10 : 0})`}>
+                <line x1="130" y1="45" x2="130" y2="78" stroke="#71717a" strokeWidth="3" />
+                <polygon points="120,78 140,78 130,88" fill="#a1a1aa" />
               </g>
 
-              <g transform={`translate(0, ${valveExhaustOpen ? 10 : 0})`} className="transition-transform duration-75">
-                <line x1="190" y1="45" x2="190" y2="78" stroke="#94a3b8" strokeWidth="4" />
-                <polygon points="180,78 200,78 190,88" fill="#cbd5e1" />
+              <g transform={`translate(0, ${valveExhaustOpen ? 10 : 0})`}>
+                <line x1="190" y1="45" x2="190" y2="78" stroke="#71717a" strokeWidth="3" />
+                <polygon points="180,78 200,78 190,88" fill="#a1a1aa" />
               </g>
 
               <g transform={`translate(${crankCenterX - pistonWidth / 2}, ${pistonTopY})`}>
-                <rect x="0" y="0" width={pistonWidth} height={pistonHeight} rx="4" fill="#64748b" stroke="#cbd5e1" strokeWidth="2" />
-                <line x1="4" y1="8" x2={pistonWidth - 4} y2="8" stroke="#334155" strokeWidth="2" />
-                <line x1="4" y1="16" x2={pistonWidth - 4} y2="16" stroke="#334155" strokeWidth="2" />
-                <circle cx={pistonWidth / 2} cy={25} r="6" fill="#0f172a" stroke="#cbd5e1" strokeWidth="2" />
+                <rect x="0" y="0" width={pistonWidth} height={pistonHeight} rx="2" fill="#27272a" stroke="#52525b" strokeWidth="1.5" />
+                <line x1="4" y1="8" x2={pistonWidth - 4} y2="8" stroke="#3f3f46" strokeWidth="1.5" />
+                <line x1="4" y1="16" x2={pistonWidth - 4} y2="16" stroke="#3f3f46" strokeWidth="1.5" />
+                <circle cx={pistonWidth / 2} cy={25} r="5" fill="#18181b" stroke="#71717a" strokeWidth="1.5" />
               </g>
 
-              <line x1={crankCenterX} y1={pistonPinY} x2={crankPinX} y2={crankPinY} stroke="#94a3b8" strokeWidth="8" strokeLinecap="round" />
-              <circle cx={crankCenterX} cy={pistonPinY} r="5" fill="#f8fafc" />
-              <circle cx={crankPinX} cy={crankPinY} r="8" fill="#f8fafc" stroke="#334155" strokeWidth="2" />
+              <line x1={crankCenterX} y1={pistonPinY} x2={crankPinX} y2={crankPinY} stroke="#71717a" strokeWidth="6" strokeLinecap="round" />
+              <circle cx={crankCenterX} cy={pistonPinY} r="4" fill="#d4d4d8" />
+              <circle cx={crankPinX} cy={crankPinY} r="7" fill="#d4d4d8" stroke="#27272a" strokeWidth="1.5" />
 
               <g transform={`translate(${crankCenterX}, ${crankCenterY})`}>
-                <circle cx="0" cy="0" r="16" fill="#334155" stroke="#64748b" strokeWidth="3" />
-                <path d={`M 0 0 L ${crankPinX - crankCenterX} ${crankPinY - crankCenterY}`} stroke="#ef4444" strokeWidth="6" strokeLinecap="round" />
-                <circle cx={-(crankPinX - crankCenterX) * 0.7} cy={-(crankPinY - crankCenterY) * 0.7} r="26" fill="#475569" opacity="0.8" />
+                <circle cx="0" cy="0" r="14" fill="#27272a" stroke="#52525b" strokeWidth="2" />
+                <path d={`M 0 0 L ${crankPinX - crankCenterX} ${crankPinY - crankCenterY}`} stroke="#a1a1aa" strokeWidth="4" strokeLinecap="round" />
+                <circle cx={-(crankPinX - crankCenterX) * 0.7} cy={-(crankPinY - crankCenterY) * 0.7} r="22" fill="#1c1d21" />
               </g>
             </svg>
 
-            <div
-              className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[11px] font-bold border backdrop-blur-md shadow"
-              style={{ backgroundColor: `${strokeColor}20`, borderColor: `${strokeColor}60`, color: strokeColor }}
-            >
+            <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[11px] font-medium bg-[#16171a] border border-[#27272a] text-zinc-200">
               {currentStroke}
             </div>
 
-            <div className="absolute top-3 right-3 text-[10px] font-mono text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
+            <div className="absolute top-2.5 right-2.5 text-[10px] font-mono text-zinc-400 bg-[#16171a] px-1.5 py-0.5 rounded border border-[#27272a]">
               {Math.round(cycleAngle)}° / 720°
             </div>
           </div>
 
-          <div className="w-full max-w-[320px] mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">Engine Speed (RPM):</span>
-              <span className="text-amber-400 font-mono font-bold">{rpm} RPM</span>
+          <div className="w-full max-w-[320px] mt-3 p-3 rounded-lg bg-[#0e0f11] border border-[#222428]">
+            <div className="flex justify-between text-xs mb-1.5">
+              <span className="text-zinc-400">Engine Speed:</span>
+              <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
             </div>
             <input
               type="range"
@@ -194,19 +168,19 @@ export default function EngineSimulator() {
               step="100"
               value={rpm}
               onChange={(e) => setRpm(Number(e.target.value))}
-              className="w-full accent-amber-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#222428] rounded"
             />
           </div>
         </div>
 
-        {/* 4 Steps grid & Deep dive */}
-        <div className="lg:col-span-6 space-y-4">
+        {/* 4 Step buttons */}
+        <div className="lg:col-span-6 space-y-3">
           <div className="grid grid-cols-2 gap-2">
             {[
               { idx: 0, name: '1. Intake', range: '0° - 180°', desc: 'Intake valve opens; depression pulls in air-fuel mixture.' },
-              { idx: 1, name: '2. Compression', range: '180° - 360°', desc: 'Valves seal; mixture compressed ~10:1 ratio.' },
-              { idx: 2, name: '3. Power', range: '360° - 540°', desc: 'Spark ignites fuel; violent expansion creates all positive work.' },
-              { idx: 3, name: '4. Exhaust', range: '540° - 720°', desc: 'Exhaust valve opens; rising piston purges spent gas.' }
+              { idx: 1, name: '2. Compression', range: '180° - 360°', desc: 'Valves seal; mixture compressed ~10.5:1 ratio.' },
+              { idx: 2, name: '3. Power', range: '360° - 540°', desc: 'Spark ignites fuel; expanding gas drives piston downward.' },
+              { idx: 3, name: '4. Exhaust', range: '540° - 720°', desc: 'Exhaust valve opens; rising piston sweeps spent gas.' }
             ].map((step) => {
               const isActive = strokeIndex === step.idx;
               return (
@@ -216,37 +190,32 @@ export default function EngineSimulator() {
                     setIsPlaying(false);
                     setCycleAngle(step.idx * 180 + 30);
                   }}
-                  className={`p-3 rounded-xl text-left border transition ${
+                  className={`p-2.5 rounded-lg text-left border transition ${
                     isActive
-                      ? 'bg-slate-800/90 border-amber-500/80 shadow-md ring-1 ring-amber-500/40'
-                      : 'bg-slate-950/40 border-slate-800 hover:bg-slate-900/60'
+                      ? 'bg-[#18191d] border-zinc-600 text-zinc-100'
+                      : 'bg-[#0e0f11] border-[#222428] text-zinc-400 hover:text-zinc-200 hover:bg-[#121316]'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-xs font-bold ${isActive ? 'text-white' : 'text-slate-300'}`}>
-                      {step.name}
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-500">{step.range}</span>
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className="text-xs font-medium text-zinc-200">{step.name}</span>
+                    <span className="text-[10px] font-mono text-zinc-500">{step.range}</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">{step.desc}</p>
+                  <p className="text-[11px] text-zinc-400 leading-normal line-clamp-2">{step.desc}</p>
                 </button>
               );
             })}
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              The Thermodynamics: The Otto Cycle
-            </h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              In an internal combustion engine, only <strong>1 out of 4 strokes</strong> creates positive forward torque. The other 3 strokes consume kinetic energy, stored in a heavy rotating <strong>flywheel</strong> to smooth out crankshaft rotation.
+          <div className="p-3.5 rounded-lg bg-[#0e0f11] border border-[#222428] space-y-2 text-xs">
+            <span className="font-medium text-zinc-200 block">Toyota 2JZ-GE Thermodynamics</span>
+            <p className="text-zinc-400 leading-relaxed text-[11px]">
+              In an internal combustion engine, only 1 out of 4 strokes creates positive forward torque. The dual-mass flywheel stores momentum to keep the crankshaft rotating smoothly between cylinder pulses.
             </p>
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80 text-[11px]">
-              <div><span className="text-slate-400">Camshaft Ratio:</span> <span className="text-white font-mono font-bold">1:2 Crank</span></div>
-              <div><span className="text-slate-400">Peak Pressure:</span> <span className="text-white font-mono font-bold">60+ Bar</span></div>
-              <div><span className="text-slate-400">Flame Temp:</span> <span className="text-white font-mono font-bold">&gt; 2,000° C</span></div>
-              <div><span className="text-slate-400">Fuel Mix:</span> <span className="text-white font-mono font-bold">14.7:1</span></div>
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#1e2024] text-[11px] font-mono">
+              <div><span className="text-zinc-500">Camshaft:</span> <span className="text-zinc-200">1:2 Crank</span></div>
+              <div><span className="text-zinc-500">Peak Pressure:</span> <span className="text-zinc-200">60+ Bar</span></div>
+              <div><span className="text-zinc-500">Compression:</span> <span className="text-zinc-200">10.5:1</span></div>
+              <div><span className="text-zinc-500">Air-Fuel:</span> <span className="text-zinc-200">14.7:1</span></div>
             </div>
           </div>
         </div>

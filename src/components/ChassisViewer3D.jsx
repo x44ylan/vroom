@@ -22,8 +22,8 @@ export default function ChassisViewer3D() {
 
   const COMPONENT_DETAILS = {
     engine: {
-      name: 'Toyota 2JZ-GE 3.0L Inline-6 Engine',
-      badge: 'Cast-Iron Block (FC250)',
+      name: '2JZ-GE 3.0L Inline-6 Engine',
+      badge: 'Cast-Iron Block',
       summary: 'Longitudinal DOHC 24-valve crossflow head with VVT-i. The deep-skirt FC250 iron block has 7 main crankshaft bearings for vibration-free primary harmonic balance and extreme boost tolerance.',
       specs: [
         { label: 'Displacement', val: '2,997 cc' },
@@ -33,19 +33,19 @@ export default function ChassisViewer3D() {
       ]
     },
     transmission: {
-      name: 'Toyota W55 5-Speed Manual Gearbox',
+      name: 'Toyota W55 5-Speed Manual',
       badge: 'Close-Ratio',
       summary: 'Direct mechanical linkage bolted behind the 2JZ bellhousing with a 0.78:1 overdrive 5th gear for highway cruising.',
       specs: [
         { label: '1st Gear Ratio', val: '3.57:1' },
         { label: '4th (Direct)', val: '1.00:1' },
         { label: '5th (Overdrive)', val: '0.78:1' },
-        { label: 'Flywheel', val: 'Dampened Dual-Mass' }
+        { label: 'Flywheel', val: 'Dual-Mass' }
       ]
     },
     driveshaft: {
       name: 'Two-Piece Propeller Driveshaft',
-      badge: 'Center Carrier Bearing',
+      badge: 'Center Bearing',
       summary: 'Transfers high rotational torque down the transmission tunnel with a rubber-isolated center bearing to eliminate driveline vibration.',
       specs: [
         { label: 'Material', val: 'High-Tensile Steel' },
@@ -73,12 +73,12 @@ export default function ChassisViewer3D() {
         { label: 'Front Geometry', val: 'Double Wishbone' },
         { label: 'Rear Geometry', val: 'Multi-Link Wishbone' },
         { label: 'Damping', val: 'Tokico Gas Monotube' },
-        { label: 'Stabilizers', val: 'Solid Front & Rear' }
+        { label: 'Stabilizers', val: 'Front & Rear Bars' }
       ]
     },
     brakes: {
       name: 'Ventilated Disc Brakes & ABS / EBD',
-      badge: '2-Piston Floating Front',
+      badge: '2-Piston Floating',
       summary: 'Cast-iron floating rotors with 2-piston front calipers. 4-channel anti-lock braking with Brake Assist (BA) prevents wheel lockup in emergency stops.',
       specs: [
         { label: 'Front Rotor', val: '296 mm Ventilated' },
@@ -104,6 +104,9 @@ export default function ChassisViewer3D() {
     const container = mountRef.current;
     if (!container) return;
 
+    // Detect mobile viewport width
+    const isMobile = window.innerWidth < 640;
+
     // SCENE
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0e0f12);
@@ -111,9 +114,14 @@ export default function ChassisViewer3D() {
     sceneRef.current = scene;
 
     const width = container.clientWidth;
-    const height = container.clientHeight || 480;
-    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 100);
-    camera.position.set(7.6, 3.6, 6.8);
+    const height = container.clientHeight || (isMobile ? 320 : 480);
+    const camera = new THREE.PerspectiveCamera(isMobile ? 44 : 36, width / height, 0.1, 100);
+    // Adjusted camera distance for mobile so car is perfectly framed and never obscured
+    if (isMobile) {
+      camera.position.set(5.8, 3.2, 5.4);
+    } else {
+      camera.position.set(7.6, 3.6, 6.8);
+    }
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -129,9 +137,9 @@ export default function ChassisViewer3D() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.maxPolarAngle = Math.PI / 2 + 0.02;
-    controls.minDistance = 3.5;
+    controls.minDistance = 2.8;
     controls.maxDistance = 16;
-    controls.target.set(0, 0.4, 0);
+    controls.target.set(0, 0.35, 0);
     controlsRef.current = controls;
 
     // Clean neutral studio lighting
@@ -147,7 +155,7 @@ export default function ChassisViewer3D() {
     fillLight.position.set(-8, 6, -8);
     scene.add(fillLight);
 
-    // Grid floor
+    // Floor grid
     const grid = new THREE.GridHelper(16, 24, 0x222428, 0x16171a);
     grid.position.y = -0.95;
     scene.add(grid);
@@ -180,7 +188,7 @@ export default function ChassisViewer3D() {
         opacity: 0.55
       }),
       headlights: new THREE.MeshBasicMaterial({ color: 0xe2e8f0 }),
-      taillights: new THREE.MeshBasicMaterial({ color: 0xdc2626 }), // Clear red Altezza jewel lights
+      taillights: new THREE.MeshBasicMaterial({ color: 0xdc2626 }),
       chromeGrille: new THREE.MeshStandardMaterial({ color: 0xd4d4d8, metalness: 0.95, roughness: 0.1 }),
       steel: new THREE.MeshStandardMaterial({ color: 0x222428, metalness: 0.8, roughness: 0.3 }),
       engineBlock: new THREE.MeshStandardMaterial({ color: 0xa1a1aa, metalness: 0.7, roughness: 0.3 }),
@@ -197,17 +205,13 @@ export default function ChassisViewer3D() {
 
     const parts = {};
 
-    // ==========================================
-    // 1. SCULPTED LEXUS IS300 (XE10) 3-BOX SPORTS SEDAN
-    // ==========================================
+    // 1. SCULPTED LEXUS IS300 (XE10) 3-BOX BODY
     const is300Group = new THREE.Group();
 
-    // Floorpan chassis base
     const floorPan = new THREE.Mesh(new THREE.BoxGeometry(1.68, 0.08, 4.4), materials.steel);
     floorPan.position.set(0, 0.15, 0);
     is300Group.add(floorPan);
 
-    // Lower Side Sills / Rocker Panels
     const sillL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.22, 2.6), materials.is300Body);
     sillL.position.set(-0.86, 0.22, 0);
     is300Group.add(sillL);
@@ -215,17 +219,14 @@ export default function ChassisViewer3D() {
     sillR.position.set(0.86, 0.22, 0);
     is300Group.add(sillR);
 
-    // Front Bumper with Altezza chin spoiler and fog light vents
     const frontBumper = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.34, 0.42), materials.is300Body);
     frontBumper.position.set(0, 0.28, 2.15);
     is300Group.add(frontBumper);
 
-    // Front Altezza chrome grille (narrow horizontal slots)
     const grille = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.16, 0.04), materials.chromeGrille);
     grille.position.set(0, 0.46, 2.37);
     is300Group.add(grille);
 
-    // Front Fenders (flared front wheel arches)
     const fenderL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.45, 1.25), materials.is300Body);
     fenderL.position.set(-0.85, 0.52, 1.45);
     is300Group.add(fenderL);
@@ -233,24 +234,20 @@ export default function ChassisViewer3D() {
     fenderR.position.set(0.85, 0.52, 1.45);
     is300Group.add(fenderR);
 
-    // Long Longitudinally-Proportioned Hood (IS300 power bulge)
     const hood = new THREE.Mesh(new THREE.BoxGeometry(1.58, 0.06, 1.3), materials.is300Body);
     hood.position.set(0, 0.62, 1.45);
     hood.rotation.x = -0.06;
     is300Group.add(hood);
 
-    // Raked A-pillars and Windshield
     const windshield = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.68, 0.04), materials.is300Glass);
     windshield.position.set(0, 0.88, 0.55);
     windshield.rotation.x = -0.66;
     is300Group.add(windshield);
 
-    // Compact Sports Sedan Roof Panel
     const roof = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.05, 1.28), materials.is300Roof);
     roof.position.set(0, 1.16, -0.15);
     is300Group.add(roof);
 
-    // Side Door Windows (4-Door Sports Sedan glasshouse)
     const glassSideL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.42, 1.3), materials.is300Glass);
     glassSideL.position.set(-0.72, 0.92, -0.15);
     is300Group.add(glassSideL);
@@ -258,7 +255,6 @@ export default function ChassisViewer3D() {
     glassSideR.position.set(0.72, 0.92, -0.15);
     is300Group.add(glassSideR);
 
-    // Four Door Outer Panels
     const doorsL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.48, 1.35), materials.is300Body);
     doorsL.position.set(-0.84, 0.5, -0.15);
     is300Group.add(doorsL);
@@ -266,18 +262,15 @@ export default function ChassisViewer3D() {
     doorsR.position.set(0.84, 0.5, -0.15);
     is300Group.add(doorsR);
 
-    // Rear C-Pillars & Back Glass
     const backGlass = new THREE.Mesh(new THREE.BoxGeometry(1.38, 0.68, 0.04), materials.is300Glass);
     backGlass.position.set(0, 0.94, -0.92);
     backGlass.rotation.x = 0.64;
     is300Group.add(backGlass);
 
-    // High Rear Decklid / Short Trunk (signature IS300 compact proportion)
     const trunkLid = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.06, 0.82), materials.is300Body);
     trunkLid.position.set(0, 0.72, -1.55);
     is300Group.add(trunkLid);
 
-    // Rear Fenders (Quarter Panels)
     const qtrL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.52, 1.25), materials.is300Body);
     qtrL.position.set(-0.85, 0.54, -1.45);
     is300Group.add(qtrL);
@@ -285,12 +278,10 @@ export default function ChassisViewer3D() {
     qtrR.position.set(0.85, 0.54, -1.45);
     is300Group.add(qtrR);
 
-    // Rear Bumper
     const rearBumper = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.42, 0.38), materials.is300Body);
     rearBumper.position.set(0, 0.36, -2.12);
     is300Group.add(rearBumper);
 
-    // Front Twin Projector Headlights
     const headL = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.08), materials.headlights);
     headL.position.set(-0.62, 0.54, 2.32);
     is300Group.add(headL);
@@ -298,7 +289,6 @@ export default function ChassisViewer3D() {
     headR.position.set(0.62, 0.54, 2.32);
     is300Group.add(headR);
 
-    // Iconic Clear Jewel Altezza Taillight Clusters
     const tailL = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.05, 16), materials.taillights);
     tailL.rotation.x = Math.PI / 2;
     tailL.position.set(-0.62, 0.64, -2.31);
@@ -311,39 +301,31 @@ export default function ChassisViewer3D() {
     carRoot.add(is300Group);
     parts.frame = is300Group;
 
-    // ==========================================
-    // 2. 2JZ-GE 3.0L INLINE-6 (Front-Mid Longitudinal)
-    // ==========================================
+    // 2. 2JZ-GE 3.0L INLINE-6
     const engineGroup = new THREE.Group();
     engineGroup.position.set(0, 0.4, 1.35);
 
-    // Cast-iron cylinder block
     const block = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.62, 1.38), materials.engineBlock);
     engineGroup.add(block);
 
-    // DOHC 24V Head
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.26, 1.34), materials.engineHead);
-    head.position.set(0, 0.42, 0);
-    engineGroup.add(head);
+    const headHead = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.26, 1.34), materials.engineHead);
+    headHead.position.set(0, 0.42, 0);
+    engineGroup.add(headHead);
 
-    // Front VVT-i Cam Pulley
     const camGear = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.08, 20), materials.driveshaft);
     camGear.rotation.x = Math.PI / 2;
     camGear.position.set(0, 0.38, 0.72);
     engineGroup.add(camGear);
 
-    // Intake Runner & Plenum
-    const intake = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 1.15, 16), materials.engineHead);
-    intake.rotation.x = Math.PI / 2;
-    intake.position.set(-0.32, 0.42, -0.05);
-    engineGroup.add(intake);
+    const intakePlen = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 1.15, 16), materials.engineHead);
+    intakePlen.rotation.x = Math.PI / 2;
+    intakePlen.position.set(-0.32, 0.42, -0.05);
+    engineGroup.add(intakePlen);
 
     carRoot.add(engineGroup);
     parts.engine = engineGroup;
 
-    // ==========================================
-    // 3. TOYOTA W55 5-SPEED MANUAL TRANSMISSION
-    // ==========================================
+    // 3. TOYOTA W55 5-SPEED TRANSMISSION
     const transGroup = new THREE.Group();
     transGroup.position.set(0, 0.28, 0.35);
     const bellHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.42, 0.45, 18), materials.transmission);
@@ -356,9 +338,7 @@ export default function ChassisViewer3D() {
     carRoot.add(transGroup);
     parts.transmission = transGroup;
 
-    // ==========================================
-    // 4. TWO-PIECE PROPELLER SHAFT & BEARING
-    // ==========================================
+    // 4. TWO-PIECE PROPELLER SHAFT
     const shaftGroup = new THREE.Group();
     const shaftFront = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.82, 16), materials.driveshaft);
     shaftFront.rotation.x = Math.PI / 2;
@@ -375,9 +355,7 @@ export default function ChassisViewer3D() {
     carRoot.add(shaftGroup);
     parts.driveshaft = shaftGroup;
 
-    // ==========================================
     // 5. TORSEN TYPE-2 (T-2) HELICAL LSD
-    // ==========================================
     const diffGroup = new THREE.Group();
     diffGroup.position.set(0, 0.14, -1.75);
     const diffCase = new THREE.Mesh(new THREE.SphereGeometry(0.35, 18, 18), materials.differential);
@@ -393,9 +371,7 @@ export default function ChassisViewer3D() {
     carRoot.add(diffGroup);
     parts.differential = diffGroup;
 
-    // ==========================================
-    // 6. WHEELS & 4-WHEEL DOUBLE-WISHBONE
-    // ==========================================
+    // 6. WHEELS & DOUBLE-WISHBONE
     const wheelsGroup = new THREE.Group();
     const wheelPositions = [
       { x: -0.92, y: 0.18, z: 1.4 },
@@ -429,9 +405,7 @@ export default function ChassisViewer3D() {
     carRoot.add(wheelsGroup);
     parts.wheels = wheelsGroup;
 
-    // ==========================================
     // 7. EXHAUST SYSTEM
-    // ==========================================
     const exhaustGroup = new THREE.Group();
     const headers = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.4, 16), materials.exhaust);
     headers.rotation.x = Math.PI / 2;
@@ -447,18 +421,16 @@ export default function ChassisViewer3D() {
 
     partsRef.current = parts;
 
-    // RESIZE OBSERVER
     const ro = new ResizeObserver(() => {
       if (!container || !rendererRef.current || !cameraRef.current) return;
       const nw = container.clientWidth;
-      const nh = container.clientHeight || 480;
+      const nh = container.clientHeight || (window.innerWidth < 640 ? 320 : 480);
       cameraRef.current.aspect = nw / nh;
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(nw, nh);
     });
     ro.observe(container);
 
-    // ANIMATION
     let shaftRot = 0;
     const animate = () => {
       animFrameRef.current = requestAnimationFrame(animate);
@@ -514,14 +486,16 @@ export default function ChassisViewer3D() {
     if (!cameraRef.current || !controlsRef.current) return;
     setIsRotating(false);
 
+    const isMobile = window.innerWidth < 640;
+
     if (preset === 'quarter') {
-      cameraRef.current.position.set(7.6, 3.6, 6.8);
-      controlsRef.current.target.set(0, 0.4, 0);
+      cameraRef.current.position.set(isMobile ? 5.8 : 7.6, isMobile ? 3.2 : 3.6, isMobile ? 5.4 : 6.8);
+      controlsRef.current.target.set(0, 0.35, 0);
     } else if (preset === 'top') {
-      cameraRef.current.position.set(0, 10.5, 0.1);
+      cameraRef.current.position.set(0, isMobile ? 9.5 : 10.5, 0.1);
       controlsRef.current.target.set(0, 0, 0);
     } else if (preset === 'side') {
-      cameraRef.current.position.set(8.5, 1.0, 0);
+      cameraRef.current.position.set(isMobile ? 7.5 : 8.5, 0.8, 0);
       controlsRef.current.target.set(0, 0.2, 0);
     } else if (preset === 'engine') {
       cameraRef.current.position.set(2.4, 1.8, 3.2);
@@ -533,14 +507,14 @@ export default function ChassisViewer3D() {
 
   return (
     <div className="w-full panel-minimal rounded-lg overflow-hidden flex flex-col">
-      {/* Top Precision Control Bar */}
-      <div className="px-4 py-2.5 border-b border-[#222428] bg-[#121316] flex flex-wrap items-center justify-between gap-3 text-xs">
+      {/* Precision Control Bar */}
+      <div className="px-3.5 py-2.5 border-b border-[#222428] bg-[#121316] flex flex-wrap items-center justify-between gap-2.5 text-xs">
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400" />
-          <h3 className="font-medium text-zinc-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0" />
+          <h3 className="font-medium text-zinc-200 truncate">
             Lexus IS300 (XE10) 3D Chassis & 2JZ Powertrain
           </h3>
-          <span className="text-[11px] text-zinc-500 font-mono hidden sm:inline">
+          <span className="text-[11px] text-zinc-500 font-mono hidden md:inline shrink-0">
             JCE10 FR Platform
           </span>
         </div>
@@ -597,13 +571,13 @@ export default function ChassisViewer3D() {
       </div>
 
       {/* 3D WebGL Canvas Stage */}
-      <div className="relative w-full h-[400px] sm:h-[480px] cursor-grab active:cursor-grabbing select-none bg-[#0e0f11]">
+      <div className="relative w-full h-[320px] sm:h-[480px] cursor-grab active:cursor-grabbing select-none bg-[#0e0f11]">
         <div ref={mountRef} className="w-full h-full" />
 
-        {/* Minimal Floating Spec Card */}
-        <div className="absolute bottom-3 left-3 right-3 sm:right-auto sm:max-w-md p-3.5 rounded bg-[#121316]/95 border border-[#26282e] text-xs shadow-xl backdrop-blur-md">
+        {/* Desktop floating spec card (hidden on mobile to keep 3D view unobstructed) */}
+        <div className="hidden sm:block absolute bottom-3 left-3 max-w-md p-3.5 rounded bg-[#121316]/95 border border-[#26282e] text-xs shadow-xl backdrop-blur-md">
           <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="font-medium text-zinc-100 text-xs sm:text-sm">
+            <span className="font-medium text-zinc-100 text-sm">
               {currentDetail.name}
             </span>
             <Badge variant="outline">{currentDetail.badge}</Badge>
@@ -624,7 +598,7 @@ export default function ChassisViewer3D() {
         </div>
       </div>
 
-      {/* Minimal Component Nav Bar */}
+      {/* Component Nav Chips (Single line, horizontally scrollable) */}
       <div className="px-3 py-2 bg-[#0c0d0e] border-t border-[#1e2024] flex items-center gap-1.5 overflow-x-auto scrollbar-none">
         <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider pl-1 shrink-0">
           Parts:
@@ -635,7 +609,7 @@ export default function ChassisViewer3D() {
             <button
               key={key}
               onClick={() => setActiveHighlight(key)}
-              className={`px-2.5 py-1 rounded text-xs transition ${
+              className={`px-2.5 py-1 rounded text-xs whitespace-nowrap shrink-0 transition ${
                 isSelected
                   ? 'bg-[#222428] text-zinc-100 font-medium'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#16171a]'
@@ -645,6 +619,29 @@ export default function ChassisViewer3D() {
             </button>
           );
         })}
+      </div>
+
+      {/* Mobile Spec Details Card (Sits cleanly below canvas on small screens) */}
+      <div className="sm:hidden p-3.5 bg-[#121316] border-t border-[#1e2024] text-xs space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-medium text-zinc-100 text-xs">
+            {currentDetail.name}
+          </span>
+          <Badge variant="outline">{currentDetail.badge}</Badge>
+        </div>
+
+        <p className="text-[11px] text-zinc-400 leading-relaxed">
+          {currentDetail.summary}
+        </p>
+
+        <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono bg-[#0c0d0e] p-2 rounded border border-[#1f2025]">
+          {currentDetail.specs.map((s, idx) => (
+            <div key={idx} className="flex justify-between">
+              <span className="text-zinc-500">{s.label}:</span>
+              <span className="text-zinc-300 font-medium">{s.val}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
