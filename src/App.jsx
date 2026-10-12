@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Car, Flame, Layers, ArrowLeftRight, Disc, Compass, Zap, HelpCircle, 
-  BookOpen, ExternalLink, Activity, Wind, ArrowDownUp, Thermometer, 
-  Cpu, Menu, X
-} from 'lucide-react';
+import { ExternalLink, Menu, X } from 'lucide-react';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
 import EngineSimulator from './components/EngineSimulator.jsx';
 import TransmissionSimulator from './components/TransmissionSimulator.jsx';
@@ -50,12 +46,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col font-sans selection:bg-zinc-100 selection:text-zinc-950">
-      {/* Minimal Top Header */}
+      {/* Top Header */}
       <header className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/80">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-13 sm:h-14 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 h-12 sm:h-13 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-xs sm:text-sm tracking-tight text-zinc-100">
-              Lexus IS300 <span className="text-zinc-500 font-normal">/ XE10 2JZ-GE</span>
+              Lexus IS300 <span className="text-zinc-500 font-normal">/ 2JZ-GE</span>
             </span>
           </div>
 
@@ -64,9 +60,9 @@ export default function App() {
               href="https://en.wikipedia.org/wiki/Lexus_IS_(XE10)"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-zinc-400 hover:text-zinc-100 hidden sm:flex items-center gap-1 transition px-2.5 py-1 rounded hover:bg-zinc-800/50"
+              className="text-xs text-zinc-400 hover:text-zinc-100 hidden sm:flex items-center gap-1 transition px-2 py-1 rounded hover:bg-zinc-800/50"
             >
-              <span>Heritage</span>
+              <span>Specs</span>
               <ExternalLink className="w-3 h-3 text-zinc-500" />
             </a>
 
@@ -84,7 +80,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Desktop Clean Tab Rail */}
+        {/* Desktop Tab Rail */}
         <div className="hidden lg:flex max-w-7xl mx-auto px-4 sm:px-6 items-center gap-1 overflow-x-auto py-1.5 scrollbar-none border-t border-zinc-900">
           {NAVIGATION_ITEMS.map((item) => {
             const isActive = activeTab === item.id;
@@ -131,143 +127,105 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4">
         {activeTab === 'chassis' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-3">
             <ChassisViewer3D />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
-              <Card>
-                <CardContent className="space-y-1 p-3.5 sm:p-4">
-                  <div className="text-xs font-medium text-zinc-200">
-                    1. Longitudinal 2JZ-GE Engine
-                  </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
-                    215 hp / 218 lb-ft. Cast-iron deep-skirt FC250 block sharing Mk4 Supra architecture with a square 86mm bore and stroke.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="space-y-1 p-3.5 sm:p-4">
-                  <div className="text-xs font-medium text-zinc-200">
-                    2. Front-Engine, Rear-Drive (FR)
-                  </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
-                    Engine mounted behind the front axle line for 54:46 weight balance, sending torque down a two-piece rubber-isolated propeller shaft.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="space-y-1 p-3.5 sm:p-4">
-                  <div className="text-xs font-medium text-zinc-200">
-                    3. Double-Wishbone & Torsen LSD
-                  </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed">
-                    High-mount upper A-arms provide negative camber gain during roll, paired with a torque-sensing helical limited-slip differential.
-                  </p>
-                </CardContent>
-              </Card>
+            {/* Quick 3-bullet takeaway */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+              <div className="p-3 rounded-lg bg-[#121316] border border-[#222428] flex items-center justify-between">
+                <span className="text-zinc-400">Layout</span>
+                <span className="text-zinc-200 font-mono">Front-Mid FR · 54:46</span>
+              </div>
+              <div className="p-3 rounded-lg bg-[#121316] border border-[#222428] flex items-center justify-between">
+                <span className="text-zinc-400">Powertrain</span>
+                <span className="text-zinc-200 font-mono">2JZ-GE 3.0L · W55 5MT</span>
+              </div>
+              <div className="p-3 rounded-lg bg-[#121316] border border-[#222428] flex items-center justify-between">
+                <span className="text-zinc-400">Traction</span>
+                <span className="text-zinc-200 font-mono">Torsen T-2 LSD · Double-Wishbone</span>
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'engine' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <EngineSimulator />
             <AudioEngineSynth />
           </div>
         )}
 
         {activeTab === 'turbo' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <TurbochargerSimulator />
           </div>
         )}
 
         {activeTab === 'transmission' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <TransmissionSimulator />
           </div>
         )}
 
         {activeTab === 'differential' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <DifferentialSimulator />
           </div>
         )}
 
         {activeTab === 'brakes' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <BrakeSimulator />
           </div>
         )}
 
         {activeTab === 'steering' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <SteeringSimulator />
           </div>
         )}
 
         {activeTab === 'suspension' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <SuspensionSimulator />
           </div>
         )}
 
         {activeTab === 'cooling' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <CoolingLubricationSimulator />
           </div>
         )}
 
         {activeTab === 'aero' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <AerodynamicsSimulator />
           </div>
         )}
 
         {activeTab === 'electronics' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <ElectricalEcuSimulator />
           </div>
         )}
 
         {activeTab === 'ev' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <EvVsIceComparison />
           </div>
         )}
 
         {activeTab === 'quiz' && (
-          <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-4">
             <CarQuiz />
           </div>
         )}
-
-        {/* Minimal Footer Info */}
-        <section className="pt-4 border-t border-zinc-800/80 text-xs text-zinc-500 space-y-1.5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span>Lexus IS300 (XE10 / JCE10) Architecture</span>
-            <div className="flex items-center gap-3">
-              <a href="https://en.wikipedia.org/wiki/Toyota_JZ_engine#2JZ-GE" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300">
-                2JZ-GE
-              </a>
-              <a href="https://en.wikipedia.org/wiki/Toyota_W_transmission#W55" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300">
-                W55 Gearbox
-              </a>
-              <a href="https://en.wikipedia.org/wiki/Torsen" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300">
-                Torsen T-2 LSD
-              </a>
-            </div>
-          </div>
-        </section>
       </main>
 
-      {/* Footer */}
       <footer className="py-3 text-center text-[10px] text-zinc-600 border-t border-zinc-900">
-        Lexus IS300 (XE10) Automotive Physics Guide
+        Lexus IS300 (XE10) 2JZ-GE Interactive Guide
       </footer>
     </div>
   );

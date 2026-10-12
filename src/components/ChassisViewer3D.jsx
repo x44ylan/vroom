@@ -24,78 +24,106 @@ export default function ChassisViewer3D() {
     engine: {
       name: '2JZ-GE 3.0L Inline-6 Engine',
       badge: 'Cast-Iron Block',
-      summary: 'Longitudinal DOHC 24-valve crossflow head with VVT-i. The deep-skirt FC250 iron block has 7 main crankshaft bearings for vibration-free primary harmonic balance and extreme boost tolerance.',
+      bullets: [
+        'Same bulletproof iron block as Mk4 Supra (2JZ)',
+        '7 main bearings = zero vibration, silky smooth',
+        'Handles 500+ HP turbo boost on stock internals'
+      ],
       specs: [
-        { label: 'Displacement', val: '2,997 cc' },
-        { label: 'Power', val: '215 hp @ 5,800 RPM' },
-        { label: 'Torque', val: '218 lb-ft @ 3,800 RPM' },
-        { label: 'Firing Order', val: '1-5-3-6-2-4' }
+        { label: 'Power', val: '215 HP' },
+        { label: 'Torque', val: '218 lb-ft' },
+        { label: 'Displacement', val: '3.0L I6' },
+        { label: 'Firing', val: '1-5-3-6-2-4' }
       ]
     },
     transmission: {
       name: 'Toyota W55 5-Speed Manual',
       badge: 'Close-Ratio',
-      summary: 'Direct mechanical linkage bolted behind the 2JZ bellhousing with a 0.78:1 overdrive 5th gear for highway cruising.',
+      bullets: [
+        'Direct mechanical 5-speed shift linkage',
+        '0.78:1 overdrive 5th gear for highway cruising',
+        'Dampened dual-mass flywheel absorbs pulses'
+      ],
       specs: [
-        { label: '1st Gear Ratio', val: '3.57:1' },
-        { label: '4th (Direct)', val: '1.00:1' },
-        { label: '5th (Overdrive)', val: '0.78:1' },
-        { label: 'Flywheel', val: 'Dual-Mass' }
+        { label: '1st Gear', val: '3.57:1 Launch' },
+        { label: '4th Gear', val: '1.00:1 Direct' },
+        { label: '5th Gear', val: '0.78:1 Cruise' },
+        { label: 'Final Drive', val: '3.73:1' }
       ]
     },
     driveshaft: {
       name: 'Two-Piece Propeller Driveshaft',
       badge: 'Center Bearing',
-      summary: 'Transfers high rotational torque down the transmission tunnel with a rubber-isolated center bearing to eliminate driveline vibration.',
+      bullets: [
+        '2-piece steel shaft down center tunnel',
+        'Rubber center hanger kills driveline vibrations',
+        'Direct torque transfer from 2JZ to rear differential'
+      ],
       specs: [
-        { label: 'Material', val: 'High-Tensile Steel' },
-        { label: 'Construction', val: '2-Piece Segmented' },
+        { label: 'Type', val: '2-Piece Steel' },
         { label: 'Joints', val: 'Universal U-Joints' },
-        { label: 'Support', val: 'Rubber Isolated' }
+        { label: 'Hanger', val: 'Rubber Isolated' },
+        { label: 'Balance', val: 'Dynamic' }
       ]
     },
     differential: {
       name: 'Torsen Type-2 (T-2) Helical LSD',
       badge: 'Torque-Sensing',
-      summary: 'Crossed helical worm gears bias drive torque to the outer tire during cornering without wearing clutch friction discs.',
+      bullets: [
+        'Helical worm gears bias torque in corners',
+        'Sends 2.5× more power to gripping outer tire',
+        'Zero clutch friction plates to ever wear out'
+      ],
       specs: [
         { label: 'Final Drive', val: '3.73:1' },
         { label: 'Torque Bias', val: '2.5:1 TBR' },
-        { label: 'Casing', val: 'Toyota M85' },
-        { label: 'Clutch Wear', val: 'Zero Discs' }
+        { label: 'Gears', val: 'Crossed Helical' },
+        { label: 'Clutch Wear', val: 'Zero' }
       ]
     },
     suspension: {
       name: '4-Wheel Independent Double-Wishbone',
-      badge: 'High-Mount A-Arms',
-      summary: 'High-mount front upper A-arms and rear multi-link wishbones deliver aggressive negative camber gain under roll, maintaining tire contact patches flat on asphalt.',
+      badge: 'High-Mount Arms',
+      bullets: [
+        'High-mount front A-arms & rear multi-link',
+        'Negative camber gain keeps tire flat in corners',
+        'Sports saloon handling with Tokico monotube gas shocks'
+      ],
       specs: [
-        { label: 'Front Geometry', val: 'Double Wishbone' },
-        { label: 'Rear Geometry', val: 'Multi-Link Wishbone' },
-        { label: 'Damping', val: 'Tokico Gas Monotube' },
-        { label: 'Stabilizers', val: 'Front & Rear Bars' }
+        { label: 'Front', val: 'Double Wishbone' },
+        { label: 'Rear', val: 'Multi-Link' },
+        { label: 'Shocks', val: 'Tokico Monotube' },
+        { label: 'Bars', val: 'Solid Anti-Roll' }
       ]
     },
     brakes: {
       name: 'Ventilated Disc Brakes & ABS / EBD',
       badge: '2-Piston Floating',
-      summary: 'Cast-iron floating rotors with 2-piston front calipers. 4-channel anti-lock braking with Brake Assist (BA) prevents wheel lockup in emergency stops.',
+      bullets: [
+        '296mm front ventilated cast-iron rotors',
+        '4-channel ABS pulses 20×/sec to prevent skids',
+        'Electronic Brakeforce Distribution (EBD)'
+      ],
       specs: [
-        { label: 'Front Rotor', val: '296 mm Ventilated' },
-        { label: 'Rear Rotor', val: '307 mm Solid' },
-        { label: 'Fluid Spec', val: 'DOT 4 Glycol' },
-        { label: 'Servo', val: 'Tandem Vacuum' }
+        { label: 'Front', val: '296 mm Vented' },
+        { label: 'Rear', val: '307 mm Solid' },
+        { label: 'ABS', val: '4-Channel 20Hz' },
+        { label: 'Fluid', val: 'DOT 4 Glycol' }
       ]
     },
     exhaust: {
-      name: 'Stainless Steel Exhaust & Dual Catalytic Converters',
+      name: 'Stainless Exhaust & Dual Catalytic Converters',
       badge: 'Dual Pre-Cats',
-      summary: 'Equal-length stainless headers with dual close-coupled pre-cats flowing into a low-backpressure rear acoustic muffler.',
+      bullets: [
+        'Equal-length stainless steel header collector',
+        'Dual close-coupled cats for low emissions',
+        'Free-flowing rear acoustic muffler with chrome tip'
+      ],
       specs: [
-        { label: 'Manifold', val: 'Tubular Stainless' },
-        { label: 'Sensors', val: 'Dual Bank O2 Lambda' },
-        { label: 'Standard', val: 'LEVII Certified' },
-        { label: 'Tailpipe', val: 'Chrome Bezel' }
+        { label: 'Headers', val: 'Stainless' },
+        { label: 'Sensors', val: 'Dual O2 Lambda' },
+        { label: 'Emission', val: 'LEVII Tier' },
+        { label: 'Tip', val: 'Chrome Bezel' }
       ]
     }
   };
@@ -104,10 +132,8 @@ export default function ChassisViewer3D() {
     const container = mountRef.current;
     if (!container) return;
 
-    // Detect mobile viewport width
     const isMobile = window.innerWidth < 640;
 
-    // SCENE
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0e0f12);
     scene.fog = new THREE.FogExp2(0x0e0f12, 0.035);
@@ -116,7 +142,6 @@ export default function ChassisViewer3D() {
     const width = container.clientWidth;
     const height = container.clientHeight || (isMobile ? 320 : 480);
     const camera = new THREE.PerspectiveCamera(isMobile ? 44 : 36, width / height, 0.1, 100);
-    // Adjusted camera distance for mobile so car is perfectly framed and never obscured
     if (isMobile) {
       camera.position.set(5.8, 3.2, 5.4);
     } else {
@@ -139,10 +164,9 @@ export default function ChassisViewer3D() {
     controls.maxPolarAngle = Math.PI / 2 + 0.02;
     controls.minDistance = 2.8;
     controls.maxDistance = 16;
-    controls.target.set(0, 0.35, 0);
+    controls.target.set(0, 0.4, 0);
     controlsRef.current = controls;
 
-    // Clean neutral studio lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
@@ -155,12 +179,10 @@ export default function ChassisViewer3D() {
     fillLight.position.set(-8, 6, -8);
     scene.add(fillLight);
 
-    // Floor grid
     const grid = new THREE.GridHelper(16, 24, 0x222428, 0x16171a);
     grid.position.y = -0.95;
     scene.add(grid);
 
-    // Car Root
     const carRoot = new THREE.Group();
     scene.add(carRoot);
 
@@ -205,7 +227,7 @@ export default function ChassisViewer3D() {
 
     const parts = {};
 
-    // 1. SCULPTED LEXUS IS300 (XE10) 3-BOX BODY
+    // 1. IS300 BODY
     const is300Group = new THREE.Group();
 
     const floorPan = new THREE.Mesh(new THREE.BoxGeometry(1.68, 0.08, 4.4), materials.steel);
@@ -301,7 +323,7 @@ export default function ChassisViewer3D() {
     carRoot.add(is300Group);
     parts.frame = is300Group;
 
-    // 2. 2JZ-GE 3.0L INLINE-6
+    // 2. 2JZ ENGINE
     const engineGroup = new THREE.Group();
     engineGroup.position.set(0, 0.4, 1.35);
 
@@ -325,7 +347,7 @@ export default function ChassisViewer3D() {
     carRoot.add(engineGroup);
     parts.engine = engineGroup;
 
-    // 3. TOYOTA W55 5-SPEED TRANSMISSION
+    // 3. W55 TRANSMISSION
     const transGroup = new THREE.Group();
     transGroup.position.set(0, 0.28, 0.35);
     const bellHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.42, 0.45, 18), materials.transmission);
@@ -338,7 +360,7 @@ export default function ChassisViewer3D() {
     carRoot.add(transGroup);
     parts.transmission = transGroup;
 
-    // 4. TWO-PIECE PROPELLER SHAFT
+    // 4. DRIVESHAFT
     const shaftGroup = new THREE.Group();
     const shaftFront = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.82, 16), materials.driveshaft);
     shaftFront.rotation.x = Math.PI / 2;
@@ -355,7 +377,7 @@ export default function ChassisViewer3D() {
     carRoot.add(shaftGroup);
     parts.driveshaft = shaftGroup;
 
-    // 5. TORSEN TYPE-2 (T-2) HELICAL LSD
+    // 5. TORSEN LSD
     const diffGroup = new THREE.Group();
     diffGroup.position.set(0, 0.14, -1.75);
     const diffCase = new THREE.Mesh(new THREE.SphereGeometry(0.35, 18, 18), materials.differential);
@@ -371,7 +393,7 @@ export default function ChassisViewer3D() {
     carRoot.add(diffGroup);
     parts.differential = diffGroup;
 
-    // 6. WHEELS & DOUBLE-WISHBONE
+    // 6. WHEELS & SUSPENSION
     const wheelsGroup = new THREE.Group();
     const wheelPositions = [
       { x: -0.92, y: 0.18, z: 1.4 },
@@ -405,7 +427,7 @@ export default function ChassisViewer3D() {
     carRoot.add(wheelsGroup);
     parts.wheels = wheelsGroup;
 
-    // 7. EXHAUST SYSTEM
+    // 7. EXHAUST
     const exhaustGroup = new THREE.Group();
     const headers = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.4, 16), materials.exhaust);
     headers.rotation.x = Math.PI / 2;
@@ -459,7 +481,6 @@ export default function ChassisViewer3D() {
     };
   }, []);
 
-  // Exploded View Update
   useEffect(() => {
     const parts = partsRef.current;
     if (!parts.engine) return;
@@ -470,7 +491,6 @@ export default function ChassisViewer3D() {
     parts.exhaust.position.set(explodedView ? 0.75 : 0, explodedView ? -0.35 : 0, 0);
   }, [explodedView]);
 
-  // Translucent shell toggle
   useEffect(() => {
     const parts = partsRef.current;
     if (!parts.frame) return;
@@ -490,12 +510,12 @@ export default function ChassisViewer3D() {
 
     if (preset === 'quarter') {
       cameraRef.current.position.set(isMobile ? 5.8 : 7.6, isMobile ? 3.2 : 3.6, isMobile ? 5.4 : 6.8);
-      controlsRef.current.target.set(0, 0.35, 0);
+      controlsRef.current.target.set(0, 0.4, 0);
     } else if (preset === 'top') {
       cameraRef.current.position.set(0, isMobile ? 9.5 : 10.5, 0.1);
       controlsRef.current.target.set(0, 0, 0);
     } else if (preset === 'side') {
-      cameraRef.current.position.set(isMobile ? 7.5 : 8.5, 0.8, 0);
+      cameraRef.current.position.set(8.5, 1.0, 0);
       controlsRef.current.target.set(0, 0.2, 0);
     } else if (preset === 'engine') {
       cameraRef.current.position.set(2.4, 1.8, 3.2);
@@ -508,7 +528,7 @@ export default function ChassisViewer3D() {
   return (
     <div className="w-full panel-minimal rounded-lg overflow-hidden flex flex-col">
       {/* Precision Control Bar */}
-      <div className="px-3.5 py-2.5 border-b border-[#222428] bg-[#121316] flex flex-wrap items-center justify-between gap-2.5 text-xs">
+      <div className="px-3.5 py-2 border-b border-[#222428] bg-[#121316] flex flex-wrap items-center justify-between gap-2 text-xs">
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0" />
           <h3 className="font-medium text-zinc-200 truncate">
@@ -574,20 +594,25 @@ export default function ChassisViewer3D() {
       <div className="relative w-full h-[320px] sm:h-[480px] cursor-grab active:cursor-grabbing select-none bg-[#0e0f11]">
         <div ref={mountRef} className="w-full h-full" />
 
-        {/* Desktop floating spec card (hidden on mobile to keep 3D view unobstructed) */}
-        <div className="hidden sm:block absolute bottom-3 left-3 max-w-md p-3.5 rounded bg-[#121316]/95 border border-[#26282e] text-xs shadow-xl backdrop-blur-md">
-          <div className="flex items-center justify-between gap-2 mb-1.5">
+        {/* Desktop floating spec card */}
+        <div className="hidden sm:block absolute bottom-3 left-3 max-w-sm p-3 rounded bg-[#121316]/95 border border-[#26282e] text-xs shadow-xl backdrop-blur-md">
+          <div className="flex items-center justify-between gap-2 mb-1">
             <span className="font-medium text-zinc-100 text-sm">
               {currentDetail.name}
             </span>
             <Badge variant="outline">{currentDetail.badge}</Badge>
           </div>
 
-          <p className="text-[11px] text-zinc-400 mb-2 leading-relaxed">
-            {currentDetail.summary}
-          </p>
+          <ul className="text-[11px] text-zinc-400 mb-2 space-y-0.5">
+            {currentDetail.bullets.map((b, i) => (
+              <li key={i} className="flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-zinc-500 shrink-0" />
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
 
-          <div className="grid grid-cols-2 gap-2 text-[10px] font-mono bg-[#0c0d0e] p-2 rounded border border-[#1f2025]">
+          <div className="grid grid-cols-2 gap-1 text-[10px] font-mono bg-[#0c0d0e] p-1.5 rounded border border-[#1f2025]">
             {currentDetail.specs.map((s, idx) => (
               <div key={idx} className="flex justify-between">
                 <span className="text-zinc-500">{s.label}:</span>
@@ -598,7 +623,7 @@ export default function ChassisViewer3D() {
         </div>
       </div>
 
-      {/* Component Nav Chips (Single line, horizontally scrollable) */}
+      {/* Component Nav Chips */}
       <div className="px-3 py-2 bg-[#0c0d0e] border-t border-[#1e2024] flex items-center gap-1.5 overflow-x-auto scrollbar-none">
         <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-wider pl-1 shrink-0">
           Parts:
@@ -621,8 +646,8 @@ export default function ChassisViewer3D() {
         })}
       </div>
 
-      {/* Mobile Spec Details Card (Sits cleanly below canvas on small screens) */}
-      <div className="sm:hidden p-3.5 bg-[#121316] border-t border-[#1e2024] text-xs space-y-2">
+      {/* Mobile Spec Details Card (Below canvas, crisp and ADHD-friendly) */}
+      <div className="sm:hidden p-3 bg-[#121316] border-t border-[#1e2024] text-xs space-y-1.5">
         <div className="flex items-center justify-between gap-2">
           <span className="font-medium text-zinc-100 text-xs">
             {currentDetail.name}
@@ -630,11 +655,16 @@ export default function ChassisViewer3D() {
           <Badge variant="outline">{currentDetail.badge}</Badge>
         </div>
 
-        <p className="text-[11px] text-zinc-400 leading-relaxed">
-          {currentDetail.summary}
-        </p>
+        <ul className="text-[11px] text-zinc-400 space-y-0.5">
+          {currentDetail.bullets.map((b, i) => (
+            <li key={i} className="flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-zinc-500 shrink-0" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
 
-        <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono bg-[#0c0d0e] p-2 rounded border border-[#1f2025]">
+        <div className="grid grid-cols-2 gap-1 text-[10px] font-mono bg-[#0c0d0e] p-1.5 rounded border border-[#1f2025]">
           {currentDetail.specs.map((s, idx) => (
             <div key={idx} className="flex justify-between">
               <span className="text-zinc-500">{s.label}:</span>
