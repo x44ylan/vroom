@@ -1,6 +1,6 @@
-# How Cars Work (Interactive Automotive Engineering Encyclopedia)
+# Vroom
 
-An interactive, visual, physics-based automotive encyclopedia explaining the mechanical, thermodynamic, kinematic, fluid, aerodynamic, and electrical systems that power modern motor vehicles.
+How a car really works, explained with interactive models of a Lexus IS300. Thirteen short lessons cover the engine, gears, brakes, steering, suspension, cooling, aerodynamics, electronics and EVs, then finish with a quiz.
 
 ## Comprehensive Interactive Modules
 

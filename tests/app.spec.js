@@ -5,10 +5,10 @@ async function openLesson(page, name) {
   await page.getByRole('dialog').getByRole('link', { name, exact: true }).click();
 }
 
-test.describe('Lexus IS300 (XE10) Engineering Guide - E2E Tests', () => {
+test.describe('Vroom lessons', () => {
   test('loads home page with Lexus IS300 3D Powertrain tab', async ({ page }) => {
     await page.goto('/#chassis');
-    await expect(page).toHaveTitle(/Lexus IS300/i);
+    await expect(page).toHaveTitle(/Vroom/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Take the car apart');
     await expect(page.getByRole('group', { name: 'Explore chassis parts' })).toBeVisible();
   });
@@ -257,7 +257,7 @@ test('landing leads into lessons and the home logo returns to it', async ({ page
   await page.locator('#lessons').getByRole('link', { name: /^Brakes & ABS:/ }).click();
   await expect(page).toHaveURL(/#brakes$/);
   await expect(page.getByLabel('Lesson 6 of 13')).toBeVisible();
-  await page.getByRole('link', { name: 'IS300 Explorer home' }).click();
+  await page.getByRole('link', { name: 'Vroom home' }).click();
   await expect(page).not.toHaveURL(/#/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
   await page.locator('.route-steps').getByRole('link', { name: /Gearbox/ }).click();

@@ -146,7 +146,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = isHome ? 'How a car works | Lexus IS300 Explorer' : `${active.label} | Lexus IS300 Explorer`;
+    document.title = isHome ? 'Vroom · How a car really works' : `${active.label} · Vroom`;
   }, [isHome, active]);
 
   const selectTopic = id => {
@@ -170,8 +170,8 @@ export default function App() {
     <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); document.getElementById('main-content')?.focus(); }}>Skip to content</a>
     <header className="app-header">
       <div className="app-header-inner">
-        <a href="#" className="brand" aria-label="IS300 Explorer home" onClick={event => { event.preventDefault(); selectTopic(HOME); }}>
-          <span className="brand-mark" aria-hidden="true" />IS300 Explorer
+        <a href="#" className="brand" aria-label="Vroom home" onClick={event => { event.preventDefault(); selectTopic(HOME); }}>
+          <span className="brand-mark" aria-hidden="true" />Vroom
         </a>
         {!isHome && <span className="header-lesson" aria-hidden="true">{active.label}</span>}
         <div className="header-actions">
@@ -228,6 +228,6 @@ export default function App() {
         </nav>
       </article>}
     </main>
-    <footer className="app-footer"><span>IS300 Explorer</span><span>Simplified learning models · Independent enthusiast guide · Car model “Toyota Altezza 2001” by <a href="https://sketchfab.com/3d-models/draft-request-toyota-altezza-2001-0396aafda6294dc4843250d979783656" target="_blank" rel="noopener noreferrer">Chai</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></span></footer>
+    <footer className="app-footer"><span>Vroom</span><span>Simplified learning models · Independent enthusiast guide · Car model “Toyota Altezza 2001” by <a href="https://sketchfab.com/3d-models/draft-request-toyota-altezza-2001-0396aafda6294dc4843250d979783656" target="_blank" rel="noopener noreferrer">Chai</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></span></footer>
   </div>;
 }

@@ -51,7 +51,7 @@ export default function HeroCar() {
     resize();
 
     let disposed = false, raf = 0, car, mats, uniforms, wheels = [];
-    const playIntro = !reduceMotion && !sessionStorage.getItem('heroIntroPlayed');
+    const playIntro = !reduceMotion && !sessionStorage.getItem('vroom:heroIntroPlayed');
     let t0 = 0;
     const spin = { angle: 0, velocity: 0, dragging: false, lastX: 0, lastT: 0 };
     let visible = true;
@@ -83,7 +83,7 @@ export default function HeroCar() {
       setState('ready');
       t0 = performance.now();
       window.__heroT0 = t0;
-      if (playIntro) sessionStorage.setItem('heroIntroPlayed', '1');
+      if (playIntro) sessionStorage.setItem('vroom:heroIntroPlayed', '1');
       loop();
     }).catch(() => !disposed && setState('failed'));
 
