@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Disc, Zap, CheckCircle2, AlertOctagon } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
+import { Switch } from './controls/Controls.jsx';
+import { Stage, Pipe, Flow, Callout, heatColor, useClock } from './diagram/kit.jsx';
 import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
 
@@ -16,6 +18,13 @@ export default function BrakeSimulator() {
   const isLockupThreshold = pedalForce > 75;
   const isWheelLocked = isLockupThreshold && !absEnabled;
 
+  const t = useClock();
+  const absPulse = isLockupThreshold && absEnabled ? (Math.sin(t * 40) > 0 ? 1 : 0.55) : 1;
+  const discSpin = isWheelLocked ? 0 : t * (220 - pedalForce * 1.6);
+  const heat = (rotorTempC - 50) / 380;
+  const squeeze = (pedalForce / 100) * 6 * absPulse;
+  const lineD = 'M40 30 H120 Q140 30 140 50 V64 H300 Q330 64 330 90';
+
   return (
     <Card className="w-full">
       <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -25,66 +34,60 @@ export default function BrakeSimulator() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Hydraulic Disc Brakes & ABS Simulator</CardTitle>
+              <CardTitle>Try the brake pedal</CardTitle>
               <Badge variant="destructive" className="hidden sm:inline-flex">Hydraulics</Badge>
             </div>
-            <CardDescription>Pascal's law hydraulic force multiplication and anti-lock slip regulation</CardDescription>
+            <CardDescription>More pedal pressure means a harder squeeze on the brake disc.</CardDescription>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-300 pl-1">ABS Status:</span>
-          <Button
-            size="sm"
-            variant={absEnabled ? "success" : "destructive"}
-            onClick={() => setAbsEnabled(!absEnabled)}
-            className="flex-1 sm:flex-none"
-          >
-            {absEnabled ? 'ABS ENABLED' : 'ABS DISABLED'}
-          </Button>
-        </div>
+        <Switch label="ABS" checked={absEnabled} onChange={setAbsEnabled} />
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
         <div className="lg:col-span-7 flex flex-col items-center">
-          <div className="relative w-full aspect-[16/11] bg-slate-950/80 rounded-2xl border border-slate-800 p-4 flex items-center justify-center overflow-hidden">
-            <svg viewBox="0 0 440 280" className="w-full h-full select-none">
-              <defs>
-                <radialGradient id="rotorHeat" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={rotorTempC > 300 ? '#ef4444' : rotorTempC > 180 ? '#f97316' : '#64748b'} />
-                  <stop offset="70%" stopColor={rotorTempC > 300 ? '#b91c1c' : rotorTempC > 180 ? '#c2410c' : '#334155'} />
-                  <stop offset="100%" stopColor="#1e293b" />
-                </radialGradient>
-              </defs>
-
-              <g transform="translate(220, 140)">
-                <circle cx="0" cy="0" r="105" fill="url(#rotorHeat)" stroke="#94a3b8" strokeWidth="3" />
-                {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
-                  const rad = (deg * Math.PI) / 180;
-                  return <circle key={deg} cx={75 * Math.cos(rad)} cy={75 * Math.sin(rad)} r="3.5" fill="#0f172a" stroke="#475569" />;
-                })}
-                <circle cx="0" cy="0" r="45" fill="#1e293b" stroke="#64748b" strokeWidth="2" />
+          <div className="diagram-frame relative w-full aspect-[25/16]">
+            <Stage viewBox="0 0 500 320" label={`Brake disc and caliper at ${pedalForce}% pedal pressure`}>
+              <ellipse cx="230" cy="306" rx="200" ry="12" fill="url(#k-floor)" />
+              {/* Brake line from the pedal */}
+              <Pipe d={lineD} w={6} color="#2f6fe0" />
+              <Flow d={lineD} t={t} speed={20 + pedalForce * 1.5} color="#cfe2ff" width={3} gap={10} opacity={pedalForce > 2 ? 0.9 : 0} />
+              <Callout x={40} y={30} tx={24} ty={54} color="#a9cbff">From pedal · {linePressureBar} bar</Callout>
+              {/* Disc */}
+              <g transform="translate(230 180)">
+                <circle r="118" fill="url(#k-steel)" />
+                <circle r="118" fill={heatColor(heat)} opacity={Math.max(0, heat - 0.15) * 0.9} />
+                <circle r="118" fill="none" stroke="#0b1220" strokeWidth="2" />
+                <g transform={`rotate(${discSpin})`}>
+                  {Array.from({ length: 24 }, (_, i) => {
+                    const a = (i / 24) * Math.PI * 2;
+                    return <circle key={i} cx={Math.cos(a) * 92} cy={Math.sin(a) * 92} r="4" fill="#1d2533" />;
+                  })}
+                  {Array.from({ length: 6 }, (_, i) => <path key={i} d="M 0 -70 A 70 70 0 0 1 30 -63" stroke="#5d6a80" strokeWidth="2" fill="none" transform={`rotate(${i * 60})`} />)}
+                </g>
+                <circle r="56" fill="url(#k-iron)" stroke="#0b1220" />
+                {Array.from({ length: 5 }, (_, i) => { const a = (i / 5) * Math.PI * 2 + discSpin * Math.PI / 180; return <circle key={i} cx={Math.cos(a) * 32} cy={Math.sin(a) * 32} r="6" fill="#c9d3e3" />; })}
+                <circle r="14" fill="#0b0f17" />
               </g>
-
-              <g transform="translate(290, 45)">
-                <path d="M 0 0 C 40 0, 70 30, 70 80 C 70 120, 30 140, 0 140 L -25 140 L -25 0 Z" fill="#be185d" stroke="#f472b6" strokeWidth="3" />
-                <rect x="-22" y={25 + (pedalForce / 100) * 4} width="18" height="90" rx="2" fill="#475569" stroke="#cbd5e1" strokeWidth="1.5" />
-                <text x="25" y="75" fill="#fdf2f8" fontSize="11" fontWeight="bold">{clampingForceN} N</text>
-                <text x="25" y="90" fill="#fbcfe8" fontSize="9">CLAMP FORCE</text>
+              {/* Caliper straddling the disc at the top right */}
+              <g transform="translate(330 120) rotate(35)">
+                <rect x={-44} y={-24 - squeeze} width="88" height="16" rx="5" fill="#9aa6ba" />
+                <rect x={-44} y={8 + squeeze} width="88" height="16" rx="5" fill="#9aa6ba" />
+                <path d="M -58 -50 H 58 Q 72 -50 72 -36 V 36 Q 72 50 58 50 H -58 Q -72 50 -72 36 V 24 H -48 V -24 H -72 V -36 Q -72 -50 -58 -50 Z" fill="url(#k-blue)" stroke="#0b1220" />
+                <text x="0" y="-30" fill="#e8eefb" fontSize="12" fontWeight="700" textAnchor="middle">CALIPER</text>
               </g>
+              <Callout x={300} y={220} tx={480} ty={268} anchor="end" color="#c9d3e3">{clampingForceN} N squeeze</Callout>
+              {isLockupThreshold && absEnabled && <text x="24" y="300" fill="#ffb547" fontSize="12" fontWeight="600">ABS pulsing pressure</text>}
+            </Stage>
 
-              <path d="M 330 0 L 330 45" fill="none" stroke="#ec4899" strokeWidth="4" />
-              <text x="340" y="25" fill="#f472b6" fontSize="9" fontWeight="bold">{linePressureBar} BAR</text>
-            </svg>
-
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <div className="absolute diagram-footer">
               {isWheelLocked ? (
                 <div className="flex items-center gap-1.5 text-red-400 font-bold text-xs truncate">
-                  <AlertOctagon className="w-4 h-4 shrink-0" /> WHEEL LOCKED & SKIDDING!
+                  <AlertOctagon className="w-4 h-4 shrink-0" /> Wheel locked: the tire is sliding
                 </div>
               ) : isLockupThreshold && absEnabled ? (
                 <div className="flex items-center gap-1.5 text-amber-400 font-bold text-xs truncate">
-                  <Zap className="w-4 h-4 shrink-0" /> ABS PULSING (20 Hz)
+                  <Zap className="w-4 h-4 shrink-0" /> ABS is adjusting brake pressure
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5 text-emerald-400 font-medium text-xs truncate">
@@ -101,7 +104,7 @@ export default function BrakeSimulator() {
               <span className="text-pink-400 font-mono font-bold">{pedalForce}% ({footForceN} N Effort)</span>
             </div>
             <input
-              type="range"
+              type="range" aria-label="Brake pedal pressure"
               min="0"
               max="100"
               step="2"
@@ -115,13 +118,13 @@ export default function BrakeSimulator() {
         <div className="lg:col-span-5 space-y-4">
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-pink-400">
-              Pascal's Principle (Hydraulic Amplification)
+              Why a small pedal force can stop a car
             </h4>
             <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-xs text-center text-pink-300 font-bold">
               Pressure (P) = F₁ / A₁ = F₂ / A₂
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Incompressible hydraulic fluid transfers foot pedal pressure into large caliper pistons, resulting in over <strong>1,000 kg of clamping force</strong> against spinning steel rotors.
+              Pressure travels through the brake fluid to the caliper pistons. Their larger area turns that pressure into a strong squeeze on the disc. The formula above says that pressure is force divided by area.
             </p>
           </div>
         </div>

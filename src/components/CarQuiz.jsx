@@ -36,7 +36,7 @@ export default function CarQuiz() {
   const handleFinish = () => {
     setIsSubmitted(true);
     const score = calculateScore();
-    if (score >= 4) {
+    if (score >= 4 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
     }
   };
@@ -59,10 +59,10 @@ export default function CarQuiz() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Car Engineering Knowledge Quiz</CardTitle>
-              <Badge variant="secondary" className="hidden sm:inline-flex">Test Skills</Badge>
+              <CardTitle>Five questions about how cars work</CardTitle>
+              <Badge variant="secondary" className="hidden sm:inline-flex">Review</Badge>
             </div>
-            <CardDescription>Test understanding of mechanical advantage, Otto cycles, differentials, and thermodynamics</CardDescription>
+            <CardDescription>Choose an answer to see the explanation. You can open the related lesson without losing your place.</CardDescription>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ export default function CarQuiz() {
               {question.question}
             </h4>
 
-            <div className="space-y-2.5">
+            <div className="quiz-options space-y-2.5">
               {question.options.map((opt, optIdx) => {
                 const isSelected = userChoice === optIdx;
                 const hasAnswered = userChoice !== undefined;
@@ -104,7 +104,7 @@ export default function CarQuiz() {
                     key={optIdx}
                     disabled={hasAnswered}
                     onClick={() => handleSelect(optIdx)}
-                    className={`w-full p-3.5 sm:p-4 rounded-xl text-left border transition text-xs sm:text-sm flex items-start justify-between gap-3 ${btnStyle}`}
+                    className={`w-full p-3.5 sm:p-4 rounded-xl text-left border transition-[background-color,color,transform] duration-150 text-xs sm:text-sm flex items-start justify-between gap-3 ${btnStyle}`}
                   >
                     <span className="leading-relaxed">{opt.text}</span>
                     {hasAnswered && opt.isCorrect && (
@@ -119,23 +119,26 @@ export default function CarQuiz() {
             </div>
 
             {userChoice !== undefined && (
-              <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2 animate-fadeIn">
+              <div role="status" className="quiz-explanation p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
                 <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  Engineering Explanation:
+                  {question.options[userChoice].isCorrect ? 'Correct.' : 'Not quite.'} Here is why:
                 </span>
                 <p className="text-xs text-slate-300 leading-relaxed">
                   {question.explanation}
                 </p>
+                <a className="lesson-review-link" href={`#${question.lessonId}`} target="_blank" rel="noopener noreferrer">Review: {question.lessonLabel}<span className="sr-only"> (opens in a new tab)</span></a>
               </div>
             )}
 
             <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
-              <div className="flex gap-1.5 overflow-x-auto">
+              <div className="flex gap-1.5 overflow-x-auto" role="group" aria-label="Quiz questions">
                 {QUIZ_QUESTIONS.map((_, idx) => (
                   <button
                     key={idx}
+                    aria-label={`Question ${idx + 1}${selectedAnswers[idx] !== undefined ? ", answered" : ""}`}
+                    aria-current={currentIdx === idx ? "step" : undefined}
                     onClick={() => setCurrentIdx(idx)}
-                    className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition ${
+                    className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition-[background-color,color,transform] duration-150 ${
                       currentIdx === idx
                         ? 'bg-amber-600 text-white'
                         : selectedAnswers[idx] !== undefined
@@ -148,15 +151,17 @@ export default function CarQuiz() {
                 ))}
               </div>
 
+              {currentIdx === QUIZ_QUESTIONS.length - 1 && !isAllAnswered && <p className="text-slate-300">Answer all five questions to see your score. Use the numbered buttons to return to any you skipped.</p>}
               <div className="flex gap-2 w-full sm:w-auto">
                 {currentIdx < QUIZ_QUESTIONS.length - 1 ? (
                   <Button
                     size="sm"
                     variant="secondary"
+                    disabled={userChoice === undefined}
                     onClick={() => setCurrentIdx(currentIdx + 1)}
                     className="flex-1 sm:flex-none"
                   >
-                    Next Question →
+                    Next question →
                   </Button>
                 ) : (
                   <Button
@@ -166,7 +171,7 @@ export default function CarQuiz() {
                     onClick={handleFinish}
                     className="flex-1 sm:flex-none"
                   >
-                    View Final Score
+                    See my score
                   </Button>
                 )}
               </div>
@@ -177,13 +182,19 @@ export default function CarQuiz() {
             <div className="inline-flex p-3 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-2">
               <Award className="w-8 h-8 sm:w-10 sm:h-10" />
             </div>
-            <h4 className="text-xl sm:text-2xl font-bold text-white">Quiz Completed!</h4>
+            <h4 className="text-xl sm:text-2xl font-bold text-white">You have finished the quiz</h4>
             <p className="text-xs sm:text-sm text-slate-400">
               You scored <span className="text-amber-400 font-bold text-base sm:text-lg">{calculateScore()}</span> out of {QUIZ_QUESTIONS.length}
             </p>
 
+            <div className="quiz-review">
+              <h3>Review the lessons</h3>
+              {QUIZ_QUESTIONS.map((item, idx) => <a className="lesson-review-link" key={item.id} href={`#${item.lessonId}`} target="_blank" rel="noopener noreferrer">
+                <span>{item.lessonLabel}<span className="sr-only"> (opens in a new tab)</span></span><span>{item.options[selectedAnswers[idx]]?.isCorrect ? 'Correct' : 'Review this idea'}</span>
+              </a>)}
+            </div>
             <Button onClick={handleReset} variant="default" className="mt-2">
-              Retake Quiz
+              Try again
             </Button>
           </div>
         )}

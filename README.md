@@ -97,6 +97,43 @@ npm run dev # http://127.0.0.1:5180
 # Build for production
 npm run build
 
-# Run Playwright E2E tests (13 comprehensive tests)
+# Run the browser checks and generate the HTML report
 npm run test:e2e
 ```
+
+
+## UX verification
+
+The explorer groups all 13 topics into a desktop sidebar and an accessible mobile dialog.
+Topic URLs (for example `/#engine`) support refresh and browser history. Every topic has
+an introduction, an experiment prompt, and previous/next navigation.
+
+```bash
+npm run build
+npm run test:e2e
+npx playwright show-report
+# Run the same checks against a deployment:
+PLAYWRIGHT_BASE_URL=https://vroom.example.com npm run test:e2e
+```
+
+The suite covers all modules, the complete quiz flow, deep links, keyboard focus,
+mobile navigation, 375px layouts, labeled sliders, and unavailable WebGL. Desktop,
+mobile overview, and mobile engine screenshots are generated under
+`test-results/app-save-desktop-and-mobile-UX-review-screenshots/`.
+
+
+The beginner lessons use plain-language introductions, exercises with expected results,
+and expandable definitions. The quiz checks five ideas from the lessons and opens review
+links in a separate tab so the learner keeps their answers. Reading text is at least 16px;
+compact labels stay separate from the explanations. The engine animation is deliberately
+slowed down and follows the labeled four-stroke sequence. The models illustrate concepts
+rather than predict the performance of a particular car.
+
+
+## Credits
+
+The landing-page car is “Draft request: Toyota Altezza 2001” by Chai
+(https://sketchfab.com/3d-models/draft-request-toyota-altezza-2001-0396aafda6294dc4843250d979783656),
+licensed under CC BY 4.0. `scripts/build-car-model.mjs` downloads it from the Objaverse mirror and
+compresses it to `public/models/is300/altezza.glb`; materials (white paint, glass, lamps) are applied
+at runtime in `src/three/heroCar.js`.

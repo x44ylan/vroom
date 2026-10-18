@@ -1,20 +1,25 @@
 import { test, expect } from '@playwright/test';
 
+async function openLesson(page, name) {
+  await page.getByRole('button', { name: 'Toggle Navigation Menu' }).click();
+  await page.getByRole('dialog').getByRole('link', { name, exact: true }).click();
+}
+
 test.describe('Lexus IS300 (XE10) Engineering Guide - E2E Tests', () => {
   test('loads home page with Lexus IS300 3D Powertrain tab', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/#chassis');
     await expect(page).toHaveTitle(/Lexus IS300/i);
-    await expect(page.locator('text=Lexus IS300 (XE10) 3D Chassis & 2JZ Powertrain')).toBeVisible();
-    await expect(page.locator('text=Parts:').first()).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Take the car apart');
+    await expect(page.getByRole('group', { name: 'Explore chassis parts' })).toBeVisible();
   });
 
   test('navigates to 2JZ-GE Engine and tests Inline-6 Audio Synth', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("2JZ Engine")').first().click();
-    await expect(page.locator('text=4-Stroke 2JZ Cylinder Simulation')).toBeVisible();
-    await expect(page.locator('text=Exhaust Acoustic Harmonic Synthesizer')).toBeVisible();
+    await openLesson(page, 'Engine');
+    await expect(page.locator('text=The four engine strokes')).toBeVisible();
+    await expect(page.locator('text=Hear how engine speed changes the sound')).toBeVisible();
     
-    const audioBtn = page.locator('button:has-text("Synthesize Audio")');
+    const audioBtn = page.locator('button:has-text("Play engine sound")');
     await expect(audioBtn).toBeVisible();
     await audioBtn.click();
     await expect(page.locator('button:has-text("Mute")')).toBeVisible();
@@ -22,91 +27,93 @@ test.describe('Lexus IS300 (XE10) Engineering Guide - E2E Tests', () => {
 
   test('navigates to 2JZ Turbo (NA-T) Build Simulator', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("NA-T Turbo")').first().click();
-    await expect(page.locator('text=2JZ-GE Turbo Conversion (NA-T Simulator)')).toBeVisible();
-    await expect(page.locator('button:has-text("Intercooler ON")')).toBeVisible();
-    await page.click('button:has-text("Intercooler ON")');
-    await expect(page.locator('button:has-text("Intercooler BYPASS")')).toBeVisible();
+    await openLesson(page, 'Turbocharger');
+    await expect(page.locator('text=Try a turbocharger')).toBeVisible();
+    const intercooler = page.getByRole('switch', { name: 'Intercooler' });
+    await expect(intercooler).toHaveAttribute('aria-checked', 'true');
+    await intercooler.click();
+    await expect(intercooler).toHaveAttribute('aria-checked', 'false');
   });
 
   test('navigates to W55 5-Speed Transmission and tests gear ratios', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Transmission")').first().click();
-    await expect(page.locator('text=Toyota W55 5-Speed Transmission')).toBeVisible();
+    await openLesson(page, 'Gears');
+    await expect(page.locator('text=Try the five gears')).toBeVisible();
     await page.click('button:has-text("Gear 5")');
-    await expect(page.locator('text=Highway Cruising')).toBeVisible();
+    await expect(page.locator('text=Cruising in fifth')).toBeVisible();
     await expect(page.locator('text=Ratio: 0.78:1')).toBeVisible();
   });
 
   test('navigates to Torsen T-2 LSD Simulator', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Torsen LSD")').first().click();
-    await expect(page.locator('text=Lexus IS300 Torsen T-2 LSD vs Open Differential')).toBeVisible();
-    await page.click('button:has-text("Turning Left")');
-    await expect(page.locator('text=Outer wheel speeds up smoothly')).toBeVisible();
+    await openLesson(page, 'Differential');
+    await expect(page.locator('text=Compare wheel speeds in a turn')).toBeVisible();
+    await page.click('button:has-text("Turn left")');
+    await expect(page.locator('text=The outside wheel turns faster')).toBeVisible();
   });
 
   test('navigates to Braking & ABS Simulator', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Brakes & ABS")').first().click();
-    await expect(page.locator('text=Hydraulic Disc Brakes & ABS Simulator')).toBeVisible();
-    await page.click('button:has-text("ABS ENABLED")');
-    await expect(page.locator('button:has-text("ABS DISABLED")')).toBeVisible();
+    await openLesson(page, 'Brakes & ABS');
+    await expect(page.locator('text=Try the brake pedal')).toBeVisible();
+    const abs = page.getByRole('switch', { name: 'ABS' });
+    await abs.click();
+    await expect(abs).toHaveAttribute('aria-checked', 'false');
   });
 
   test('navigates to Steering Kinematics', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Steering")').first().click();
-    await expect(page.locator('text=Steering Kinematics & Ackermann Geometry')).toBeVisible();
+    await openLesson(page, 'Steering');
+    await expect(page.locator('text=Turn the front wheels')).toBeVisible();
   });
 
   test('navigates to 4-Wheel Double-Wishbone Suspension', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Suspension")').first().click();
-    await expect(page.locator('text=Lexus IS300 4-Wheel Double-Wishbone Suspension')).toBeVisible();
-    await page.click('button:has-text("Speed Bump")');
-    await expect(page.locator('text=Damping:')).toBeVisible();
+    await openLesson(page, 'Suspension');
+    await expect(page.locator('text=Try a bump in the road')).toBeVisible();
+    await page.click('button:has-text("Speed bump")');
+    await expect(page.getByText('Damping:', { exact: true })).toBeVisible();
   });
 
-  test('navigates to 2JZ Cooling & Oil Lubrication', async ({ page }) => {
+  test('navigates to 2JZ Cooling & oil Lubrication', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Cooling & Oil")').first().click();
-    await expect(page.locator('text=2JZ-GE Cooling & Cast-Iron Oil Gallery Lubrication')).toBeVisible();
+    await openLesson(page, 'Cooling & oil');
+    await expect(page.locator('text=Compare cooling and lubrication')).toBeVisible();
     await page.click('button:has-text("10W-40")');
-    await expect(page.locator('text=Main Bearing Oil Film:')).toBeVisible();
+    await expect(page.locator('text=Example oil film:')).toBeVisible();
   });
 
   test('navigates to Aerodynamics (0.28 Cd)', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Aerodynamics")').first().click();
-    await expect(page.locator('text=Lexus IS300 Aerodynamics & High-Speed Highway Drag')).toBeVisible();
-    await page.click('button:has-text("IS300 SportDesign with Rear Spoiler")');
-    await expect(page.locator('text=Aerodynamic Downforce:')).toBeVisible();
+    await openLesson(page, 'Air resistance');
+    await expect(page.locator('text=Compare speed and air resistance')).toBeVisible();
+    await page.click('button:has-text("Sedan with spoiler")');
+    await expect(page.locator('text=Example downforce:')).toBeVisible();
   });
 
   test('navigates to Denso ECM & MPX Diagnostics', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Electronics")').first().click();
-    await expect(page.locator('text=Lexus IS300 Denso ECM & Multiplex Communication')).toBeVisible();
-    await page.click('button:has-text("MISFIRE")');
-    await expect(page.locator('text=CHECK ENGINE (MIL): P0302')).toBeVisible();
+    await openLesson(page, 'Sensors & faults');
+    await expect(page.locator('text=Try a fault example')).toBeVisible();
+    await page.click('button:has-text("Misfire")');
+    await expect(page.locator('text=Fault code: P0302')).toBeVisible();
   });
 
   test('navigates to EV vs 2JZ ICE comparison', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("EV Comparison")').first().click();
-    await expect(page.locator('text=EV vs Internal Combustion (ICE) Comparison')).toBeVisible();
-    await expect(page.locator('text=Thermal Efficiency')).toBeVisible();
+    await openLesson(page, 'Gas vs electric');
+    await expect(page.locator('text=Compare gasoline and electric power')).toBeVisible();
+    await expect(page.getByText('Imagine starting with 100 units', { exact: false })).toBeVisible();
   });
 
-  test('navigates to IS300 Knowledge Quiz', async ({ page }) => {
+  test('navigates to IS300 Quick quiz', async ({ page }) => {
     await page.goto('/');
-    await page.locator('header button:has-text("Knowledge Quiz")').first().click();
-    await expect(page.locator('text=Car Engineering Knowledge Quiz')).toBeVisible();
-    const option = page.locator('button:has-text("cast-iron (FC250) deep-skirt engine block")');
+    await openLesson(page, 'Quick quiz');
+    await expect(page.locator('text=Five questions about how cars work')).toBeVisible();
+    const option = page.locator('button:has-text("Power: expanding gas pushes the piston down.")');
     await expect(option).toBeVisible();
     await option.click();
-    await expect(page.locator('text=Engineering Explanation:')).toBeVisible();
+    await expect(page.locator('text=Here is why:')).toBeVisible();
   });
 });
 
@@ -119,11 +126,317 @@ test.describe('Mobile Viewport & Navigation Drawer Tests', () => {
     await expect(mobileBtn).toBeVisible();
 
     await mobileBtn.click();
-    await page.getByRole('button', { name: 'NA-T Turbo Boost' }).click();
-    await expect(page.locator('text=2JZ-GE Turbo Conversion (NA-T Simulator)')).toBeVisible();
+    await page.getByRole('dialog').getByRole('link', { name: 'Turbocharger', exact: true }).click();
+    await expect(page.locator('text=Try a turbocharger')).toBeVisible();
 
     await mobileBtn.click();
-    await page.getByRole('button', { name: 'Knowledge Quiz Test' }).click();
-    await expect(page.locator('text=Car Engineering Knowledge Quiz')).toBeVisible();
+    await page.getByRole('dialog').getByRole('link', { name: 'Quick quiz', exact: true }).click();
+    await expect(page.locator('text=Five questions about how cars work')).toBeVisible();
   });
+});
+
+
+test('topic URLs survive refresh and browser history; next step moves focus', async ({ page }) => {
+  await page.goto('/#engine');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+  await page.getByRole('button', { name: 'Next topic: Turbocharger' }).click();
+  await expect(page).toHaveURL(/#turbo$/);
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a turbo pushes more air into the engine');
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+  await page.goto('/#unknown-topic');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
+});
+
+test('mobile topic dialog traps focus, closes on Escape, and restores the trigger', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const trigger = page.getByRole('button', { name: 'Toggle Navigation Menu' });
+  await trigger.click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await trigger.click();
+  await page.getByRole('dialog').getByRole('link', { name: 'Engine', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  const slider = page.getByRole('slider', { name: 'Engine speed', exact: true });
+  await slider.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(slider).toHaveValue('1300');
+});
+
+test('every topic fits a narrow phone and loads without runtime errors', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  for (const topic of ['home', 'chassis', 'engine', 'turbo', 'transmission', 'differential', 'brakes', 'steering', 'suspension', 'cooling', 'aero', 'electronics', 'ev', 'quiz']) {
+    await page.goto('/#' + topic);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), topic).toBeTruthy();
+    for (const header of await page.locator('[data-slot=card-header]').all()) {
+      expect((await header.boundingBox()).height, topic + ' header').toBeLessThan(320);
+    }
+    for (const paragraph of await page.locator('.simulation-content p').all()) {
+      if (await paragraph.isVisible()) expect(await paragraph.evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(16);
+    }
+    for (const slider of await page.getByRole('slider').all()) {
+      await expect(slider).toHaveAccessibleName(/.+/);
+    }
+  }
+  expect(errors).toEqual([]);
+});
+
+test('chassis controls communicate state and part details remain available', async ({ page }) => {
+  await page.goto('/#chassis');
+  const orbit = page.getByRole('button', { name: 'Auto-rotate', exact: true });
+  await expect(orbit).toHaveAttribute('aria-pressed', 'true');
+  await orbit.click();
+  await expect(orbit).toHaveAttribute('aria-pressed', 'false');
+  const exploded = page.getByRole('button', { name: 'Exploded view', exact: true });
+  await exploded.click();
+  await expect(exploded).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Transmission', exact: true }).last().click();
+  await expect(page.getByText('Five-speed gearbox', { exact: true })).toBeVisible();
+});
+
+test('3D failure leaves navigation and part information usable', async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type, ...args) {
+      return type.startsWith('webgl') ? null : original.call(this, type, ...args);
+    };
+  });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
+  await page.getByRole('button', { name: 'Start learning' }).click();
+  await expect(page.getByText('3D view unavailable')).toBeVisible();
+  await page.getByRole('button', { name: 'Transmission', exact: true }).last().click();
+  await expect(page.getByText('Five-speed gearbox', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Next topic: Engine' }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+});
+
+test('save desktop and mobile UX review screenshots', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+  await expect(page.locator('.hero-car-ready canvas')).toBeVisible({ timeout: 60000 });
+  await page.screenshot({ path: testInfo.outputPath('desktop.png'), fullPage: true, animations: 'disabled' });
+  await page.goto('/#brakes');
+  await page.screenshot({ path: testInfo.outputPath('lesson-desktop.png'), fullPage: true, animations: 'disabled' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.screenshot({ path: testInfo.outputPath('mobile.png'), fullPage: true, animations: 'disabled' });
+  await page.goto('/#engine');
+  await page.screenshot({ path: testInfo.outputPath('engine-mobile.png'), fullPage: true, animations: 'disabled' });
+  await page.goto('/#quiz');
+  await page.getByRole('button', { name: 'Power: expanding gas pushes the piston down.', exact: true }).click();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: testInfo.outputPath('quiz-mobile.png'), fullPage: true, animations: 'disabled' });
+});
+
+
+test('keyboard skip link keeps the current topic and focuses content', async ({ page }) => {
+  await page.goto('/#engine');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('main')).toBeFocused();
+  await expect(page).toHaveURL(/#engine$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+});
+
+test('landing leads into lessons and the home logo returns to it', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
+  await page.getByRole('link', { name: 'See all lessons' }).click();
+  await expect(page.getByRole('heading', { name: 'Pick any lesson, or start at one.' })).toBeInViewport();
+  await page.locator('#lessons').getByRole('link', { name: /^Brakes & ABS:/ }).click();
+  await expect(page).toHaveURL(/#brakes$/);
+  await expect(page.getByLabel('Lesson 6 of 13')).toBeVisible();
+  await page.getByRole('link', { name: 'IS300 Explorer home' }).click();
+  await expect(page).not.toHaveURL(/#/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
+  await page.locator('.route-steps').getByRole('link', { name: /Gearbox/ }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Why a car needs different gears');
+  await page.goBack();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
+});
+
+test('the decorative hero model never blocks scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const hero = page.locator('.hero-visual');
+  await hero.scrollIntoViewIfNeeded();
+  const box = await hero.boundingBox();
+  const before = await page.evaluate(() => scrollY);
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(before + 200);
+});
+
+test('complete the quiz and start again on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/#quiz');
+  const card = page.locator('[data-slot="card"]');
+  for (let question = 0; question < 5; question++) {
+    await card.locator('button.w-full').first().click();
+    await expect(page.getByText('Here is why:')).toBeVisible();
+    if (question < 4) await page.getByRole('button', { name: 'Next question' }).click();
+  }
+  await page.getByRole('button', { name: 'See my score' }).click();
+  await expect(page.getByText('You have finished the quiz')).toBeVisible();
+  await page.getByRole('button', { name: 'Try again' }).click();
+  await expect(page.getByText('Question 1 of 5')).toBeVisible();
+  await expect(card.locator('button.w-full').first()).toBeEnabled();
+});
+
+
+test('beginner can open definitions and see the selected engine stroke', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/#engine');
+  await page.getByText('What do these words mean?', { exact: true }).click();
+  await expect(page.getByText('Revolutions per minute:', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: '1. Intake' }).click();
+  await expect(page.getByRole('button', { name: 'Start', exact: true })).toBeVisible();
+  const position = () => page.getByTestId('engine-piston').getAttribute('transform').then(value => Number(value.split(',')[1].replace(')', '')));
+  const earlyIntake = await position();
+  await page.getByRole('button', { name: '2. Compression' }).click();
+  const earlyCompression = await position();
+  expect(earlyIntake).toBeLessThan(earlyCompression);
+  await expect(page.getByRole('heading', { name: 'What to remember' })).toBeVisible();
+});
+
+test('quiz explains a wrong answer and links to a lesson without losing the answer', async ({ page, context }) => {
+  await page.goto('/#quiz');
+  await expect(page.getByRole('button', { name: 'Next question' })).toBeDisabled();
+  await page.getByRole('button', { name: 'Intake: the piston draws in air and fuel.', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('Not quite. Here is why:');
+  const lessonPromise = context.waitForEvent('page');
+  await page.getByRole('link', { name: 'Review: Engine' }).click();
+  const lesson = await lessonPromise;
+  await expect(lesson).toHaveURL(/#engine$/);
+  await expect(lesson.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+  await lesson.close();
+  await expect(page.getByRole('status')).toContainText('Not quite.');
+  await page.getByRole('button', { name: 'Next question' }).click();
+  await expect(page.getByText('Question 2 of 5')).toBeVisible();
+});
+
+test('lesson exercises produce the observations described in the text', async ({ page }) => {
+  await page.goto('/#brakes');
+  const brake = page.getByRole('slider', { name: 'Brake pedal pressure' });
+  await brake.fill('90');
+  await page.getByRole('switch', { name: 'ABS' }).click();
+  await expect(page.getByText('Wheel locked: the tire is sliding')).toBeVisible();
+  await page.getByRole('switch', { name: 'ABS' }).click();
+  await expect(page.getByText('ABS is adjusting brake pressure')).toBeVisible();
+  await page.goto('/#cooling');
+  await page.getByRole('switch', { name: 'Thermostat open' }).click();
+  await expect(page.getByText('Temperature is too high')).toBeVisible();
+});
+
+test('every lesson diagram responds to its controls', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const diagram = () => page.locator('.simulation-content .diagram').first();
+  const snapshot = async () => (await diagram().innerHTML()).replace(/rotate\([^)]*\)|stroke-dashoffset="[^"]*"/g, '');
+
+  await page.goto('/#transmission');
+  const gear1 = await snapshot();
+  await page.getByRole('button', { name: 'Gear 5' }).click();
+  expect(await snapshot()).not.toEqual(gear1);
+
+  await page.goto('/#differential');
+  await page.getByRole('button', { name: 'Turn left' }).click();
+  await expect(diagram()).toContainText('140 RPM');
+  await expect(diagram()).toContainText('60 RPM');
+
+  await page.goto('/#steering');
+  await page.getByRole('slider', { name: 'Steering angle' }).fill('-30');
+  await expect(diagram()).toContainText('Left 38°');
+
+  await page.goto('/#brakes');
+  await page.getByRole('slider', { name: 'Brake pedal pressure' }).fill('92');
+  await expect(diagram()).toContainText('101 bar');
+
+  await page.goto('/#cooling');
+  await page.getByRole('switch', { name: 'Thermostat open' }).click();
+  await expect(diagram()).toContainText('Thermostat closed');
+
+  await page.goto('/#aero');
+  const sedan = await snapshot();
+  await page.getByRole('button', { name: 'Large SUV' }).click();
+  expect(await snapshot()).not.toEqual(sedan);
+
+  await page.goto('/#electronics');
+  await page.getByRole('button', { name: 'Wheel sensor' }).click();
+  await expect(page.locator('.diagram-footer')).toContainText('C0200');
+
+  // Suspension: weak damping should keep the body moving after a bump.
+  await page.goto('/#suspension');
+  await page.getByRole('slider', { name: 'Damper rebound' }).fill('10');
+  await expect(page.locator('.diagram-footer')).toContainText('Too little');
+  // Retry the bump until the trace shows it; under heavy load a single frame can be skipped.
+  const swing = async () => {
+    const d = await page.locator('.simulation-content .diagram path[stroke="#4d94ff"]').last().getAttribute('d');
+    const ys = (d.match(/,(-?[\d.]+)/g) || []).map(v => Number(v.slice(1)));
+    return ys.length ? Math.max(...ys) - Math.min(...ys) : 0;
+  };
+  await expect.poll(async () => {
+    if ((await swing()) <= 20) await page.getByRole('button', { name: 'Speed bump' }).click();
+    return swing();
+  }, { timeout: 15000, intervals: [700] }).toBeGreaterThan(20);
+  expect(errors).toEqual([]);
+});
+
+test('3D part buttons move the camera and the engine view frames the engine', async ({ page }) => {
+  await page.goto('/#chassis');
+  await expect(page.locator('.chassis-stage canvas')).toBeVisible();
+  await page.locator('.part-picker').getByRole('button', { name: 'Brakes' }).click();
+  await expect(page.locator('.part-picker').getByRole('button', { name: 'Brakes' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Auto-rotate' })).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Engine', exact: true }).first().click();
+  await expect(page.getByRole('button', { name: 'Engine', exact: true }).first()).toHaveAttribute('aria-pressed', 'true');
+});
+
+
+test('segmented controls and switches work from the keyboard', async ({ page }) => {
+  await page.goto('/#transmission');
+  const gear1 = page.getByRole('button', { name: 'Gear 1', exact: true });
+  await gear1.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.getByRole('button', { name: 'Gear 2', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Gear 2', exact: true })).toBeFocused();
+  await page.keyboard.press('End');
+  await expect(page.getByRole('button', { name: 'Gear 5', exact: true })).toHaveAttribute('aria-pressed', 'true');
+
+  await page.goto('/#cooling');
+  const thermostat = page.getByRole('switch', { name: 'Thermostat open' });
+  await thermostat.focus();
+  await page.keyboard.press('Space');
+  await expect(thermostat).toHaveAttribute('aria-checked', 'false');
+  await expect(page.locator('.diagram')).toContainText('Thermostat closed');
+});
+
+test('reduced motion keeps the landing content fully visible', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
+  const opacity = await page.locator('.hero-copy').evaluate(el => getComputedStyle(el).opacity);
+  expect(Number(opacity)).toBe(1);
+});
+
+
+test('landing car loads the compressed model and credits its author', async ({ page }) => {
+  const responses = [];
+  page.on('response', r => { if (r.url().endsWith('.glb')) responses.push({ status: r.status(), size: Number(r.headers()['content-length'] || 0) }); });
+  await page.goto('/');
+  await expect(page.locator('.hero-car-ready canvas')).toBeVisible({ timeout: 60000 });
+  expect(responses[0]?.status).toBe(200);
+  expect(responses[0].size).toBeLessThan(1_000_000);
+  await expect(page.locator('.app-footer')).toContainText('CC BY 4.0');
 });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Compass, Sparkles } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
+import { Stage, Callout } from './diagram/kit.jsx';
 import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
 
@@ -14,6 +15,14 @@ export default function SteeringSimulator() {
   const leftWheelVisual = steeringAngle < 0 ? -insideWheelAngle : -outsideWheelAngle;
   const rightWheelVisual = steeringAngle < 0 ? -outsideWheelAngle : -insideWheelAngle;
 
+  // Front axle seen from above. Turning centre lies on the rear axle line.
+  const wheelbase = 210, half = 120, cx = 250, frontY = 90;
+  const rackShift = steeringAngle * 1.4;
+  const dir = Math.sign(steeringAngle) || 1;
+  const innerA = (insideWheelAngle * Math.PI) / 180;
+  const turnX = cx - dir * half + dir * (wheelbase / Math.tan(Math.max(innerA, 0.01)));
+  const showCentre = absAngle > 3;
+
   return (
     <Card className="w-full">
       <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -23,10 +32,10 @@ export default function SteeringSimulator() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Steering Kinematics & Ackermann Geometry</CardTitle>
+              <CardTitle>Turn the front wheels</CardTitle>
               <Badge variant="secondary" className="hidden sm:inline-flex">Kinematics</Badge>
             </div>
-            <CardDescription>Different turn angles prevent lateral tire scrub in corners</CardDescription>
+            <CardDescription>Compare the inside and outside wheel angles as you steer.</CardDescription>
           </div>
         </div>
 
@@ -34,63 +43,59 @@ export default function SteeringSimulator() {
           size="sm"
           variant="secondary"
           onClick={() => setSteeringAngle(0)}
-          className="w-full sm:w-auto"
+          className="action-chip"
         >
-          Center Steering (0°)
+          Centre steering
         </Button>
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
         <div className="lg:col-span-7 flex flex-col items-center">
-          <div className="relative w-full aspect-[16/11] bg-slate-950/80 rounded-2xl border border-slate-800 p-4 flex items-center justify-center overflow-hidden">
-            <svg viewBox="0 0 460 300" className="w-full h-full select-none">
-              <rect x="80" y="80" width="300" height="14" rx="4" fill="#334155" stroke="#475569" strokeWidth="2" />
-              <text x="230" y="72" fill="#64748b" fontSize="10" textAnchor="middle" fontWeight="bold">FRONT SUBFRAME</text>
-
-              <line x1="230" y1="20" x2="230" y2="120" stroke="#f59e0b" strokeWidth="6" strokeLinecap="round" />
-              <circle cx="230" cy="120" r="10" fill="#d97706" stroke="#fef08a" strokeWidth="2" />
-
-              <rect
-                x={120 + steeringAngle * 1.5}
-                y="114"
-                width="220"
-                height="12"
-                rx="3"
-                fill="#0ea5e9"
-                stroke="#38bdf8"
-                strokeWidth="1.5"
-              />
-
-              <line x1={120 + steeringAngle * 1.5} y1="120" x2="100" y2="155" stroke="#cbd5e1" strokeWidth="4" />
-              <line x1={340 + steeringAngle * 1.5} y1="120" x2="360" y2="155" stroke="#cbd5e1" strokeWidth="4" />
-
-              <g transform={`translate(90, 150) rotate(${leftWheelVisual})`}>
-                <rect x="-18" y="-55" width="36" height="110" rx="6" fill="#1e293b" stroke="#14b8a6" strokeWidth="3" />
-                <rect x="-8" y="-30" width="16" height="60" rx="3" fill="#64748b" />
-                <text x="0" y="4" fill="#f8fafc" fontSize="11" textAnchor="middle" fontWeight="bold">{Math.round(Math.abs(leftWheelVisual))}°</text>
-              </g>
-
-              <g transform={`translate(370, 150) rotate(${rightWheelVisual})`}>
-                <rect x="-18" y="-55" width="36" height="110" rx="6" fill="#1e293b" stroke="#14b8a6" strokeWidth="3" />
-                <rect x="-8" y="-30" width="16" height="60" rx="3" fill="#64748b" />
-                <text x="0" y="4" fill="#f8fafc" fontSize="11" textAnchor="middle" fontWeight="bold">{Math.round(Math.abs(rightWheelVisual))}°</text>
-              </g>
-
-              {steeringAngle !== 0 && (
-                <g stroke="#14b8a6" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.6">
-                  <line x1="90" y1="150" x2={steeringAngle < 0 ? 0 : 460} y2={250} />
-                  <line x1="370" y1="150" x2={steeringAngle < 0 ? 0 : 460} y2={250} />
+          <div className="diagram-frame relative w-full aspect-[25/17]">
+            <Stage viewBox="0 0 500 340" label={`Front wheels seen from above, steered ${steeringAngle} degrees`}>
+              <clipPath id="steer-clip"><rect width="500" height="340" /></clipPath>
+              {/* Car outline from above */}
+              <path d="M128 340 L134 70 Q140 24 250 20 Q360 24 366 70 L372 340 Z" fill="#101827" stroke="#22304a" strokeWidth="2" />
+              <line x1="128" y1={frontY + wheelbase} x2="372" y2={frontY + wheelbase} stroke="#22304a" strokeWidth="2" strokeDasharray="4 6" />
+              <text x="250" y={frontY + wheelbase + 18} fill="#5a6680" fontSize="11" textAnchor="middle">rear axle: both lines meet here</text>
+              {/* Lines from each front wheel to the shared turning point */}
+              {showCentre && (
+                <g stroke="#4d94ff" strokeWidth="1.5" strokeDasharray="5 6" opacity=".75" clipPath="url(#steer-clip)">
+                  <line x1={cx - half} y1={frontY} x2={turnX} y2={frontY + wheelbase} />
+                  <line x1={cx + half} y1={frontY} x2={turnX} y2={frontY + wheelbase} />
                 </g>
               )}
-            </svg>
+              {showCentre && Math.abs(turnX - 250) < 400 && <circle cx={turnX} cy={frontY + wheelbase} r="5" fill="#4d94ff" />}
+              {/* Steering column and rack */}
+              <rect x={cx - 92 + rackShift} y={frontY + 34} width="184" height="12" rx="6" fill="url(#k-steel)" />
+              <circle cx={cx} cy={frontY + 40} r="12" fill="url(#k-blue)" stroke="#0b1220" />
+              <line x1={cx} y1={frontY + 40} x2={cx} y2={frontY + 130} stroke="#5d6a80" strokeWidth="6" strokeLinecap="round" />
+              {/* Tie rods from the rack ends to the steering-arm tips */}
+              {[[-1, leftWheelVisual], [1, rightWheelVisual]].map(([side, ang]) => {
+                const r = (ang * Math.PI) / 180, lx = -side * 34, ly = 30;
+                const tipX = cx + side * half + lx * Math.cos(r) - ly * Math.sin(r);
+                const tipY = frontY + lx * Math.sin(r) + ly * Math.cos(r);
+                return <line key={side} x1={cx + side * 92 + rackShift} y1={frontY + 40} x2={tipX} y2={tipY} stroke="#c9d3e3" strokeWidth="5" strokeLinecap="round" />;
+              })}
+              {/* Wheels */}
+              {[[-1, leftWheelVisual], [1, rightWheelVisual]].map(([side, ang]) => (
+                <g key={side} transform={`translate(${cx + side * half} ${frontY}) rotate(${ang})`}>
+                  <rect x="-17" y="-44" width="34" height="88" rx="10" fill="#10141c" stroke="#05070b" strokeWidth="2" />
+                  {Array.from({ length: 6 }, (_, i) => <rect key={i} x="-15" y={-40 + i * 14} width="30" height="3" fill="#232b38" />)}
+                  <line x1={-side * 17} y1="0" x2={-side * 34} y2="30" stroke="#8c97ab" strokeWidth="5" strokeLinecap="round" />
+                </g>
+              ))}
+              <Callout x={cx - half} y={frontY - 48} tx={60} ty={22} color={steeringAngle < 0 ? '#a9cbff' : '#c9d3e3'}>Left {Math.round(Math.abs(leftWheelVisual))}°</Callout>
+              <Callout x={cx + half} y={frontY - 48} tx={440} ty={22} anchor="end" color={steeringAngle > 0 ? '#a9cbff' : '#c9d3e3'}>Right {Math.round(Math.abs(rightWheelVisual))}°</Callout>
+            </Stage>
 
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <div className="absolute diagram-footer">
               <span className="text-slate-300 font-medium truncate">
                 {steeringAngle === 0
                   ? 'Steering Centered'
                   : `Inside Wheel: ${Math.round(insideWheelAngle)}° | Outside Wheel: ${Math.round(outsideWheelAngle)}°`}
               </span>
-              <span className="font-mono text-teal-400 font-bold shrink-0">Ackermann Compensation</span>
+              <span className="font-mono text-teal-400 font-bold shrink-0">Inside wheel turns more</span>
             </div>
           </div>
 
@@ -100,7 +105,7 @@ export default function SteeringSimulator() {
               <span className="text-teal-400 font-mono font-bold">{steeringAngle}°</span>
             </div>
             <input
-              type="range"
+              type="range" aria-label="Steering angle"
               min="-35"
               max="35"
               step="1"
@@ -115,10 +120,10 @@ export default function SteeringSimulator() {
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5" />
-              The Ackermann Principle
+              Why the inside wheel turns more
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Because left and right tires trace arcs of different radii in a turn, front wheels cannot point parallel. By angling steering arms toward the rear axle center, the linkage naturally pivots the inner wheel sharper.
+              Imagine two people walking around a bend side by side. The person on the inside follows a tighter curve. The inside front wheel does the same, so the steering linkage turns it more sharply. This arrangement is called Ackermann geometry.
             </p>
           </div>
         </div>

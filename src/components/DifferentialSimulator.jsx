@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Compass, ArrowLeftRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
+import { Segmented } from './controls/Controls.jsx';
 import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
+import { Stage, Gear, Callout, SideWheel, Arrow, useClock } from './diagram/kit.jsx';
 
 export default function DifferentialSimulator() {
   const [turnDirection, setTurnDirection] = useState('straight');
@@ -20,6 +22,12 @@ export default function DifferentialSimulator() {
     rightWheelSpeed = Math.round(driveshaftSpeed * 0.6);
   }
 
+  const t = useClock();
+  const spinL = (t * leftWheelSpeed * 2.4) % 360, spinR = (t * rightWheelSpeed * 2.4) % 360;
+  const ringAngle = (t * driveshaftSpeed * 2.4) % 360;
+  const spiderAngle = (t * (rightWheelSpeed - leftWheelSpeed) * 3) % 360;
+  const bend = turnDirection === 'left' ? -1 : turnDirection === 'right' ? 1 : 0;
+
   return (
     <Card className="w-full">
       <CardHeader className="flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -29,86 +37,65 @@ export default function DifferentialSimulator() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Lexus IS300 Torsen T-2 LSD vs Open Differential</CardTitle>
+              <CardTitle>Compare wheel speeds in a turn</CardTitle>
               <Badge variant="secondary" className="hidden sm:inline-flex">Torsen Type-2 LSD</Badge>
             </div>
-            <CardDescription>Torque-sensing crossed helical gears bias drive torque to the tire with maximum adhesion</CardDescription>
+            <CardDescription>The outside wheel travels farther around a bend, so it turns faster.</CardDescription>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 w-full sm:w-auto overflow-x-auto">
-          {[
-            { id: 'left', label: 'Turning Left ↰' },
-            { id: 'straight', label: 'Straight Ahead ↑' },
-            { id: 'right', label: 'Turning Right ↱' }
-          ].map((item) => (
-            <Button
-              key={item.id}
-              size="sm"
-              variant={turnDirection === item.id ? "secondary" : "ghost"}
-              onClick={() => setTurnDirection(item.id)}
-              className="flex-1 sm:flex-none text-xs whitespace-nowrap"
-            >
-              {item.label}
-            </Button>
-          ))}
-        </div>
+        <Segmented label="Driving direction" value={turnDirection} onChange={setTurnDirection}
+          options={[{ value: 'left', label: 'Turn left' }, { value: 'straight', label: 'Straight' }, { value: 'right', label: 'Turn right' }]} />
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
         <div className="lg:col-span-7 flex flex-col items-center">
-          <div className="relative w-full aspect-[16/11] bg-slate-950/80 rounded-2xl border border-slate-800 p-4 flex items-center justify-center overflow-hidden">
-            <svg viewBox="0 0 460 300" className="w-full h-full select-none">
-              <defs>
-                <radialGradient id="ringGearGrad" cx="50%" cy="50%" r="50%">
-                  <stop offset="60%" stopColor="#8b5cf6" />
-                  <stop offset="90%" stopColor="#6d28d9" />
-                  <stop offset="100%" stopColor="#4c1d95" />
-                </radialGradient>
-              </defs>
-
-              <g transform="translate(230, 250)">
-                <rect x="-10" y="0" width="20" height="45" fill="#38bdf8" />
-                <polygon points="-22,0 22,0 0,-18" fill="#0ea5e9" stroke="#38bdf8" strokeWidth="2" />
-                <text x="0" y="40" fill="#bae6fd" fontSize="9" textAnchor="middle" fontWeight="bold">PROPELLER PINION</text>
+          <div className="diagram-frame relative w-full aspect-[25/16]">
+            <Stage viewBox="0 0 500 320" label={`Rear axle seen from above, ${turnDirection === 'straight' ? 'driving straight' : `turning ${turnDirection}`}`}>
+              {/* Path of each wheel through the bend */}
+              {bend !== 0 && (
+                <g fill="none" strokeDasharray="6 8" strokeWidth="2">
+                  {[[50, '#5a6680'], [450, '#4d94ff']].map(([x, color]) => {
+                    // Both wheels circle the same point far off to the side of the bend.
+                    const centreX = bend < 0 ? -650 : 1150, R = Math.abs(x - centreX);
+                    const pts = Array.from({ length: 33 }, (_, i) => { const y = i * 10; return `${i ? 'L' : 'M'}${(centreX + Math.sign(x - centreX) * Math.sqrt(R * R - (y - 160) ** 2)).toFixed(1)},${y}`; }).join('');
+                    return <path key={x} d={pts} stroke={(bend < 0 ? x > 250 : x < 250) ? '#4d94ff' : '#5a6680'} />;
+                  })}
+                </g>
+              )}
+              {/* Axle shafts */}
+              <rect x="70" y="151" width="360" height="18" rx="9" fill="url(#k-steel)" />
+              {/* Driveshaft and pinion coming from the front */}
+              <rect x="241" y="236" width="18" height="84" rx="9" fill="url(#k-steel-h)" />
+              <Callout x={259} y={290} tx={300} ty={290} color="#a9cbff">From gearbox</Callout>
+              {/* Housing with ring gear and spider gears */}
+              <circle cx="250" cy="160" r="78" fill="url(#k-iron)" stroke="#0b1220" />
+              <g transform="translate(250 160)">
+                <Gear r={66} teeth={36} angle={ringAngle} fill="url(#k-blue)" spokes={0} hub="#121a27" />
+                <circle r="44" fill="#121a27" />
+                <g transform={`rotate(${ringAngle})`}>
+                  <g transform="translate(0 -28)"><Gear r={12} teeth={10} angle={spiderAngle} /></g>
+                  <g transform="translate(0 28)"><Gear r={12} teeth={10} angle={-spiderAngle} /></g>
+                </g>
+                <g transform="translate(-30 0)"><Gear r={13} teeth={10} angle={spinL} fill="url(#k-steel-h)" /></g>
+                <g transform="translate(30 0)"><Gear r={13} teeth={10} angle={-spinR} fill="url(#k-steel-h)" /></g>
               </g>
+              {/* Tyres, top-down */}
+              {[[50, spinL, leftWheelSpeed, 'Left'], [450, spinR, rightWheelSpeed, 'Right']].map(([x, spin, rpm, label]) => (
+                <g key={label}>
+                  <rect x={x - 26} y="102" width="52" height="116" rx="14" fill="#10141c" stroke="#05070b" strokeWidth="2" />
+                  {Array.from({ length: 7 }, (_, i) => <rect key={i} x={x - 24} y={104 + ((i * 17 + spin * 0.3) % 112)} width="48" height="3" fill="#232b38" />)}
+                  <text x={x} y="244" fill={rpm > driveshaftSpeed ? '#a9cbff' : rpm < driveshaftSpeed ? '#8f9bb3' : '#e8eefb'} fontSize="15" fontWeight="600" textAnchor="middle">{rpm} RPM</text>
+                  <text x={x} y="92" fill="#8f9bb3" fontSize="11" textAnchor="middle">{label} wheel</text>
+                </g>
+              ))}
+            </Stage>
 
-              <g transform="translate(230, 150)">
-                <circle cx="0" cy="0" r="85" fill="none" stroke="url(#ringGearGrad)" strokeWidth="18" strokeDasharray="10 5" />
-                <circle cx="0" cy="0" r="70" fill="#1e1b4b" opacity="0.6" />
-                <text x="0" y="-55" fill="#c4b5fd" fontSize="10" textAnchor="middle" fontWeight="bold">3.73:1 M85 RING GEAR</text>
-              </g>
-
-              <g transform="translate(60, 150)">
-                <rect x="0" y="-8" width="130" height="16" fill="#64748b" />
-                <polygon points="130,-22 130,22 145,15 145,-15" fill="#a78bfa" stroke="#c4b5fd" strokeWidth="2" />
-                <rect x="-30" y="-45" width="25" height="90" rx="4" fill="#334155" stroke="#64748b" strokeWidth="3" />
-                <text x="-18" y="-52" fill="#94a3b8" fontSize="10" textAnchor="middle" fontWeight="bold">LEFT REAR TIRE</text>
-                <text x="50" y="25" fill="#e2e8f0" fontSize="12" fontWeight="bold" fontFamily="monospace">{leftWheelSpeed} RPM</text>
-              </g>
-
-              <g transform="translate(400, 150)">
-                <rect x="-130" y="-8" width="130" height="16" fill="#64748b" />
-                <polygon points="-130,-22 -130,22 -145,15 -145,-15" fill="#a78bfa" stroke="#c4b5fd" strokeWidth="2" />
-                <rect x="5" y="-45" width="25" height="90" rx="4" fill="#334155" stroke="#64748b" strokeWidth="3" />
-                <text x="18" y="-52" fill="#94a3b8" fontSize="10" textAnchor="middle" fontWeight="bold">RIGHT REAR TIRE</text>
-                <text x="-90" y="25" fill="#e2e8f0" fontSize="12" fontWeight="bold" fontFamily="monospace">{rightWheelSpeed} RPM</text>
-              </g>
-
-              <g transform="translate(230, 115)">
-                <polygon points="-16,-5 16,-5 12,12 -12,12" fill="#f59e0b" stroke="#fef08a" strokeWidth="2" />
-                <text x="0" y="-12" fill="#fde047" fontSize="9" textAnchor="middle" fontWeight="bold">TORSEN HELICAL PINION</text>
-              </g>
-              <g transform="translate(230, 185)">
-                <polygon points="-16,5 16,5 12,-12 -12,-12" fill="#f59e0b" stroke="#fef08a" strokeWidth="2" />
-              </g>
-            </svg>
-
-            <div className="absolute top-3 left-4 right-4 flex items-center justify-between text-xs bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <div className="absolute diagram-footer">
               <span className="text-slate-300 font-medium">
-                {turnDirection === 'straight' ? 'Straight Line Drive' : 'Cornering: Outer wheel speeds up smoothly'}
+                {turnDirection === 'straight' ? 'Both wheels turn at the same speed' : 'The outside wheel turns faster'}
               </span>
-              <span className="font-mono text-purple-400 font-bold hidden sm:inline">(L + R) / 2 = {driveshaftSpeed} RPM</span>
+              <span>(L + R) / 2 = {driveshaftSpeed} RPM</span>
             </div>
           </div>
         </div>
@@ -117,13 +104,13 @@ export default function DifferentialSimulator() {
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5" />
-              Why the IS300 Torsen T-2 is Special
+              What happens when a tire loses grip?
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Standard base models use an open differential. If the inside wheel lifts or encounters slippery rain, all 218 lb-ft of torque spins that tire helplessly.
+              An open differential lets the wheels turn at different speeds, but the turning force available to both wheels is limited by the wheel with less grip.
             </p>
             <p className="text-xs text-slate-300 leading-relaxed">
-              The factory Lexus IS300 sport option <strong>Torsen Type-2 LSD</strong> uses crossed helical planet gears. Friction between the teeth dynamically biases up to <strong>2.5× more torque</strong> to the gripping outer tire, propelling the IS300 out of corners with zero clutch-plate wear!
+              A Torsen limited-slip differential uses gears and friction to send more turning force to the wheel with better grip. This is a separate job from allowing different wheel speeds in a corner.
             </p>
           </div>
         </div>

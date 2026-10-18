@@ -66,58 +66,108 @@ export const LEXUS_IS300_SPECS = {
 
 export const QUIZ_QUESTIONS = [
   {
-    id: 1,
-    question: "What makes the Lexus IS300's 2JZ-GE Inline-6 engine renowned among automotive tuners?",
-    options: [
-      { text: "It uses a rotary wankel core with no pistons.", isCorrect: false },
-      { text: "Its ultra-strong cast-iron (FC250) deep-skirt engine block can handle 500+ horsepower on stock internals when turbocharged (NA-T builds).", isCorrect: true },
-      { text: "It was the first engine made entirely of plastic composites.", isCorrect: false },
-      { text: "It does not require motor oil or cooling radiators.", isCorrect: false }
+    "id": 1,
+    "lessonId": "engine",
+    "lessonLabel": "Engine",
+    "question": "Which stroke gets its push from burning fuel?",
+    "options": [
+      {
+        "text": "Intake: the piston draws in air and fuel.",
+        "isCorrect": false
+      },
+      {
+        "text": "Power: expanding gas pushes the piston down.",
+        "isCorrect": true
+      },
+      {
+        "text": "Exhaust: the piston pushes used gases out.",
+        "isCorrect": false
+      }
     ],
-    explanation: "The 2JZ-GE in the IS300 shares its cast-iron cylinder block architecture with the twin-turbo Mk4 Toyota Supra (JZA80). Its heavy-duty deep-skirt block and forged steel crankshaft provide legendary durability for aftermarket turbocharging."
+    "explanation": "During the power stroke, the burning mixture expands and pushes the piston down. The connecting rod transfers that movement to the crankshaft. Intake and exhaust prepare the cylinder for the next cycle."
   },
   {
-    id: 2,
-    question: "Why does the Lexus IS300 Inline-6 have inherently smoother running harmonics than a V6 or Inline-4?",
-    options: [
-      { text: "Because it uses three spark plugs per cylinder.", isCorrect: false },
-      { text: "Because an Inline-6 has inherent perfect primary and secondary harmonic balance, with mirror-image piston motions canceling out reciprocating vibrations.", isCorrect: true },
-      { text: "Because the transmission spins in the opposite direction.", isCorrect: false },
-      { text: "Because it only fires when the car turns right.", isCorrect: false }
+    "id": 2,
+    "lessonId": "transmission",
+    "lessonLabel": "Gears",
+    "question": "Keep engine speed the same and shift from first to fifth. What changes?",
+    "options": [
+      {
+        "text": "The wheels turn more slowly with more turning force.",
+        "isCorrect": false
+      },
+      {
+        "text": "The gearbox creates extra engine power.",
+        "isCorrect": false
+      },
+      {
+        "text": "The wheels turn faster with less turning force.",
+        "isCorrect": true
+      }
     ],
-    explanation: "In an inline-6 with firing order 1-5-3-6-2-4, cylinders 1&6, 2&5, and 3&4 move in tandem pairs 120° apart. All primary and secondary vertical forces and rocking moments naturally cancel each other out without needing heavy balance shafts."
+    "explanation": "Higher gears give more wheel speed for the same engine speed. The trade-off is less turning force at the wheels. First gear gives more turning force to help the car start moving."
   },
   {
-    id: 3,
-    question: "What is the purpose of the Torsen Type-2 (T-2) Limited-Slip Differential equipped on sport-package Lexus IS300s?",
-    options: [
-      { text: "It permanently locks the rear wheels at all times for drifting only.", isCorrect: false },
-      { text: "It uses crossed helical worm gears to mechanically bias torque to the rear wheel with traction without using wearing clutch plates.", isCorrect: true },
-      { text: "It cuts engine fuel whenever cornering g-forces exceed 0.2g.", isCorrect: false },
-      { text: "It redirects exhaust gas into the rear tires to heat them up.", isCorrect: false }
+    "id": 3,
+    "lessonId": "differential",
+    "lessonLabel": "Differential",
+    "question": "The car turns left. Why does the right rear wheel turn faster?",
+    "options": [
+      {
+        "text": "It travels farther around the outside of the bend.",
+        "isCorrect": true
+      },
+      {
+        "text": "It is closer to the center of the bend.",
+        "isCorrect": false
+      },
+      {
+        "text": "The differential locks both wheels together.",
+        "isCorrect": false
+      }
     ],
-    explanation: "The Torsen (TORque-SENsing) differential uses helical gears to multiply torque toward the tire that has grip, preventing the open-diff 'one-wheel peel' while preserving smooth, chirp-free street cornering."
+    "explanation": "The right wheel is on the outside of a left turn. It follows a longer path in the same time, so it must turn faster. The differential allows this difference."
   },
   {
-    id: 4,
-    question: "What iconic interior design feature was uniquely created for the first-generation Lexus IS300 (XE10)?",
-    options: [
-      { text: "A heads-up holographic windshield laser projector.", isCorrect: false },
-      { text: "The Chronograph luxury wristwatch-style gauge cluster with inset voltage, water temperature, and MPG sub-dials.", isCorrect: true },
-      { text: "A digital CRT television built into the center console.", isCorrect: false },
-      { text: "A steering wheel with an integrated joystick instead of pedals.", isCorrect: false }
+    "id": 4,
+    "lessonId": "suspension",
+    "lessonLabel": "Suspension",
+    "question": "What helps stop the car from bouncing after a bump?",
+    "options": [
+      {
+        "text": "The differential, by changing wheel speeds.",
+        "isCorrect": false
+      },
+      {
+        "text": "The damper, by resisting suspension movement.",
+        "isCorrect": true
+      },
+      {
+        "text": "The spring alone, by pushing back without losing energy.",
+        "isCorrect": false
+      }
     ],
-    explanation: "Chief engineer Nobuaki Katayama designed the IS300 instrument cluster to mimic a Swiss chronograph sports watch, featuring sub-dials for battery voltage, engine temperature, and instantaneous fuel economy nested inside the central speedometer."
+    "explanation": "The spring compresses and then pushes back. The damper resists the movement and dissipates energy, so the bouncing settles."
   },
   {
-    id: 5,
-    question: "What suspension design gives the Lexus IS300 its celebrated sports car road handling and tire contact patch control?",
-    options: [
-      { text: "Four-wheel independent double-wishbone suspension front and rear.", isCorrect: true },
-      { text: "Solid beam live truck axles front and back.", isCorrect: false },
-      { text: "Pneumatic air bladders with no control arms.", isCorrect: false },
-      { text: "Leaf springs mounted transversely.", isCorrect: false }
+    "id": 5,
+    "lessonId": "aero",
+    "lessonLabel": "Air resistance",
+    "question": "With the same body shape and air conditions, what happens to drag when speed doubles?",
+    "options": [
+      {
+        "text": "It stays the same.",
+        "isCorrect": false
+      },
+      {
+        "text": "It doubles.",
+        "isCorrect": false
+      },
+      {
+        "text": "It becomes about four times as large.",
+        "isCorrect": true
+      }
     ],
-    explanation: "Unlike economy sedans with cheap MacPherson struts, the Lexus IS300 utilizes high-mount double wishbones at the front and a sophisticated multi-link double-wishbone setup at the rear, keeping tire contact patches optimal under high lateral g-loads."
+    "explanation": "Drag depends on speed squared. Doubling speed gives 2 × 2, or four times the drag. Moving against that force at twice the speed takes about eight times the power."
   }
 ];

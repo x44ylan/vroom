@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { ExternalLink, Menu, X, ArrowUpRight } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap } from 'lucide-react';
+import * as Dialog from '@radix-ui/react-dialog';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
+import HeroCar from './components/HeroCar.jsx';
 import EngineSimulator from './components/EngineSimulator.jsx';
 import TransmissionSimulator from './components/TransmissionSimulator.jsx';
 import DifferentialSimulator from './components/DifferentialSimulator.jsx';
@@ -14,241 +16,218 @@ import ElectricalEcuSimulator from './components/ElectricalEcuSimulator.jsx';
 import AudioEngineSynth from './components/AudioEngineSynth.jsx';
 import EvVsIceComparison from './components/EvVsIceComparison.jsx';
 import CarQuiz from './components/CarQuiz.jsx';
+import { lessons } from './data/lessons.js';
+
+const TOPICS = [
+  { id: 'chassis', group: 'Start here', component: ChassisViewer3D },
+  { id: 'engine', group: 'Making power', component: EngineSimulator },
+  { id: 'turbo', group: 'Making power', component: TurbochargerSimulator },
+  { id: 'transmission', group: 'Making power', component: TransmissionSimulator },
+  { id: 'differential', group: 'Making power', component: DifferentialSimulator },
+  { id: 'brakes', group: 'On the road', component: BrakeSimulator },
+  { id: 'steering', group: 'On the road', component: SteeringSimulator },
+  { id: 'suspension', group: 'On the road', component: SuspensionSimulator },
+  { id: 'cooling', group: 'Supporting systems', component: CoolingLubricationSimulator },
+  { id: 'aero', group: 'Supporting systems', component: AerodynamicsSimulator },
+  { id: 'electronics', group: 'Supporting systems', component: ElectricalEcuSimulator },
+  { id: 'ev', group: 'Review', component: EvVsIceComparison },
+  { id: 'quiz', group: 'Review', component: CarQuiz },
+].map((topic, index) => ({ ...topic, ...lessons[topic.id], number: String(index + 1).padStart(2, '0') }));
+const ICONS = { chassis: CarFront, engine: Cog, turbo: Fan, transmission: Settings2, differential: Split, brakes: Disc3, steering: Navigation2, suspension: ArrowDownUp, cooling: Thermometer, aero: Wind, electronics: Cpu, ev: Zap, quiz: GraduationCap };
+TOPICS.forEach(topic => { topic.Icon = ICONS[topic.id]; });
+const GROUPS = [...new Set(TOPICS.map(topic => topic.group))];
+const HOME = 'home';
+const POWER_ROUTE = [
+  { id: 'engine', label: 'Engine', note: 'Burns fuel to turn a shaft' },
+  { id: 'transmission', label: 'Gearbox', note: 'Trades speed for force' },
+  { id: 'chassis', label: 'Driveshaft', note: 'Carries it to the back' },
+  { id: 'differential', label: 'Differential', note: 'Splits it between wheels' },
+  { id: 'brakes', label: 'Wheels', note: 'Grip, steer, and stop' },
+];
+const readTopic = () => TOPICS.find(topic => `#${topic.id}` === window.location.hash)?.id || HOME;
+
+function TopicNavigation({ active, onSelect, className = '' }) {
+  return <nav aria-label="Topics" className={`topic-navigation ${className}`}>
+    {GROUPS.map(group => <div className="nav-group" key={group}>
+      <p className="nav-group-label">{group}</p>
+      <ul>
+        {TOPICS.filter(topic => topic.group === group).map(topic => <li key={topic.id}>
+          <a href={`#${topic.id}`} aria-label={topic.label} aria-current={active === topic.id ? 'page' : undefined}
+            onClick={event => { event.preventDefault(); onSelect(topic.id); }} className="topic-link">
+            <span className="topic-icon" aria-hidden="true"><topic.Icon size={18} strokeWidth={1.75} /></span>
+            <span className="topic-text"><span className="topic-label">{topic.label}</span><span className="topic-title">{topic.title}</span></span>
+            <span className="topic-number" aria-hidden="true">{topic.number}</span>
+          </a>
+        </li>)}
+      </ul>
+    </div>)}
+  </nav>;
+}
+
+function Landing({ onSelect }) {
+  return <>
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="hero-copy">
+        <p className="eyebrow">An interactive course · 13 lessons</p>
+        <h1 id="hero-title" tabIndex={-1}>How a car really works.</h1>
+        <p className="hero-lede">Take apart a Lexus IS300, then try the engine, gears, brakes, and more. No experience needed — each lesson takes a few minutes.</p>
+        <div className="hero-actions">
+          <button className="button button-primary" onClick={() => onSelect('chassis')}>Start learning <ArrowRight size={16} aria-hidden="true" /></button>
+          <a className="button button-secondary" href="#lessons">See all lessons</a>
+        </div>
+      </div>
+      <figure className="hero-visual">
+        <HeroCar />
+        <figcaption>
+          <dl className="hero-spec">
+            <div><dt>Engine</dt><dd>3.0 L six</dd></div>
+            <div><dt>Power</dt><dd>215 hp</dd></div>
+            <div><dt>Gearbox</dt><dd>5-speed</dd></div>
+            <div><dt>Drive</dt><dd>Rear wheels</dd></div>
+          </dl>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section className="route" aria-labelledby="route-title">
+      <p className="eyebrow">The big idea</p>
+      <h2 id="route-title">Follow the power from fuel to road.</h2>
+      <ol className="route-steps">
+        {POWER_ROUTE.map((step, index) => <li key={step.label}>
+          <a href={`#${step.id}`} onClick={event => { event.preventDefault(); onSelect(step.id); }}>
+            <span className="route-index">{index + 1}</span>
+            <strong>{step.label}</strong>
+            <span>{step.note}</span>
+          </a>
+        </li>)}
+      </ol>
+    </section>
+
+    <section className="lesson-index" id="lessons" aria-labelledby="lessons-title">
+      <p className="eyebrow">Curriculum</p>
+      <h2 id="lessons-title">Pick any lesson, or start at one.</h2>
+      <nav aria-label="Topics" className="lesson-grid">
+        {GROUPS.map(group => <div className="lesson-group" key={group}>
+          <h3>{group}</h3>
+          <ul>
+            {TOPICS.filter(topic => topic.group === group).map(topic => <li key={topic.id}>
+              <a href={`#${topic.id}`} className="lesson-row" aria-label={`${topic.label}: ${topic.title}`} onClick={event => { event.preventDefault(); onSelect(topic.id); }}>
+                <span className="lesson-row-icon" aria-hidden="true"><topic.Icon size={18} strokeWidth={1.75} /></span>
+                <span className="lesson-row-text"><span className="lesson-row-label">{topic.label}</span><span className="lesson-row-title">{topic.title}</span></span>
+                <span className="lesson-row-number" aria-hidden="true">{topic.number}</span>
+              </a>
+            </li>)}
+          </ul>
+        </div>)}
+      </nav>
+    </section>
+
+    <section className="closing" aria-labelledby="closing-title">
+      <h2 id="closing-title">Ready to look under the hood?</h2>
+      <button className="button button-primary" onClick={() => onSelect('chassis')}>Start with lesson 01 <ArrowRight size={16} aria-hidden="true" /></button>
+    </section>
+  </>;
+}
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('chassis');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(readTopic);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headingRef = useRef(null);
+  const focusAfterClose = useRef(false);
+  const isHome = activeTab === HOME;
+  const index = TOPICS.findIndex(topic => topic.id === activeTab);
+  const active = TOPICS[index];
 
-  const NAVIGATION_ITEMS = [
-    { id: 'chassis', label: '3D Chassis', badge: 'JCE10' },
-    { id: 'engine', label: '2JZ Engine', badge: 'Inline-6' },
-    { id: 'turbo', label: 'NA-T Turbo', badge: 'Boost' },
-    { id: 'transmission', label: 'Transmission', badge: 'W55' },
-    { id: 'differential', label: 'Torsen LSD', badge: 'T-2' },
-    { id: 'brakes', label: 'Brakes & ABS', badge: 'Hydraulics' },
-    { id: 'steering', label: 'Steering', badge: 'Ackermann' },
-    { id: 'suspension', label: 'Suspension', badge: 'Double-Wishbone' },
-    { id: 'cooling', label: 'Cooling & Oil', badge: 'Thermal' },
-    { id: 'aero', label: 'Aerodynamics', badge: '0.28 Cd' },
-    { id: 'electronics', label: 'Electronics', badge: 'OBD-II' },
-    { id: 'ev', label: 'EV Comparison', badge: 'Architecture' },
-    { id: 'quiz', label: 'Knowledge Quiz', badge: 'Test' },
-  ];
+  useEffect(() => {
+    const sync = () => setActiveTab(readTopic());
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
+    return () => { window.removeEventListener('hashchange', sync); window.removeEventListener('popstate', sync); };
+  }, []);
 
-  const handleSelectTab = (id) => {
+  useEffect(() => {
+    document.title = isHome ? 'How a car works | Lexus IS300 Explorer' : `${active.label} | Lexus IS300 Explorer`;
+  }, [isHome, active]);
+
+  const selectTopic = id => {
+    focusAfterClose.current = menuOpen;
     setActiveTab(id);
-    setMobileMenuOpen(false);
+    setMenuOpen(false);
+    if (id === HOME) {
+      if (window.location.hash) window.history.pushState(null, '', window.location.pathname);
+    } else if (window.location.hash !== `#${id}`) {
+      window.location.hash = id;
+    }
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      (document.getElementById('topic-title') || document.getElementById('hero-title'))?.focus({ preventScroll: true });
+    });
   };
 
-  const activeItem = NAVIGATION_ITEMS.find((item) => item.id === activeTab) || NAVIGATION_ITEMS[0];
+  const Simulator = active?.component;
 
-  return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-heading selection:bg-white selection:text-black">
-      {/* zPod Top Minimal Navbar */}
-      <header className="sticky top-0 z-50 bg-black/85 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="font-heading font-bold text-lg sm:text-xl tracking-wider text-white">
-              IS300<span className="text-zinc-500 font-normal">.2JZ</span>
-            </span>
-            <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full bg-white/10 text-[10px] font-mono tracking-widest text-zinc-300">
-              CHASSIS JCE10
-            </span>
-          </div>
+  return <div className={`app-shell ${isHome ? 'is-home' : 'is-lesson'}`}>
+    <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); document.getElementById('main-content')?.focus(); }}>Skip to content</a>
+    <header className="app-header">
+      <div className="app-header-inner">
+        <a href="#" className="brand" aria-label="IS300 Explorer home" onClick={event => { event.preventDefault(); selectTopic(HOME); }}>
+          <span className="brand-mark" aria-hidden="true" />IS300 Explorer
+        </a>
+        {!isHome && <span className="header-lesson" aria-hidden="true">{active.label}</span>}
+        <div className="header-actions">
+          {!isHome && <span className="header-progress" aria-label={`Lesson ${index + 1} of ${TOPICS.length}`}>{active.number}<span> / {TOPICS.length}</span></span>}
+          <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>
+            <Dialog.Trigger className="menu-button" aria-label="Toggle Navigation Menu"><Menu size={16} aria-hidden="true" />Lessons</Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="menu-overlay" />
+              <Dialog.Content className="menu-panel" onCloseAutoFocus={event => {
+                if (focusAfterClose.current) { event.preventDefault(); document.getElementById('topic-title')?.focus({ preventScroll: true }); focusAfterClose.current = false; }
+              }}>
+                <div className="menu-heading"><Dialog.Title>Lessons</Dialog.Title><Dialog.Close className="icon-button" aria-label="Close navigation"><X size={18} /></Dialog.Close></div>
+                <Dialog.Description className="sr-only">Choose a lesson to open it.</Dialog.Description>
+                <TopicNavigation active={activeTab} onSelect={selectTopic} />
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+        </div>
+      </div>
+      {!isHome && <div className="progress-track" aria-hidden="true"><span style={{ transform: `scaleX(${(index + 1) / TOPICS.length})` }} /></div>}
+    </header>
 
-          <div className="flex items-center gap-2">
-            <a
-              href="https://en.wikipedia.org/wiki/Lexus_IS_(XE10)"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-zinc-400 hover:text-white hidden sm:flex items-center gap-1.5 transition px-3 py-1.5 rounded-full hover:bg-white/10 border border-white/10"
-            >
-              <span className="tracking-wider uppercase text-[11px]">Heritage</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-zinc-400" />
-            </a>
+    <main id="main-content" tabIndex={-1}>
+      {isHome ? <Landing onSelect={selectTopic} /> : <article className="lesson" key={activeTab}>
+        <header className="lesson-header">
+          <p className="eyebrow">Lesson {active.number} · {active.label}</p>
+          <h1 id="topic-title" ref={headingRef} tabIndex={-1}>{active.title}</h1>
+          <p className="lesson-lede">{active.description}</p>
+        </header>
 
-            {/* Mobile menu trigger */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-900 border border-white/15 text-xs font-medium text-white"
-              aria-label="Toggle Navigation Menu"
-            >
-              {mobileMenuOpen ? <X className="w-3.5 h-3.5" /> : <Menu className="w-3.5 h-3.5" />}
-              <span className="uppercase tracking-wider">{activeItem.label}</span>
-            </button>
-          </div>
+        <p className="lesson-tip"><strong>Try this</strong>{active.tip}</p>
+
+        <div className="simulation-content">
+          <Simulator />
+          {activeTab === 'engine' && <AudioEngineSynth />}
         </div>
 
-        {/* zPod Clean Pill Segment Rail */}
-        <div className="hidden md:flex max-w-7xl mx-auto px-4 sm:px-6 items-center gap-1.5 overflow-x-auto py-2 scrollbar-none border-t border-white/10">
-          {NAVIGATION_ITEMS.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleSelectTab(item.id)}
-                className={`px-3.5 py-1 text-xs uppercase tracking-wider font-medium rounded-full transition shrink-0 ${
-                  isActive
-                    ? 'bg-white text-black font-semibold'
-                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
+        {active.terms.length > 0 && <details className="lesson-vocabulary">
+          <summary>What do these words mean?</summary>
+          <dl>{active.terms.map(([term, meaning]) => <div key={term}><dt>{term}</dt><dd>{meaning}</dd></div>)}</dl>
+        </details>}
 
-        {/* Mobile menu drawer */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-[#080808] border-b border-white/15 p-3 space-y-1.5 max-h-[70vh] overflow-y-auto">
-            <div className="grid grid-cols-2 gap-1.5">
-              {NAVIGATION_ITEMS.map((item) => {
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleSelectTab(item.id)}
-                    className={`p-2.5 rounded-xl text-left text-xs uppercase tracking-wider font-medium transition flex items-center justify-between ${
-                      isActive
-                        ? 'bg-white text-black font-semibold'
-                        : 'bg-zinc-900/80 text-zinc-300 hover:bg-zinc-800 border border-white/5'
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                    <span className="text-[10px] text-zinc-500 font-mono">{item.badge}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </header>
+        {active.takeaway && <section className="lesson-takeaway" aria-labelledby="takeaway-title">
+          <h2 id="takeaway-title">What to remember</h2>
+          <p>{active.takeaway}</p>
+          {active.source && <a href={active.source.url} target="_blank" rel="noopener noreferrer">{active.source.label} <ArrowUpRight size={14} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}
+        </section>}
 
-      {/* Main Showcase Stage */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-        {activeTab === 'chassis' && (
-          <div className="space-y-6">
-            {/* zPod Hero Title Block */}
-            <div className="text-center py-4 sm:py-8 space-y-2">
-              <span className="zpod-tag">NATURE-INSPIRED BALANCE</span>
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight uppercase text-white mt-3">
-                FR SPORT SEDAN
-              </h1>
-              <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto font-normal">
-                Longitudinal 2JZ-GE power meets 54:46 front-mid chassis equilibrium.
-              </p>
-            </div>
-
-            <ChassisViewer3D />
-
-            {/* zPod Clean 3-Column Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-              <div className="p-4 rounded-xl zpod-card space-y-1.5">
-                <span className="text-[10px] tracking-widest uppercase font-mono text-zinc-500">01 / ARCHITECTURE</span>
-                <h4 className="text-sm font-semibold text-white tracking-wide uppercase">Front-Mid FR Layout</h4>
-                <p className="text-xs text-zinc-400 leading-normal">
-                  Engine mounted behind front axle line for near 50:50 cornering dynamics.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl zpod-card space-y-1.5">
-                <span className="text-[10px] tracking-widest uppercase font-mono text-zinc-500">02 / MOTOR</span>
-                <h4 className="text-sm font-semibold text-white tracking-wide uppercase">Cast-Iron 2JZ-GE</h4>
-                <p className="text-xs text-zinc-400 leading-normal">
-                  7 main bearings guarantee zero secondary shake; holds 500+ HP under turbo.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl zpod-card space-y-1.5">
-                <span className="text-[10px] tracking-widest uppercase font-mono text-zinc-500">03 / TRACTION</span>
-                <h4 className="text-sm font-semibold text-white tracking-wide uppercase">Torsen T-2 LSD</h4>
-                <p className="text-xs text-zinc-400 leading-normal">
-                  Helical worm gears bias 2.5× more torque to the gripping outer tire.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'engine' && (
-          <div className="space-y-4">
-            <EngineSimulator />
-            <AudioEngineSynth />
-          </div>
-        )}
-
-        {activeTab === 'turbo' && (
-          <div className="space-y-4">
-            <TurbochargerSimulator />
-          </div>
-        )}
-
-        {activeTab === 'transmission' && (
-          <div className="space-y-4">
-            <TransmissionSimulator />
-          </div>
-        )}
-
-        {activeTab === 'differential' && (
-          <div className="space-y-4">
-            <DifferentialSimulator />
-          </div>
-        )}
-
-        {activeTab === 'brakes' && (
-          <div className="space-y-4">
-            <BrakeSimulator />
-          </div>
-        )}
-
-        {activeTab === 'steering' && (
-          <div className="space-y-4">
-            <SteeringSimulator />
-          </div>
-        )}
-
-        {activeTab === 'suspension' && (
-          <div className="space-y-4">
-            <SuspensionSimulator />
-          </div>
-        )}
-
-        {activeTab === 'cooling' && (
-          <div className="space-y-4">
-            <CoolingLubricationSimulator />
-          </div>
-        )}
-
-        {activeTab === 'aero' && (
-          <div className="space-y-4">
-            <AerodynamicsSimulator />
-          </div>
-        )}
-
-        {activeTab === 'electronics' && (
-          <div className="space-y-4">
-            <ElectricalEcuSimulator />
-          </div>
-        )}
-
-        {activeTab === 'ev' && (
-          <div className="space-y-4">
-            <EvVsIceComparison />
-          </div>
-        )}
-
-        {activeTab === 'quiz' && (
-          <div className="space-y-4">
-            <CarQuiz />
-          </div>
-        )}
-      </main>
-
-      {/* zPod Clean Minimal Footer */}
-      <footer className="py-6 border-t border-white/10 text-center text-xs text-zinc-500 tracking-wider uppercase">
-        © Lexus IS300 (XE10) · 2JZ-GE Engineering Explorer
-      </footer>
-    </div>
-  );
+        <nav className="topic-pagination" aria-label="Topic sequence">
+          {index > 0
+            ? <button className="pager pager-previous" aria-label={`Previous topic: ${TOPICS[index - 1].label}`} onClick={() => selectTopic(TOPICS[index - 1].id)}><ArrowLeft size={18} aria-hidden="true" /><span><small>Previous</small>{TOPICS[index - 1].label}</span></button>
+            : <button className="pager pager-previous" aria-label="Back to home" onClick={() => selectTopic(HOME)}><ArrowLeft size={18} aria-hidden="true" /><span><small>Back</small>Home</span></button>}
+          <button className="pager pager-next" aria-label={index === TOPICS.length - 1 ? 'Back to overview' : `Next topic: ${TOPICS[index + 1].label}`} onClick={() => selectTopic(TOPICS[index + 1]?.id || HOME)}><span><small>{index === TOPICS.length - 1 ? 'Finished' : 'Next'}</small>{TOPICS[index + 1]?.label || 'Back to overview'}</span><ArrowRight size={18} aria-hidden="true" /></button>
+        </nav>
+      </article>}
+    </main>
+    <footer className="app-footer"><span>IS300 Explorer</span><span>Simplified learning models · Independent enthusiast guide · Car model “Toyota Altezza 2001” by <a href="https://sketchfab.com/3d-models/draft-request-toyota-altezza-2001-0396aafda6294dc4843250d979783656" target="_blank" rel="noopener noreferrer">Chai</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></span></footer>
+  </div>;
 }

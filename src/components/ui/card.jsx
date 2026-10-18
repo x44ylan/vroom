@@ -29,7 +29,7 @@ function CardHeader({ className, ...props }) {
 
 function CardTitle({ className, ...props }) {
   return (
-    <div
+    <h2
       data-slot="card-title"
       className={cn("font-medium tracking-tight text-zinc-100 text-sm sm:text-base", className)}
       {...props}

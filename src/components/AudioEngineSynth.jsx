@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
+import { Segmented } from './controls/Controls.jsx';
 import { Button } from './ui/button.jsx';
 
 export default function AudioEngineSynth() {
@@ -74,8 +75,8 @@ export default function AudioEngineSynth() {
     <Card className="w-full">
       <CardHeader className="flex-row items-center justify-between gap-3 p-4 sm:p-5">
         <div>
-          <CardTitle>Exhaust Acoustic Harmonic Synthesizer</CardTitle>
-          <CardDescription>Cylinder firing orders and primary acoustic harmonics</CardDescription>
+          <CardTitle>Hear how engine speed changes the sound</CardTitle>
+          <CardDescription>Turn the sound on, then move the speed slider. This is a synthesized example, not a recording.</CardDescription>
         </div>
 
         <Button
@@ -84,55 +85,40 @@ export default function AudioEngineSynth() {
           onClick={() => setIsPlaying(!isPlaying)}
         >
           {isPlaying ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-          <span>{isPlaying ? 'Mute' : 'Synthesize Audio'}</span>
+          <span>{isPlaying ? 'Mute' : 'Play engine sound'}</span>
         </Button>
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 sm:p-5">
-        <div className="p-3 rounded-lg bg-[#0e0f11] border border-[#222428] space-y-1.5">
-          <span className="text-xs text-zinc-400">Firing Profile:</span>
-          <div className="grid grid-cols-3 gap-1">
-            {[
-              { id: '2jz', label: '2JZ I6' },
-              { id: '3sge', label: '3S-GE I4' },
-              { id: '1uz', label: '1UZ V8' }
-            ].map((type) => (
-              <Button
-                key={type.id}
-                size="sm"
-                variant={engineType === type.id ? "default" : "outline"}
-                onClick={() => setEngineType(type.id)}
-                className="text-[11px] px-1.5"
-              >
-                {type.label}
-              </Button>
-            ))}
-          </div>
+        <div className="p-3 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-1.5">
+          <span className="text-xs text-zinc-400">Engine type:</span>
+          <Segmented size="sm" label="Engine type" value={engineType} onChange={setEngineType}
+            options={[{ value: '2jz', label: '2JZ I6' }, { value: '3sge', label: '3S-GE I4' }, { value: '1uz', label: '1UZ V8' }]} />
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0e0f11] border border-[#222428] space-y-1.5">
+        <div className="p-3 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-1.5">
           <div className="flex justify-between text-xs">
             <span className="text-zinc-400">Engine Speed:</span>
             <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
           </div>
           <input
-            type="range"
+            type="range" aria-label="Audio engine speed"
             min="700"
             max="6500"
             step="100"
             value={rpm}
             onChange={(e) => setRpm(Number(e.target.value))}
-            className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#222428] rounded"
+            className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#262e3d] rounded"
           />
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0e0f11] border border-[#222428] space-y-1 text-xs">
-          <span className="text-zinc-400">Harmonic Frequency:</span>
+        <div className="p-3 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-1 text-xs">
+          <span className="text-zinc-400">Firing frequency:</span>
           <div className="text-sm font-mono font-medium text-zinc-100">
             {fundamentalFreqHz.toFixed(1)} Hz
           </div>
           <p className="text-[11px] text-zinc-500">
-            2JZ firing order 1-5-3-6-2-4 produces 3 pulses/rev with zero secondary vibration.
+            Each cylinder fires once every two crankshaft turns. More cylinders or a higher engine speed create more firing pulses each second, changing the pitch of the sound.
           </p>
         </div>
       </CardContent>

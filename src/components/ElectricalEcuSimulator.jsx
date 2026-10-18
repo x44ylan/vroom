@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Cpu, AlertTriangle, ShieldCheck, Radio } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
+import { Segmented } from './controls/Controls.jsx';
+import { Stage, Callout, Flow, useClock } from './diagram/kit.jsx';
 import { Button } from './ui/button.jsx';
 import { Badge } from './ui/badge.jsx';
 
@@ -10,32 +12,43 @@ export default function ElectricalEcuSimulator() {
 
   const FAULTS = {
     none: {
-      code: 'SYSTEM NORMAL - 2JZ-GE RUNNING CLOSED-LOOP',
+      code: 'No fault detected in this example',
       mil: false,
-      desc: 'Denso ECM reading dual heated oxygen sensors (Bank 1 & Bank 2), mass airflow, and VVT-i camshaft sensor without error.',
-      action: 'Target air-fuel ratio 14.7:1 (Stoichiometric). VVT-i continuously advancing intake cam up to 60° for optimal torque.'
+      desc: 'The sensors are reporting normal engine operation.',
+      action: 'The engine computer uses sensor readings to adjust fuel delivery and valve timing.'
     },
     'vvti-solenoid': {
-      code: 'P1349 - VVT System Malfunction (Bank 1)',
+      code: 'P1349: valve timing problem',
       mil: true,
-      desc: 'Oil Control Valve (OCV) mesh filter clogged or spool valve jammed; intake camshaft not matching target advance angle.',
-      action: 'ECM cuts VVT-i advance signal and locks cam timing in base retarded position; low-end torque noticeably diminishes.'
+      desc: 'The system that adjusts when the intake valves open is not responding as expected.',
+      action: 'The engine may lose some performance. The code points to the valve-timing system; it does not identify a single failed part.'
     },
     'wheel-speed': {
-      code: 'C0200 - Right Front Wheel Speed Sensor Signal Malfunction',
+      code: 'C0200: right front wheel-speed signal problem',
       mil: true,
-      desc: 'Reluctor tone ring pulse lost on front right hub knuckle.',
-      action: 'ABS and Traction Control (TRAC) disabled; TRAC OFF indicator flashes on chronograph cluster; standard hydraulic braking remains.'
+      desc: 'The brake computer cannot read a reliable speed signal from the right front wheel.',
+      action: 'Without reliable wheel-speed information, ABS and traction control may be unavailable. A technician would check the sensor signal and wiring.'
     },
     'misfire': {
-      code: 'P0302 - Cylinder 2 Misfire Detected',
+      code: 'P0302: cylinder 2 misfire',
       mil: true,
-      desc: 'Denso igniter module / coil pack or spark plug failed on 2JZ Cylinder 2.',
-      action: 'ECM flashes CHECK ENGINE light and disables fuel injector on Cylinder 2 to protect close-coupled catalytic converters from raw unburnt fuel.'
+      desc: 'Cylinder 2 is not burning its mixture properly. Ignition, fuel delivery, or compression could be involved.',
+      action: 'The engine may run unevenly. The code identifies the cylinder to investigate, but further checks are needed to find the cause.'
     }
   };
 
   const fault = FAULTS[activeFault];
+
+  const t = useClock();
+  const faultNode = activeFault === 'wheel-speed' ? 'brake' : activeFault === 'none' ? null : 'engine';
+  const NODES = [
+    { id: 'engine', x: 18, y: 30, title: 'Engine computer', sub: 'Fuel and ignition' },
+    { id: 'gearbox', x: 176, y: 30, title: 'Gearbox control', sub: 'Gear selection' },
+    { id: 'brake', x: 334, y: 30, title: 'Brake control', sub: 'Wheel sensors' },
+    { id: 'dash', x: 96, y: 196, title: 'Dashboard', sub: 'Gauges and warnings' },
+    { id: 'port', x: 256, y: 196, title: 'Diagnostic port', sub: 'Connect a scan tool' },
+  ];
+  const bus = 'M20 156 H480';
 
   return (
     <Card className="w-full">
@@ -46,82 +59,51 @@ export default function ElectricalEcuSimulator() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <CardTitle>Lexus IS300 Denso ECM & Multiplex Communication (MPX)</CardTitle>
-              <Badge variant="secondary" className="hidden sm:inline-flex">OBD-II / BEAN Network</Badge>
+              <CardTitle>Try a fault example</CardTitle>
+              <Badge variant="secondary" className="hidden sm:inline-flex">Onboard diagnostics</Badge>
             </div>
-            <CardDescription>How Denso engine computers regulate VVT-i cam phasing, sequential injection & OBD-II DTCs</CardDescription>
+            <CardDescription>Choose a fault to see what the computer reports and what it can mean.</CardDescription>
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800 w-full sm:w-auto overflow-x-auto">
-          {['none', 'vvti-solenoid', 'wheel-speed', 'misfire'].map((key) => (
-            <Button
-              key={key}
-              size="sm"
-              variant={activeFault === key ? (key === 'none' ? "success" : "default") : "ghost"}
-              onClick={() => setActiveFault(key)}
-              className="flex-1 sm:flex-none text-xs font-mono whitespace-nowrap"
-            >
-              {key === 'none' ? 'Clear DTCs' : key.toUpperCase()}
-            </Button>
-          ))}
-        </div>
+        <Segmented label="Fault example" value={activeFault} onChange={setActiveFault}
+          options={[{ value: 'none', label: 'No fault' }, { value: 'vvti-solenoid', label: 'Valve timing' }, { value: 'wheel-speed', label: 'Wheel sensor' }, { value: 'misfire', label: 'Misfire' }]} />
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center">
         <div className="lg:col-span-7 flex flex-col items-center">
-          <div className="relative w-full aspect-[16/11] bg-slate-950/80 rounded-2xl border border-slate-800 p-4 flex items-center justify-center overflow-hidden">
-            <svg viewBox="0 0 460 300" className="w-full h-full select-none">
-              <line x1="30" y1="150" x2="430" y2="150" stroke="#8b5cf6" strokeWidth="4" />
-              <line x1="30" y1="160" x2="430" y2="160" stroke="#06b6d4" strokeWidth="4" strokeDasharray="8 4" />
-              <text x="230" y="142" fill="#c4b5fd" fontSize="9" textAnchor="middle" fontWeight="bold">
-                TOYOTA BEAN / CAN MULTIPLEX BUS (Body Electronics Area Network)
-              </text>
+          <div className="diagram-frame relative w-full aspect-[5/3]">
+            <Stage viewBox="0 0 500 280" label="Car computers sharing messages on one network">
+              {/* Twisted-pair data bus */}
+              <path d={bus} stroke="#1d2a44" strokeWidth="14" strokeLinecap="round" />
+              <path d="M20 152 Q32 160 44 152 T68 152 T92 152 T116 152 T140 152 T164 152 T188 152 T212 152 T236 152 T260 152 T284 152 T308 152 T332 152 T356 152 T380 152 T404 152 T428 152 T452 152 T476 152" fill="none" stroke="#4d94ff" strokeWidth="2" />
+              <path d="M20 160 Q32 152 44 160 T68 160 T92 160 T116 160 T140 160 T164 160 T188 160 T212 160 T236 160 T260 160 T284 160 T308 160 T332 160 T356 160 T380 160 T404 160 T428 160 T452 160 T476 160" fill="none" stroke="#7d8aa3" strokeWidth="2" />
+              <Flow d={bus} t={t} speed={90} color="#cfe2ff" width={5} gap={40} />
+              <text x="480" y="182" fill="#5a6680" fontSize="11" textAnchor="end">Shared network</text>
+              {NODES.map(n => {
+                const bad = faultNode === n.id;
+                const top = n.y < 150;
+                const stubY1 = top ? n.y + 64 : n.y, stubY2 = top ? 152 : 160;
+                return (
+                  <g key={n.id}>
+                    <line x1={n.x + 74} y1={stubY1} x2={n.x + 74} y2={stubY2} stroke={bad ? '#ff5a4f' : '#2c4470'} strokeWidth="3" />
+                    <rect x={n.x} y={n.y} width="148" height="64" rx="12" fill="#121a27" stroke={bad ? '#ff5a4f' : n.id === 'port' ? '#3ddc97' : '#2c4470'} strokeWidth={bad ? 2.5 : 1.5} filter="url(#k-shadow)" />
+                    <circle cx={n.x + 16} cy={n.y + 18} r="4" fill={bad ? '#ff5a4f' : '#3ddc97'} opacity={bad ? 0.5 + 0.5 * Math.sin(t * 8) : 0.9} />
+                    <text x={n.x + 26} y={n.y + 22} fill="#e8eefb" fontSize="12" fontWeight="600">{n.title}</text>
+                    <text x={n.x + 14} y={n.y + 44} fill="#8f9bb3" fontSize="11">{n.sub}</text>
+                  </g>
+                );
+              })}
+            </Stage>
 
-              <g transform="translate(50, 50)">
-                <rect x="0" y="0" width="105" height="60" rx="6" fill="#1e1b4b" stroke={activeFault === 'vvti-solenoid' || activeFault === 'misfire' ? '#f59e0b' : '#a78bfa'} strokeWidth="2" />
-                <text x="52" y="22" fill="#ffffff" fontSize="10" textAnchor="middle" fontWeight="bold">DENSO ECM</text>
-                <text x="52" y="38" fill="#c4b5fd" fontSize="8" textAnchor="middle">2JZ VVT-i & Spark</text>
-                <line x1="52" y1="60" x2="52" y2="100" stroke="#8b5cf6" strokeWidth="3" />
-              </g>
-
-              <g transform="translate(180, 50)">
-                <rect x="0" y="0" width="100" height="60" rx="6" fill="#0f172a" stroke="#38bdf8" strokeWidth="2" />
-                <text x="50" y="22" fill="#ffffff" fontSize="10" textAnchor="middle" fontWeight="bold">A650E TCM</text>
-                <text x="50" y="38" fill="#7dd3fc" fontSize="8" textAnchor="middle">E-Shift Buttons</text>
-                <line x1="50" y1="60" x2="50" y2="100" stroke="#38bdf8" strokeWidth="3" />
-              </g>
-
-              <g transform="translate(305, 50)">
-                <rect x="0" y="0" width="105" height="60" rx="6" fill="#1e1b4b" stroke={activeFault === 'wheel-speed' ? '#ef4444' : '#a78bfa'} strokeWidth="2" />
-                <text x="52" y="22" fill="#ffffff" fontSize="10" textAnchor="middle" fontWeight="bold">ABS / TRAC / VSC</text>
-                <text x="52" y="38" fill="#c4b5fd" fontSize="8" textAnchor="middle">4-Wheel Sensors</text>
-                <line x1="52" y1="60" x2="52" y2="100" stroke="#8b5cf6" strokeWidth="3" />
-              </g>
-
-              <g transform="translate(80, 190)">
-                <rect x="0" y="0" width="120" height="55" rx="6" fill="#0f172a" stroke="#64748b" strokeWidth="2" />
-                <text x="60" y="22" fill="#ffffff" fontSize="10" textAnchor="middle" fontWeight="bold">CHRONOGRAPH CLUSTER</text>
-                <text x="60" y="38" fill="#94a3b8" fontSize="8" textAnchor="middle">Volt / Temp / MPG Dials</text>
-                <line x1="60" y1="0" x2="60" y2="-30" stroke="#8b5cf6" strokeWidth="3" />
-              </g>
-
-              <g transform="translate(250, 190)">
-                <rect x="0" y="0" width="130" height="55" rx="6" fill="#0f172a" stroke="#10b981" strokeWidth="2" />
-                <text x="65" y="22" fill="#34d399" fontSize="10" textAnchor="middle" fontWeight="bold">DLC3 (OBD-II PORT)</text>
-                <text x="65" y="38" fill="#a7f3d0" fontSize="8" textAnchor="middle">16-Pin Scan Connector</text>
-                <line x1="65" y1="0" x2="65" y2="-30" stroke="#10b981" strokeWidth="3" />
-              </g>
-            </svg>
-
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <div className="absolute diagram-footer">
               {fault.mil ? (
-                <span className="text-amber-400 font-bold flex items-center gap-1.5 animate-pulse truncate">
-                  <AlertTriangle className="w-4 h-4 shrink-0" /> CHECK ENGINE (MIL): {fault.code.split(' - ')[0]}
+                <span className="text-amber-400 font-bold flex items-center gap-1.5 truncate">
+                  <AlertTriangle className="w-4 h-4 shrink-0" /> Fault code: {fault.code.split(' - ')[0]}
                 </span>
               ) : (
                 <span className="text-emerald-400 font-medium flex items-center gap-1.5 truncate">
-                  <ShieldCheck className="w-4 h-4 shrink-0" /> All Denso IS300 Systems Normal
+                  <ShieldCheck className="w-4 h-4 shrink-0" /> No fault selected
                 </span>
               )}
               <span className="font-mono text-cyan-400 font-bold shrink-0">{batteryVoltage}V Alternator</span>
@@ -133,16 +115,16 @@ export default function ElectricalEcuSimulator() {
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-violet-400 flex items-center gap-1.5">
               <Radio className="w-3.5 h-3.5" />
-              Lexus OBD-II Diagnostic Telemetry
+              What the code means
             </h4>
 
             <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 font-mono text-xs space-y-1.5">
               <div className="text-amber-300 font-bold">{fault.code}</div>
-              <div className="text-slate-400 text-[11px] leading-relaxed pt-1">{fault.desc}</div>
+              <p className="text-slate-400 leading-relaxed pt-1">{fault.desc}</p>
             </div>
 
             <div className="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs space-y-1">
-              <span className="text-slate-400 font-medium">ECM Failsafe Strategy:</span>
+              <span className="text-slate-400 font-medium">What you might notice</span>
               <p className="text-slate-200 leading-relaxed text-[11px]">{fault.action}</p>
             </div>
           </div>
