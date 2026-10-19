@@ -173,7 +173,7 @@ test('every topic fits a narrow phone and loads without runtime errors', async (
   await page.setViewportSize({ width: 375, height: 812 });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  for (const topic of ['home', 'chassis', 'engine', 'turbo', 'transmission', 'differential', 'brakes', 'steering', 'suspension', 'cooling', 'aero', 'electronics', 'ev', 'quiz']) {
+  for (const topic of ['home', 'chassis', 'engine', 'turbo', 'transmission', 'differential', 'brakes', 'steering', 'suspension', 'cooling', 'aero', 'electronics', 'addons', 'ev', 'quiz']) {
     await page.goto('/#' + topic);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), topic).toBeTruthy();
@@ -256,7 +256,7 @@ test('landing leads into lessons and the home logo returns to it', async ({ page
   await expect(page.getByRole('heading', { name: 'Pick any lesson, or start at one.' })).toBeInViewport();
   await page.locator('#lessons').getByRole('link', { name: /^Brakes & ABS:/ }).click();
   await expect(page).toHaveURL(/#brakes$/);
-  await expect(page.getByLabel('Lesson 6 of 13')).toBeVisible();
+  await expect(page.getByLabel('Lesson 6 of 14')).toBeVisible();
   await page.getByRole('link', { name: 'Vroom home' }).click();
   await expect(page).not.toHaveURL(/#/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
@@ -499,7 +499,7 @@ test.describe('phone layout', () => {
 
     await dock.getByRole('button', { name: 'Next topic: Engine' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
-    await expect(dock).toContainText('02 of 13');
+    await expect(dock).toContainText('02 of 14');
     await dock.getByRole('button', { name: 'Previous topic: Car overview' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Take the car apart');
 
@@ -522,4 +522,44 @@ test.describe('phone layout', () => {
     await expect(dock.getByRole('button', { name: /Continue/ })).toContainText('Brakes & ABS');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
   });
+});
+
+
+test('fitting add-ons changes the numbers, conflicting parts swap, and stock resets', async ({ page }) => {
+  test.setTimeout(60000);
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Toggle Navigation Menu' }).click();
+  await page.getByRole('dialog').getByRole('link', { name: 'Add-ons', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('What you can bolt onto a car');
+  await expect(page.locator('.garage-stage canvas')).toBeVisible();
+
+  const stats = page.locator('.garage-stats');
+  await expect(stats).toContainText('0 kg');
+  await expect(stats).toContainText('135 mm');
+
+  const wing = page.getByRole('button', { name: 'Rear wing', exact: true });
+  await wing.click();
+  await expect(wing).toHaveAttribute('aria-pressed', 'true');
+  await expect(stats).toContainText('+7 kg');
+  await expect(stats).toContainText('+4%');
+  await expect(page.locator('.garage-detail')).toContainText('The catch');
+
+  await page.getByRole('button', { name: 'Lowering springs', exact: true }).click();
+  await expect(stats).toContainText('95 mm');
+
+  // The diffuser and the tow hitch share the space under the rear bumper.
+  const diffuser = page.getByRole('button', { name: 'Rear diffuser', exact: true });
+  const hitch = page.getByRole('button', { name: 'Tow hitch', exact: true });
+  await diffuser.click();
+  await hitch.click();
+  await expect(hitch).toHaveAttribute('aria-pressed', 'true');
+  await expect(diffuser).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('.garage-note')).toContainText('Rear diffuser removed');
+
+  await page.getByRole('button', { name: 'Back to stock' }).click();
+  await expect(stats).toContainText('0 kg');
+  await expect(page.locator('.addon-toggle[aria-pressed="true"]')).toHaveCount(0);
+  expect(errors).toEqual([]);
 });

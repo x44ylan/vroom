@@ -139,7 +139,8 @@ export async function loadCar(renderer, { ghost = [] } = {}) {
   const car = gltf.scene;
 
   // Normalise: ground at y = 0, centred, nose toward +z, real length ~4.4 m.
-  const box = new THREE.Box3().setFromObject(car);
+  // Measure the actual vertices: the compressed wheels are rotated, so their rough boxes reach below the tyres.
+  const box = new THREE.Box3().setFromObject(car, true);
   const centre = box.getCenter(new THREE.Vector3());
   car.position.sub(new THREE.Vector3(centre.x, box.min.y, centre.z));
   const turn = new THREE.Group();

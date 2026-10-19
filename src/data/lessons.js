@@ -80,6 +80,13 @@ export const lessons = {
     takeaway: 'A fault code identifies what the computer noticed. It does not, by itself, prove which part needs replacing.',
     terms: [['ECU / ECM', 'Electronic control unit / engine control module: names for computers that control vehicle systems.'], ['Misfire', 'When a cylinder does not burn its fuel-air mixture properly.'], ['OBD-II', 'The onboard diagnostic system that lets a scan tool read engine-related fault information.']],
   },
+  addons: {
+    label: 'Add-ons', title: 'What you can bolt onto a car',
+    description: 'Cars leave the factory as a compromise. Owners then fit parts that change how air moves around the body, how low the car sits, or what it can carry. Every add-on helps with one thing and costs you something else.',
+    tip: 'Fit the rear wing, then the roof box, and watch the air resistance number. Then fit the tow hitch while the diffuser is on.',
+    takeaway: 'An add-on is a trade. Aero parts manage air at speed, lower springs swap comfort for grip, and carrying gear adds weight and drag. Know what you give up before you fit anything.',
+    terms: [['Downforce', 'Air pushing the car down onto the road. More downforce means more grip, but usually more drag too.'], ['Drag coefficient (Cd)', 'A number for how easily a shape slips through air. Lower is better. The stock IS300 is about 0.28.'], ['Ground clearance', 'The gap between the road and the lowest part of the car.']],
+  },
   ev: {
     label: 'Gas vs electric', title: 'How an electric car is different',
     description: 'A gasoline engine burns fuel to create movement. An electric car uses energy stored in a battery to turn a motor. Compare where that energy goes and how the parts fit into the car.',

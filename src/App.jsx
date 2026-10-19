@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
 import HeroCar from './components/HeroCar.jsx';
@@ -16,6 +16,7 @@ import ElectricalEcuSimulator from './components/ElectricalEcuSimulator.jsx';
 import AudioEngineSynth from './components/AudioEngineSynth.jsx';
 import EvVsIceComparison from './components/EvVsIceComparison.jsx';
 import CarQuiz from './components/CarQuiz.jsx';
+import AddonGarage from './components/AddonGarage.jsx';
 import { lessons } from './data/lessons.js';
 import { useIsMobile } from './lib/useMediaQuery.js';
 
@@ -31,10 +32,11 @@ const TOPICS = [
   { id: 'cooling', group: 'Supporting systems', component: CoolingLubricationSimulator },
   { id: 'aero', group: 'Supporting systems', component: AerodynamicsSimulator },
   { id: 'electronics', group: 'Supporting systems', component: ElectricalEcuSimulator },
+  { id: 'addons', group: 'Extensions', component: AddonGarage },
   { id: 'ev', group: 'Review', component: EvVsIceComparison },
   { id: 'quiz', group: 'Review', component: CarQuiz },
 ].map((topic, index) => ({ ...topic, ...lessons[topic.id], number: String(index + 1).padStart(2, '0') }));
-const ICONS = { chassis: CarFront, engine: Cog, turbo: Fan, transmission: Settings2, differential: Split, brakes: Disc3, steering: Navigation2, suspension: ArrowDownUp, cooling: Thermometer, aero: Wind, electronics: Cpu, ev: Zap, quiz: GraduationCap };
+const ICONS = { chassis: CarFront, engine: Cog, turbo: Fan, transmission: Settings2, differential: Split, brakes: Disc3, steering: Navigation2, suspension: ArrowDownUp, cooling: Thermometer, aero: Wind, electronics: Cpu, addons: Wrench, ev: Zap, quiz: GraduationCap };
 TOPICS.forEach(topic => { topic.Icon = ICONS[topic.id]; });
 const GROUPS = [...new Set(TOPICS.map(topic => topic.group))];
 const HOME = 'home';
@@ -71,7 +73,7 @@ function Landing({ onSelect, mobile }) {
   return <>
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
-        <p className="eyebrow">An interactive course · 13 lessons</p>
+        <p className="eyebrow">An interactive course · {TOPICS.length} lessons</p>
         <h1 id="hero-title" tabIndex={-1}>How a car really works.</h1>
         <p className="hero-lede">Take apart a Lexus IS300, then try the engine, gears, brakes, and more. No experience needed — each lesson takes a few minutes.</p>
         {!mobile && <div className="hero-actions">
