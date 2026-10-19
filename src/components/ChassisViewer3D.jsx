@@ -1,55 +1,89 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { buildCar, EXPLODE_OFFSETS } from '../three/carModel.js';
+import { loadCar, createStage, MAX_ZONES } from '../three/heroCar.js';
 import { Segmented } from './controls/Controls.jsx';
 import { RotateCw, Layers, Eye } from 'lucide-react';
 
 const view = (p, t) => ({ position: new THREE.Vector3(...p), target: new THREE.Vector3(...t) });
 const CAMERA_VIEWS = {
-  hero: view([5.6, 2.4, 5.0], [0, 0.42, 0]),
-  quarter: view([4.5, 2.0, 4.3], [0, 0.45, 0]),
-  top: view([0, 8.8, 0.01], [0, 0, 0]),
-  side: view([7.2, 1.0, 0], [0, 0.55, 0]),
-  engine: view([1.9, 1.7, 2.9], [0, 0.6, 1.1]),
+  quarter: view([4.8, 2.1, 4.6], [0, 0.5, 0]),
+  top: view([0, 9.2, 0.01], [0, 0, 0]),
+  side: view([7.6, 1.0, 0], [0, 0.55, 0]),
+  engine: view([2.2, 2.1, 3.4], [0, 0.6, 1.2]),
 };
 // Each part gets a camera angle that frames it.
 const PART_VIEWS = {
-  engine: CAMERA_VIEWS.engine,
-  transmission: view([1.8, 1.3, 1.9], [0, 0.45, 0.45]),
-  driveshaft: view([2.4, 0.7, -0.2], [0, 0.35, -0.5]),
-  differential: view([1.6, 1.3, -3.0], [0, 0.32, -1.2]),
-  suspension: view([2.6, 1.1, 2.6], [0.6, 0.4, 1.4]),
-  brakes: view([2.4, 1.0, 2.0], [0.7, 0.32, 1.4]),
-  exhaust: view([2.0, 0.5, -3.6], [0.3, 0.25, -1.2]),
+  engine: view([3.0, 2.6, 4.2], [0, 0.55, 1.1]),
+  transmission: view([3.6, 3.4, 2.2], [0, 0.45, 0.4]),
+  driveshaft: view([4.6, 1.5, -0.6], [0, 0.4, -0.5]),
+  differential: view([2.8, 1.9, -4.8], [0, 0.4, -1.2]),
+  suspension: view([4.4, 1.6, 4.0], [0.3, 0.45, 0.6]),
+  brakes: view([4.0, 1.1, 3.4], [0.5, 0.35, 1.0]),
+  exhaust: view([3.8, 0.9, -4.8], [0.2, 0.3, -0.9]),
 };
 
-export default function ChassisViewer3D({ variant = 'full' }) {
-  const hero = variant === 'hero';
+// The mechanical parts are drawn to IS300 dimensions; this lines them up with the wheels of the white body model.
+const MECH_SCALE = new THREE.Vector3(1.09, 1, 1.025);
+const MECH_OFFSET = new THREE.Vector3(0, 0, 0.045);
+const toCar = (x, y, z) => new THREE.Vector3(x, y, z).multiply(MECH_SCALE).add(MECH_OFFSET);
+const seg = (a, b, r) => ({ a: toCar(...a), b: toCar(...b), r });
+const corners = fn => [1.40, -1.27].flatMap(z => [-1, 1].map(side => fn(side, z)));
+
+// Where each part sits, as capsules in car space. The body opens an x-ray window over them.
+const PART_ZONES = {
+  engine: [seg([0, 0.6, 0.86], [0, 0.6, 1.44], 0.42)],
+  transmission: [seg([0, 0.5, 0.7], [0, 0.45, 0.1], 0.27)],
+  driveshaft: [seg([0, 0.45, 0], [0, 0.34, -1.13], 0.16)],
+  differential: [seg([-0.6, 0.31, -1.27], [0.6, 0.31, -1.27], 0.2)],
+  suspension: corners((s, z) => seg([s * 0.62, 0.2, z], [s * 0.5, 0.72, z], 0.24)),
+  brakes: corners((s, z) => seg([s * 0.68, 0.32, z], [s * 0.76, 0.32, z], 0.22)),
+  exhaust: [seg([0.25, 0.66, 1.36], [0.24, 0.22, 0.6], 0.18), seg([0.22, 0.2, 0.6], [0.38, 0.24, -2.2], 0.2)],
+};
+// Which zone the callout points at (the near side when a part repeats at every wheel) and how far along it.
+const CALLOUT_AT = { suspension: [3, 0.5], brakes: [1, 0.5], exhaust: [1, 0.85] };
+
+const PART_WHERE = {
+  engine: 'Under the bonnet, between the front wheels',
+  transmission: 'Right behind the engine, under the gear lever',
+  driveshaft: 'Under the floor, down the middle of the car',
+  differential: 'Between the rear wheels',
+  suspension: 'At each of the four wheels',
+  brakes: 'Inside each wheel',
+  exhaust: 'From the engine, under the floor, out the back',
+};
+
+const clamp01 = t => Math.min(1, Math.max(0, t));
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+export default function ChassisViewer3D() {
   const mountRef = useRef(null);
-  const sceneRef = useRef(null);
-  const rendererRef = useRef(null);
+  const calloutRef = useRef(null);
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
-  const partsRef = useRef({});
-  const animFrameRef = useRef(null);
   const carRootRef = useRef(null);
+  const bodyRef = useRef(null);
+  const partsRef = useRef({});
   const tweenRef = useRef(null);
   const explodedRef = useRef(false);
-  const highlightRef = useRef(null);
-  const focusRef = useRef(false);
+  const bodyVisibleRef = useRef(true);
+  const fallbackRef = useRef(false);
+  const highlightRef = useRef('engine');
+  const locateRef = useRef(() => {});
+  const selectRef = useRef(() => {});
   const wakeRef = useRef(() => {});
+  const reduceMotion = useRef(window.matchMedia('(prefers-reduced-motion: reduce)').matches).current;
 
   const [activeHighlight, setActiveHighlight] = useState('engine');
-  const [isRotating, setIsRotating] = useState(() => !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [isRotating, setIsRotating] = useState(() => !reduceMotion);
   const rotationRef = useRef(isRotating);
   const [webglUnavailable, setWebglUnavailable] = useState(false);
+  const [explodedView, setExplodedView] = useState(false);
+  const [bodyVisible, setBodyVisible] = useState(true);
+  const [cameraPreset, setCameraPreset] = useState('quarter');
 
   useEffect(() => { rotationRef.current = isRotating; }, [isRotating]);
-  const [explodedView, setExplodedView] = useState(false);
-  const [bodyTranslucent, setBodyTranslucent] = useState(true);
-  const [cameraPreset, setCameraPreset] = useState('quarter');
 
   const COMPONENT_DETAILS = {
   "engine": {
@@ -185,20 +219,6 @@ export default function ChassisViewer3D({ variant = 'full' }) {
     if (!container) return;
 
     const isMobile = window.innerWidth < 768;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    if (!hero) {
-      scene.fog = new THREE.Fog(0x05080f, 9, 22);
-    }
-
-    const width = container.clientWidth;
-    const height = container.clientHeight || (isMobile ? 320 : 460);
-    const camera = new THREE.PerspectiveCamera(hero ? 28 : isMobile ? 40 : 32, width / height, 0.05, 80);
-    const startView = hero ? CAMERA_VIEWS.hero : CAMERA_VIEWS.quarter;
-    camera.position.copy(startView.position).multiplyScalar(isMobile && !hero ? 1.18 : 1);
-    cameraRef.current = camera;
-
     let renderer;
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -207,113 +227,183 @@ export default function ChassisViewer3D({ variant = 'full' }) {
       return;
     }
     renderer.setClearColor(0x000000, 0);
-    renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    rendererRef.current = renderer;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // Studio reflections give the metal parts shape; a blue key and rim light set the mood.
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    const envMap = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = envMap;
-    scene.environmentIntensity = 0.55;
-    scene.add(new THREE.HemisphereLight(0x9ec4ff, 0x05070c, 0.5));
-    const key = new THREE.DirectionalLight(0xffffff, 2.2);
-    key.position.set(4, 7, 3);
-    key.castShadow = true;
-    key.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
-    Object.assign(key.shadow.camera, { left: -3.2, right: 3.2, top: 3.2, bottom: -3.2, near: 1, far: 18 });
-    key.shadow.bias = -0.0004;
-    key.shadow.radius = 6;
-    scene.add(key);
-    const rim = new THREE.DirectionalLight(0x4d94ff, 3.2);
-    rim.position.set(-5, 2.5, -4);
-    scene.add(rim);
-    const fill = new THREE.PointLight(0x6aa8ff, 6, 6, 1.6);
-    fill.position.set(0, 1.6, 2.6);
+    const { scene } = createStage(renderer);
+    scene.fog = new THREE.Fog(0x070a10, 11, 26);
+    // The mechanical parts are darker than the paint; a soft fill keeps them readable inside the x-ray window.
+    const fill = new THREE.PointLight(0x9cc4ff, 4, 7, 1.6);
+    fill.position.set(0, 2.2, 1.6);
     scene.add(fill);
 
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(hero ? 3.6 : 6, 64), new THREE.ShadowMaterial({ opacity: hero ? 0.5 : 0.6 }));
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
-    // Soft blue pool of light under the car.
-    const glowTex = (() => {
-      const c = document.createElement('canvas');
-      c.width = c.height = 256;
-      const ctx = c.getContext('2d');
-      const grd = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-      grd.addColorStop(0, 'rgba(77,148,255,0.55)');
-      grd.addColorStop(0.45, 'rgba(77,148,255,0.16)');
-      grd.addColorStop(1, 'rgba(77,148,255,0)');
-      ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, 256, 256);
-      return new THREE.CanvasTexture(c);
-    })();
-    const glow = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 6.4), new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-    glow.rotation.x = -Math.PI / 2;
-    glow.position.y = 0.002;
-    scene.add(glow);
-    if (!hero) {
-      const grid = new THREE.PolarGridHelper(6, 16, 8, 64, 0x1d2a44, 0x111a2b);
-      grid.position.y = 0.001;
-      scene.add(grid);
-    }
+    const camera = new THREE.PerspectiveCamera(isMobile ? 40 : 32, 1, 0.05, 80);
+    const mobileScale = () => (window.innerWidth < 768 ? 1.18 : 1);
+    camera.position.copy(CAMERA_VIEWS.quarter.position).multiplyScalar(mobileScale());
+    cameraRef.current = camera;
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.maxPolarAngle = Math.PI / 2 - 0.04;
-    controls.minDistance = 2.2;
-    controls.maxDistance = 11;
+    controls.minDistance = 2.4;
+    controls.maxDistance = 12;
     controls.enablePan = false;
-    controls.target.copy(startView.target);
-    if (hero) controls.enabled = false; // decorative: never capture scroll or touch
+    controls.target.copy(CAMERA_VIEWS.quarter.target);
     controlsRef.current = controls;
     controls.addEventListener('start', () => { tweenRef.current = null; });
 
-    const { root, parts, spinners } = buildCar();
-    scene.add(root);
+    const carRoot = new THREE.Group();
+    scene.add(carRoot);
+    carRootRef.current = carRoot;
+    const mech = new THREE.Group();
+    mech.scale.copy(MECH_SCALE);
+    mech.position.copy(MECH_OFFSET);
+    carRoot.add(mech);
+    const { root, parts } = buildCar();
+    mech.add(root);
     partsRef.current = parts;
-    carRootRef.current = root;
+    // The white body model brings its own wheels and shell.
+    parts.wheels.visible = false;
+    parts.structure.visible = false;
+    parts.body.visible = false;
+    // Parts sit inside the body, so they would always be in its shadow; light them directly instead.
+    root.traverse(o => { if (o.isMesh) o.receiveShadow = false; });
 
-    const ro = new ResizeObserver(() => {
-      wake(300);
-      const nw = container.clientWidth;
-      const nh = container.clientHeight || (window.innerWidth < 768 ? 320 : 460);
-      camera.aspect = nw / nh;
-      camera.updateProjectionMatrix();
-      renderer.setSize(nw, nh);
+    let disposed = false;
+    let uniforms = null;
+    let revealStart = 0;
+    loadCar(renderer, { ghost: ['tyre', 'rim', 'underbody', 'chassis'] }).then(res => {
+      if (disposed) return;
+      const { car, mats } = res;
+      // Hide the body model's own brake and suspension pieces so the labelled parts are the ones you see.
+      car.traverse(o => { if (o.isMesh && [mats.caliper, mats.chassis, mats.exhaust].includes(o.material)) o.visible = false; });
+      car.visible = bodyVisibleRef.current;
+      carRoot.add(car);
+      bodyRef.current = car;
+      uniforms = res.uniforms;
+      uniforms.uReveal.value = reduceMotion ? 1 : 0;
+      revealStart = performance.now();
+      locateRef.current(highlightRef.current, { delay: reduceMotion ? 0 : 1.5 });
+      wake(3500);
+    }).catch(() => {
+      // Without the body model, fall back to the simple glass shell so every part is still visible.
+      if (disposed) return;
+      fallbackRef.current = true;
+      parts.body.visible = bodyVisibleRef.current;
+      wake();
     });
+
+    const resize = () => {
+      const w = container.clientWidth, h = container.clientHeight || (window.innerWidth < 768 ? 320 : 460);
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      wake(300);
+    };
+    const ro = new ResizeObserver(resize);
     ro.observe(container);
 
-    const clock = new THREE.Clock();
-    let running = true;
-    const io = new IntersectionObserver(([entry]) => { running = entry.isIntersecting; });
+    let visible = true;
+    const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
     io.observe(container);
 
     // Render only while something is changing: rotation, a camera move, parts easing,
-    // a highlight pulse, or the user orbiting. Otherwise the canvas stays idle.
+    // the locate animation, or the user orbiting. Otherwise the canvas stays idle.
     let dirtyUntil = performance.now() + 1500;
     const wake = (ms = 1200) => { dirtyUntil = Math.max(dirtyUntil, performance.now() + ms); };
-    controls.addEventListener('change', () => wake(400));
     wakeRef.current = wake;
-    const animate = () => {
-      animFrameRef.current = requestAnimationFrame(animate);
-      const dt = Math.min(clock.getDelta(), 0.05);
-      if (!running) return;
-      const busy = (rotationRef.current && !reduceMotion) || tweenRef.current || performance.now() < dirtyUntil;
-      if (!busy) return;
-      if (rotationRef.current && !reduceMotion) root.rotation.y += dt * (hero ? 0.18 : 0.18);
-      const roll = reduceMotion ? 0 : dt * 9;
-      for (const s of spinners) s.object.rotation[s.axis] += roll * s.rate;
+    controls.addEventListener('change', () => wake(400));
+    resize();
 
-      // Ease each part toward its exploded or assembled position.
+    // Locate animation: the window over the old part closes, the camera moves, a new window opens
+    // over the selected part and a ripple runs out across the paint from it.
+    const fx = { key: null, shown: null, t0: 0, openAt: 0, closeFrom: 0, lens: 0 };
+    const setZones = key => {
+      const zones = PART_ZONES[key] || [];
+      for (let i = 0; i < MAX_ZONES; i++) {
+        const z = zones[i];
+        if (z) { uniforms.uZoneA.value[i].set(z.a.x, z.a.y, z.a.z, z.r); uniforms.uZoneB.value[i].set(z.b.x, z.b.y, z.b.z, 1); }
+        else uniforms.uZoneB.value[i].w = 0;
+      }
+    };
+    locateRef.current = (key, { delay = 0.3 } = {}) => {
+      fx.key = key;
+      fx.t0 = performance.now();
+      fx.closeFrom = fx.lens;
+      fx.delay = reduceMotion ? 0 : delay;
+      calloutRef.current?.classList.remove('is-visible');
+      wake(3000);
+    };
+
+    const callout = { at: new THREE.Vector3(), shown: false };
+    const updateCallout = () => {
+      const el = calloutRef.current;
+      if (!el) return;
+      const key = fx.shown;
+      const zones = key && PART_ZONES[key];
+      const ready = zones && fx.lens > 0.6;
+      if (ready) {
+        const [zi, along] = CALLOUT_AT[key] || [0, 0.5];
+        const z = zones[zi];
+        callout.at.copy(z.a).lerp(z.b, along).applyMatrix4(carRoot.matrixWorld).project(camera);
+        const inView = callout.at.z < 1 && Math.abs(callout.at.x) < 1.05 && Math.abs(callout.at.y) < 1.05;
+        const x = (callout.at.x * 0.5 + 0.5) * container.clientWidth;
+        const y = (-callout.at.y * 0.5 + 0.5) * container.clientHeight;
+        el.style.translate = `${x.toFixed(1)}px ${y.toFixed(1)}px`;
+        // Put the label on whichever side has room for it.
+        const labelWidth = el.lastElementChild?.offsetWidth || 200;
+        el.dataset.side = x + 24 + labelWidth > container.clientWidth && x > container.clientWidth / 2 ? 'left' : 'right';
+        if (inView !== callout.shown) { callout.shown = inView; el.classList.toggle('is-visible', inView); }
+      } else if (callout.shown) {
+        callout.shown = false;
+        el.classList.remove('is-visible');
+      }
+    };
+
+    // Tap the car to find out what is there.
+    const raycaster = new THREE.Raycaster();
+    const pointer = { x: 0, y: 0, down: false };
+    const onDown = e => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.down = true; };
+    const onUp = e => {
+      if (!pointer.down) return;
+      pointer.down = false;
+      if (Math.hypot(e.clientX - pointer.x, e.clientY - pointer.y) > 6) return;
+      const rect = renderer.domElement.getBoundingClientRect();
+      raycaster.setFromCamera({ x: ((e.clientX - rect.left) / rect.width) * 2 - 1, y: -((e.clientY - rect.top) / rect.height) * 2 + 1 }, camera);
+      const inv = new THREE.Matrix4().copy(carRoot.matrixWorld).invert();
+      const ray = raycaster.ray.clone().applyMatrix4(inv);
+      let best = null, bestScore = 1.15;
+      for (const [key, zones] of Object.entries(PART_ZONES)) {
+        for (const z of zones) {
+          const score = ray.distanceSqToSegment(z.a, z.b) ** 0.5 / z.r;
+          if (score < bestScore) { bestScore = score; best = key; }
+        }
+      }
+      if (best) selectRef.current(best);
+    };
+    renderer.domElement.addEventListener('pointerdown', onDown);
+    renderer.domElement.addEventListener('pointerup', onUp);
+
+    const clock = new THREE.Clock();
+    const camLocal = new THREE.Vector3();
+    const inverse = new THREE.Matrix4();
+    let raf = 0;
+    const animate = () => {
+      raf = requestAnimationFrame(animate);
+      const dt = Math.min(clock.getDelta(), 0.05);
+      if (!visible || document.hidden) return;
+      const now = performance.now();
+      const busy = rotationRef.current || tweenRef.current || now < dirtyUntil;
+      if (!busy) return;
+      if (rotationRef.current) carRoot.rotation.y += dt * 0.18;
+
+      // Ease each part toward its exploded or assembled position; the body lifts away when exploded.
       const k = 1 - Math.exp(-dt * 7);
       for (const [name, part] of Object.entries(parts)) {
         const offset = explodedRef.current && EXPLODE_OFFSETS[name];
@@ -321,116 +411,135 @@ export default function ChassisViewer3D({ variant = 'full' }) {
         if (offset) target.add(offset);
         part.position.lerp(target, k);
       }
+      if (bodyRef.current) bodyRef.current.position.y += ((explodedRef.current ? 0.55 : 0) - bodyRef.current.position.y) * k;
 
-      // Give the selected part a steady blue glow so it stands out from the rest.
-      const pulse = 0.6;
+      if (uniforms) {
+        uniforms.uReveal.value = reduceMotion ? 1 : easeOut(clamp01((now - revealStart) / 1600));
+        const t = (now - fx.t0) / 1000;
+        if (fx.key && fx.shown !== fx.key) {
+          // Close the current window quickly, then switch to the new part.
+          const close = fx.closeFrom > 0.01 && !reduceMotion ? 0.16 : 0;
+          fx.lens = close ? fx.closeFrom * (1 - clamp01(t / close)) : 0;
+          if (t >= close) { setZones(fx.key); fx.shown = fx.key; fx.openAt = now + Math.max(0, fx.delay - close) * 1000; }
+        }
+        if (fx.shown) {
+          const o = (now - fx.openAt) / 1000;
+          fx.lens = reduceMotion ? 1 : o < 0 ? 0 : easeOut(clamp01(o / 0.55));
+          uniforms.uWave.value = Math.max(0, o) * 1.9;
+          uniforms.uWaveAmp.value = reduceMotion || o < 0 ? 0 : Math.pow(1 - clamp01(o / 1.3), 2);
+        }
+        uniforms.uLens.value = fx.lens;
+        inverse.copy(carRoot.matrixWorld).invert();
+        uniforms.uCarInverse.value.copy(inverse);
+        uniforms.uCamLocal.value.copy(camLocal.copy(camera.position).applyMatrix4(inverse));
+      }
+
+      // With the body on, only the selected part is drawn, so its window shows that part alone.
+      const isolate = bodyVisibleRef.current && bodyRef.current && !explodedRef.current;
+      for (const name of Object.keys(PART_ZONES)) parts[name].visible = !isolate || name === (fx.shown || highlightRef.current);
+
+      // The selected part glows: a brief flash as the window opens, then a steady blue.
+      const flash = fx.shown && !reduceMotion ? Math.max(0, 1 - Math.abs((now - fx.openAt) / 1000 - 0.35) / 0.45) : 0;
       for (const [name, part] of Object.entries(parts)) {
         if (!part.userData.materials) continue;
         const on = highlightRef.current === name;
+        const target = on ? 0.8 + flash * 0.9 : 0;
         for (const m of part.userData.materials) {
           m.emissive.setHex(0x2f7bff);
-          m.emissiveIntensity += ((on ? pulse : 0) - m.emissiveIntensity) * k;
+          m.emissiveIntensity += (target - m.emissiveIntensity) * (on ? 1 - Math.exp(-dt * 14) : k);
         }
-      }
-
-      const body = parts.body;
-      if (body.userData.shell) {
-        const u = body.userData.shell.material.uniforms.uFade;
-        u.value += ((focusRef.current ? 0.28 : 1) - u.value) * k;
-        body.userData.lineMat.opacity = 0.55 * u.value;
       }
 
       const tween = tweenRef.current;
       if (tween) {
-        tween.t = Math.min(1, tween.t + dt / 0.9);
-        const e = 1 - Math.pow(1 - tween.t, 3);
+        tween.t = reduceMotion ? 1 : Math.min(1, tween.t + dt / 0.9);
+        const e = easeOut(tween.t);
         camera.position.lerpVectors(tween.fromPos, tween.toPos, e);
         controls.target.lerpVectors(tween.fromTarget, tween.toTarget, e);
         if (tween.t >= 1) { tweenRef.current = null; wake(); }
       }
       controls.update();
       renderer.render(scene, camera);
+      updateCallout();
     };
     animate();
 
     return () => {
-      cancelAnimationFrame(animFrameRef.current);
+      disposed = true;
+      cancelAnimationFrame(raf);
       ro.disconnect();
       io.disconnect();
       controls.dispose();
+      renderer.domElement.removeEventListener('pointerdown', onDown);
+      renderer.domElement.removeEventListener('pointerup', onUp);
       const disposables = new Set();
       scene.traverse(object => {
         if (object.geometry) disposables.add(object.geometry);
-        const mats = object.material ? (Array.isArray(object.material) ? object.material : [object.material]) : [];
-        mats.forEach(m => { disposables.add(m); if (m.map) disposables.add(m.map); });
+        [object.material].flat().forEach(m => { if (!m) return; disposables.add(m); if (m.map) disposables.add(m.map); });
       });
       disposables.forEach(item => item.dispose());
-      envMap.dispose();
-      pmrem.dispose();
+      scene.environment?.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     };
   }, []);
 
   useEffect(() => { explodedRef.current = explodedView; wakeRef.current(1500); }, [explodedView]);
-  useEffect(() => { highlightRef.current = hero ? null : activeHighlight; wakeRef.current(); }, [activeHighlight, hero]);
   useEffect(() => {
-    const body = partsRef.current.body;
-    if (body) body.visible = bodyTranslucent;
+    bodyVisibleRef.current = bodyVisible;
+    if (bodyRef.current) bodyRef.current.visible = bodyVisible;
+    else if (fallbackRef.current) partsRef.current.body.visible = bodyVisible;
     wakeRef.current();
-  }, [bodyTranslucent]);
+  }, [bodyVisible]);
 
-  const flyTo = (view) => {
+  const flyTo = (target) => {
     wakeRef.current(1500);
     const camera = cameraRef.current, controls = controlsRef.current;
     if (!camera || !controls) return;
     const scale = window.innerWidth < 768 ? 1.18 : 1;
     tweenRef.current = {
-      t: 0, fromPos: camera.position.clone(), toPos: view.position.clone().multiplyScalar(scale),
-      fromTarget: controls.target.clone(), toTarget: view.target.clone(),
+      t: 0, fromPos: camera.position.clone(), toPos: target.position.clone().multiplyScalar(scale),
+      fromTarget: controls.target.clone(), toTarget: target.target.clone(),
     };
   };
 
   const setPresetAngle = (preset) => {
     setCameraPreset(preset);
     setIsRotating(false);
-    focusRef.current = preset === 'engine';
     if (carRootRef.current) carRootRef.current.rotation.y = 0;
     flyTo(CAMERA_VIEWS[preset]);
   };
 
   const selectPart = (key) => {
     setActiveHighlight(key);
-    const view = PART_VIEWS[key];
-    if (view) {
-      focusRef.current = true;
-      setIsRotating(false);
-      setCameraPreset(null);
-      if (carRootRef.current) carRootRef.current.rotation.y = 0;
-      flyTo(view);
-    }
+    highlightRef.current = key;
+    setIsRotating(false);
+    setCameraPreset(null);
+    if (carRootRef.current) carRootRef.current.rotation.y = 0;
+    if (PART_VIEWS[key]) flyTo(PART_VIEWS[key]);
+    locateRef.current(key);
   };
+  selectRef.current = selectPart;
 
   const currentDetail = COMPONENT_DETAILS[activeHighlight] || COMPONENT_DETAILS.engine;
-
   const partLabels = { engine: 'Engine', transmission: 'Transmission', driveshaft: 'Driveshaft', differential: 'Differential', suspension: 'Suspension', brakes: 'Brakes', exhaust: 'Exhaust' };
-
-  if (hero) {
-    return <div className="hero-canvas" aria-hidden="true">{!webglUnavailable && <div ref={mountRef} className="viewer-canvas" />}</div>;
-  }
 
   return (
     <section className="chassis-viewer" aria-label="Interactive chassis explorer">
       <div className="chassis-stage">
         {webglUnavailable ? <div className="viewer-fallback" role="status"><h3>3D view unavailable</h3><p>Your browser could not start the 3D model. You can still read about every part below.</p></div> : <>
-          <div ref={mountRef} className="viewer-canvas" role="img" aria-label="Rotatable model of the Lexus IS300 chassis. Use the camera buttons for preset views." />
-          <span className="viewer-caption">Drag to orbit · Scroll or pinch to zoom</span>
+          <div ref={mountRef} className="viewer-canvas" role="img" aria-label="Rotatable model of the Lexus IS300. The selected part is shown through the body." />
+          <div ref={calloutRef} className="part-callout" aria-hidden="true">
+            <span className="part-callout-dot" />
+            <span className="part-callout-label" key={activeHighlight}><strong>{partLabels[activeHighlight]}</strong>{PART_WHERE[activeHighlight]}</span>
+          </div>
+          <span className="viewer-caption">Tap the car to find a part</span>
         </>}
         <div className="viewer-dock viewer-dock-top">
           <div className="viewer-toggles" role="group" aria-label="Model controls">
-            <button disabled={webglUnavailable} aria-pressed={isRotating} onClick={() => { focusRef.current = false; setIsRotating(!isRotating); }}><RotateCw size={15} aria-hidden="true" />Auto-rotate</button>
+            <button disabled={webglUnavailable} aria-pressed={isRotating} onClick={() => setIsRotating(!isRotating)}><RotateCw size={15} aria-hidden="true" />Auto-rotate</button>
             <button disabled={webglUnavailable} aria-pressed={explodedView} onClick={() => setExplodedView(!explodedView)}><Layers size={15} aria-hidden="true" />Exploded view</button>
-            <button disabled={webglUnavailable} aria-pressed={bodyTranslucent} onClick={() => setBodyTranslucent(!bodyTranslucent)}><Eye size={15} aria-hidden="true" />Body shell</button>
+            <button disabled={webglUnavailable} aria-pressed={bodyVisible} onClick={() => setBodyVisible(!bodyVisible)}><Eye size={15} aria-hidden="true" />Body</button>
           </div>
         </div>
         <div className="viewer-dock viewer-dock-bottom">

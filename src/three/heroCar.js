@@ -70,8 +70,13 @@ export function createMaterials() {
   };
 }
 
-// Paint reveal: a scan line travels nose -> tail; behind it the car is painted, ahead it's a blueprint.
-function addReveal(material, uniforms, { lineOnly = false } = {}) {
+// Body shader. Two effects share it:
+// - Paint reveal (landing intro): a scan line travels nose -> tail; ahead of it the car is a blueprint.
+// - Part locator (car overview): an x-ray lens opens over up to four zones (capsules in car space), seen
+//   from the camera, and a ripple runs across the body from the part so you can see where it sits.
+export const MAX_ZONES = 4;
+
+function addReveal(material, uniforms) {
   material.onBeforeCompile = shader => {
     Object.assign(shader.uniforms, uniforms);
     shader.vertexShader = shader.vertexShader
@@ -79,23 +84,55 @@ function addReveal(material, uniforms, { lineOnly = false } = {}) {
       .replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\nvCarPos = (uCarInverse * modelMatrix * vec4(transformed, 1.0)).xyz;');
     shader.vertexShader = 'uniform mat4 uCarInverse;\n' + shader.vertexShader;
     shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', '#include <common>\nvarying vec3 vCarPos;\nuniform float uReveal;\nuniform vec3 uScanColor;\nuniform float uLength;')
+      .replace('#include <common>', `#include <common>
+        varying vec3 vCarPos;
+        uniform float uReveal; uniform vec3 uScanColor; uniform float uLength;
+        uniform vec4 uZoneA[${MAX_ZONES}]; uniform vec4 uZoneB[${MAX_ZONES}];
+        uniform float uLens; uniform float uWave; uniform float uWaveAmp; uniform vec3 uCamLocal;
+        float segDist(vec3 p, vec3 a, vec3 b) {
+          vec3 pa = p - a, ba = b - a;
+          return length(pa - ba * clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0));
+        }
+        // Distance between the camera ray through this pixel and a segment: an x-ray lens that
+        // keeps the same size at the part's depth however the camera looks at it.
+        float raySegDist(vec3 ro, vec3 rd, vec3 a, vec3 b) {
+          vec3 ba = b - a, oa = ro - a;
+          float baba = dot(ba, ba), bard = dot(ba, rd), denom = baba - bard * bard;
+          float s = denom > 1e-6 ? clamp((dot(ba, oa) - bard * dot(rd, oa)) / denom, 0.0, 1.0) : 0.0;
+          vec3 q = a + ba * s;
+          return length(ro + rd * max(dot(q - ro, rd), 0.0) - q);
+        }`)
       .replace('#include <opaque_fragment>', `
         float zn = clamp(0.5 - vCarPos.z / uLength, 0.0, 1.0);   // 0 at the nose, 1 at the tail
         float front = uReveal * 1.1 - 0.05;
         float painted = smoothstep(front + 0.01, front - 0.01, zn);
         float line = exp(-pow((zn - front) / 0.008, 2.0)) * step(0.001, uReveal) * step(uReveal, 0.999);
+        float lens = 0.0, edge = 0.0, wave = 0.0;
+        if (uLens > 0.001 || uWaveAmp > 0.001) {
+          vec3 rd = normalize(vCarPos - uCamLocal);
+          for (int i = 0; i < ${MAX_ZONES}; i++) {
+            if (uZoneB[i].w > 0.5) {
+              float r = uZoneA[i].w * uLens;
+              float dr = raySegDist(uCamLocal, rd, uZoneA[i].xyz, uZoneB[i].xyz);
+              lens = max(lens, smoothstep(r + 0.025, r - 0.025, dr));
+              edge = max(edge, exp(-pow((dr - r) / 0.01, 2.0)) * step(0.02, r));
+              wave = max(wave, exp(-pow((segDist(vCarPos, uZoneA[i].xyz, uZoneB[i].xyz) - uWave) / 0.05, 2.0)));
+            }
+          }
+        }
+        painted *= 1.0 - lens;
         float fres = pow(1.0 - abs(dot(normalize(vNormal), normalize(vViewPosition))), 2.5);
         vec3 ghost = uScanColor * (0.04 + fres * 0.7);
-        vec3 rgb = mix(ghost, outgoingLight, painted) + uScanColor * line * 3.0;
-        float alpha = ${lineOnly ? 'diffuseColor.a' : 'mix(0.08 + fres * 0.6, diffuseColor.a, painted)'};
-        gl_FragColor = vec4(rgb, max(alpha, line));`);
+        float glow = line * 3.0 + edge * 1.4 + wave * uWaveAmp * 1.6;
+        vec3 rgb = mix(ghost, outgoingLight, painted) + uScanColor * glow;
+        float alpha = mix(0.08 + fres * 0.6, diffuseColor.a, painted);
+        gl_FragColor = vec4(rgb, max(alpha, min(glow, 1.0)));`);
   };
   material.customProgramCacheKey = () => `reveal-${material.type}-${material.transparent}`;
   material.transparent = true;
 }
 
-export async function loadCar(renderer) {
+export async function loadCar(renderer, { ghost = [] } = {}) {
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);
   const gltf = await loader.loadAsync(MODEL_URL);
@@ -116,8 +153,11 @@ export async function loadCar(renderer) {
   const uniforms = {
     uReveal: { value: 1 }, uScanColor: { value: new THREE.Color('#6fb0ff') },
     uLength: { value: size.z }, uCarInverse: { value: new THREE.Matrix4() },
+    uZoneA: { value: Array.from({ length: MAX_ZONES }, () => new THREE.Vector4()) },
+    uZoneB: { value: Array.from({ length: MAX_ZONES }, () => new THREE.Vector4()) },
+    uLens: { value: 0 }, uWave: { value: 0 }, uWaveAmp: { value: 0 }, uCamLocal: { value: new THREE.Vector3() },
   };
-  for (const key of ['paint', 'trimBlack', 'moulding', 'glass', 'chrome', 'lamp', 'tailLamp', 'gap', 'wiper']) addReveal(mats[key], uniforms);
+  for (const key of ['paint', 'trimBlack', 'moulding', 'glass', 'chrome', 'lamp', 'tailLamp', 'gap', 'wiper', ...ghost]) addReveal(mats[key], uniforms);
 
   const wheels = [];
   car.traverse(o => {

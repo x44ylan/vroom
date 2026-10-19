@@ -404,6 +404,49 @@ test('3D part buttons move the camera and the engine view frames the engine', as
 });
 
 
+test('choosing a part shows where it sits on the car, and tapping the car finds a part', async ({ page }) => {
+  test.setTimeout(60000);
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/#chassis');
+  const stage = page.locator('.chassis-stage');
+  const callout = page.locator('.part-callout');
+  await expect(stage.locator('canvas')).toBeVisible();
+  await expect(callout).toHaveClass(/is-visible/, { timeout: 30000 });
+  await expect(callout).toContainText('Under the bonnet');
+
+  await page.locator('.part-picker').getByRole('button', { name: 'Differential' }).click();
+  await expect(callout).toContainText('Between the rear wheels');
+  await expect(callout).toHaveClass(/is-visible/);
+
+  // From the top view, tap where the engine callout pointed: the engine is selected again.
+  // Headless WebGL renders slowly, so wait for the camera to settle before reading positions.
+  const settled = async () => {
+    let last = '';
+    await expect.poll(async () => {
+      const now = await callout.evaluate(el => el.style.translate);
+      const same = now === last;
+      last = now;
+      return same;
+    }, { timeout: 20000, intervals: [600] }).toBe(true);
+    return last.split(' ').map(parseFloat);
+  };
+  await page.locator('.part-picker').getByRole('button', { name: 'Engine' }).click();
+  await page.getByRole('button', { name: 'Top', exact: true }).click();
+  await expect(callout).toHaveClass(/is-visible/);
+  const [x, y] = await settled();
+  await page.locator('.part-picker').getByRole('button', { name: 'Exhaust' }).click();
+  await page.getByRole('button', { name: 'Top', exact: true }).click();
+  await expect(callout).toContainText('out the back');
+  await settled();
+  await stage.locator('canvas').click({ position: { x, y } });
+  await expect(page.locator('.part-picker').getByRole('button', { name: 'Engine' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(callout).toContainText('Under the bonnet');
+  expect(errors).toEqual([]);
+});
+
+
 test('segmented controls and switches work from the keyboard', async ({ page }) => {
   await page.goto('/#transmission');
   const gear1 = page.getByRole('button', { name: 'Gear 1', exact: true });
