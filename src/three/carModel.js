@@ -111,7 +111,7 @@ function buildBody() {
 
   // X-ray shell: a fresnel glow that is bright at grazing angles and nearly clear face-on.
   const shell = new THREE.Mesh(geo, new THREE.ShaderMaterial({
-    uniforms: { uColor: { value: new THREE.Color(0x5b9dff) }, uBase: { value: 0.035 }, uFade: { value: 1 } },
+    uniforms: { uColor: { value: new THREE.Color(0xc9c9c9) }, uBase: { value: 0.035 }, uFade: { value: 1 } },
     vertexShader: `varying vec3 vN; varying vec3 vV;
       void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vN = normalize(mat3(modelMatrix) * normal);
         vV = normalize(cameraPosition - wp.xyz); gl_Position = projectionMatrix * viewMatrix * wp; }`,
@@ -126,7 +126,7 @@ function buildBody() {
 
   // Character lines: window frames, B-pillar, door shuts, beltline.
   const lineMat = new THREE.LineBasicMaterial({
-    userData: { baseOpacity: 0.55 }, color: 0x8fbaff, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
+    userData: { baseOpacity: 0.55 }, color: 0xcecece, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false });
   const onSide = (side, pts) => pts.map(([z, y]) => new THREE.Vector3(side * (halfW * bodyHalfWidthScale(y, z) + 0.004), y, z));
   const sideLines = [
     [[0.8, 0.9], [0.5, 1.1], [0.18, 1.31], [-0.25, 1.38], [-0.68, 1.32], [-1.05, 1.1], [-1.36, 0.97], [-0.3, 0.93], [0.8, 0.9]],
@@ -142,8 +142,8 @@ function buildBody() {
   }
   group.userData.lineMat = lineMat;
 
-  const headMat = new THREE.MeshStandardMaterial({ color: 0xe6f0ff, emissive: 0xcfe2ff, emissiveIntensity: 2.2, roughness: 0.2 });
-  const tailMat = new THREE.MeshStandardMaterial({ color: 0xff3347, emissive: 0xff2236, emissiveIntensity: 2.4, roughness: 0.3 });
+  const headMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, emissive: 0xe4e4e4, emissiveIntensity: 2.2, roughness: 0.2 });
+  const tailMat = new THREE.MeshStandardMaterial({ color: 0xbfbfbf, emissive: 0xc3c3c3, emissiveIntensity: 2.4, roughness: 0.3 });
   for (const side of [-1, 1]) {
     const head = new THREE.Mesh(new RoundedBoxGeometry(0.34, 0.08, 0.05, 2, 0.02), headMat);
     head.position.set(side * 0.56, 0.6, 2.17);
@@ -349,19 +349,19 @@ function buildStructure(mats) {
 
 export function buildCar() {
   const mats = {
-    iron: metal(0x5d6676, 0.55, 0.75),
-    alloy: metal(0xb9c3d3, 0.28, 0.9),
-    black: metal(0x1a1f2a, 0.45, 0.5),
-    shaft: metal(0xc8d0dc, 0.2, 0.95),
-    rubber: new THREE.MeshStandardMaterial({ color: 0x15171c, roughness: 0.92, metalness: 0 }),
-    rim: metal(0xd7dee9, 0.18, 0.95),
-    disc: metal(0x8d96a5, 0.35, 0.9),
-    caliper: metal(0x5b616c, 0.35, 0.6),
-    arm: metal(0x47505f, 0.45, 0.8),
-    spring: metal(0x9aa3b1, 0.3, 0.8),
-    exhaust: metal(0x8a8f98, 0.4, 0.85),
-    chrome: metal(0xf2f5fa, 0.08, 1),
-    frame: metal(0x2a3240, 0.6, 0.6),
+    iron: metal(0x717171, 0.55, 0.75),
+    alloy: metal(0xc7c7c7, 0.28, 0.9),
+    black: metal(0x292929, 0.45, 0.5),
+    shaft: metal(0xd2d2d2, 0.2, 0.95),
+    rubber: new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.92, metalness: 0 }),
+    rim: metal(0xdfdfdf, 0.18, 0.95),
+    disc: metal(0x9d9d9d, 0.35, 0.9),
+    caliper: metal(0x686868, 0.35, 0.6),
+    arm: metal(0x5c5c5c, 0.45, 0.8),
+    spring: metal(0xa8a8a8, 0.3, 0.8),
+    exhaust: metal(0x939393, 0.4, 0.85),
+    chrome: metal(0xf5f5f5, 0.08, 1),
+    frame: metal(0x3f3f3f, 0.6, 0.6),
   };
   const spinners = [];
   const root = new THREE.Group();

@@ -2,46 +2,46 @@ import React from 'react';
 
 // Shared drawing kit so every lesson diagram has the same light, metal, and labels.
 export const C = {
-  bg: '#0a0f18', panel: '#121a27', line: '#22304a', steel: '#8c97ab', steelHi: '#d9e2f0', steelLo: '#3a4558',
-  iron: '#4b5568', ink: '#e8eefb', muted: '#8f9bb3', blue: '#4d94ff', blueHi: '#a9cbff', blueLo: '#173a7a',
-  hot: '#ff5a4f', warm: '#ffb547', good: '#3ddc97',
+  bg: '#181818', panel: '#272727', line: '#474747', steel: '#a0a0a0', steelHi: '#e3e3e3', steelLo: '#555555',
+  iron: '#636363', ink: '#efefef', muted: '#a5a5a5', blue: '#c9c9c9', blueHi: '#d6d6d6', blueLo: '#717171',
+  hot: '#c0c0c0', warm: '#e1e1e1', good: '#d8d8d8',
 };
 
 export function Defs() {
   return (
     <defs>
       <linearGradient id="k-steel" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="#e4ebf6" /><stop offset=".45" stopColor="#9aa6ba" /><stop offset=".55" stopColor="#7d899e" /><stop offset="1" stopColor="#4a5568" />
+        <stop offset="0" stopColor="#ebebeb" /><stop offset=".45" stopColor="#adadad" /><stop offset=".55" stopColor="#949494" /><stop offset="1" stopColor="#636363" />
       </linearGradient>
       <linearGradient id="k-steel-h" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0" stopColor="#4a5568" /><stop offset=".45" stopColor="#c9d3e3" /><stop offset=".6" stopColor="#8c97ab" /><stop offset="1" stopColor="#3a4558" />
+        <stop offset="0" stopColor="#636363" /><stop offset=".45" stopColor="#d5d5d5" /><stop offset=".6" stopColor="#a0a0a0" /><stop offset="1" stopColor="#555555" />
       </linearGradient>
       <linearGradient id="k-iron" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="#3b4659" /><stop offset="1" stopColor="#1d2533" />
+        <stop offset="0" stopColor="#555555" /><stop offset="1" stopColor="#323232" />
       </linearGradient>
       <linearGradient id="k-blue" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="#8fbcff" /><stop offset=".5" stopColor="#4d94ff" /><stop offset="1" stopColor="#2457b8" />
+        <stop offset="0" stopColor="#cfcfcf" /><stop offset=".5" stopColor="#c9c9c9" /><stop offset="1" stopColor="#9e9e9e" />
       </linearGradient>
       <radialGradient id="k-glow" cx=".5" cy=".5" r=".5">
-        <stop offset="0" stopColor="#4d94ff" stopOpacity=".45" /><stop offset="1" stopColor="#4d94ff" stopOpacity="0" />
+        <stop offset="0" stopColor="#c9c9c9" stopOpacity=".45" /><stop offset="1" stopColor="#c9c9c9" stopOpacity="0" />
       </radialGradient>
       <radialGradient id="k-floor" cx=".5" cy="0" r="1">
-        <stop offset="0" stopColor="#1c3a6e" stopOpacity=".55" /><stop offset="1" stopColor="#0a0f18" stopOpacity="0" />
+        <stop offset="0" stopColor="#686868" stopOpacity=".55" /><stop offset="1" stopColor="#181818" stopOpacity="0" />
       </radialGradient>
       <pattern id="k-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-        <path d="M20 0H0V20" fill="none" stroke="#16213a" strokeWidth="1" />
+        <path d="M20 0H0V20" fill="none" stroke="#383838" strokeWidth="1" />
       </pattern>
       <filter id="k-shadow" x="-20%" y="-20%" width="140%" height="160%">
-        <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#000" floodOpacity=".55" />
+        <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#000000" floodOpacity=".55" />
       </filter>
       <filter id="k-bloom" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="4" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
       </filter>
       <radialGradient id="k-flame" cx=".5" cy=".3" r=".6">
-        <stop offset="0" stopColor="#fff6d6" /><stop offset=".35" stopColor="#ffb547" /><stop offset=".75" stopColor="#ff5a2a" stopOpacity=".6" /><stop offset="1" stopColor="#ff5a2a" stopOpacity="0" />
+        <stop offset="0" stopColor="#f7f7f7" /><stop offset=".35" stopColor="#e1e1e1" /><stop offset=".75" stopColor="#cdcdcd" stopOpacity=".6" /><stop offset="1" stopColor="#cdcdcd" stopOpacity="0" />
       </radialGradient>
       <marker id="k-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M0 0L10 5L0 10z" fill="#4d94ff" />
+        <path d="M0 0L10 5L0 10z" fill="#c9c9c9" />
       </marker>
     </defs>
   );
@@ -84,7 +84,7 @@ export function Callout({ x, y, tx, ty, children, anchor = 'start', color = C.mu
 export function Chip({ x, y, label, value, color = C.ink, w = 120 }) {
   return (
     <g transform={`translate(${x},${y})`}>
-      <rect width={w} height="38" rx="9" fill="#0d1421" stroke={C.line} />
+      <rect width={w} height="38" rx="9" fill="#212121" stroke={C.line} />
       <text x="10" y="15" fill={C.muted} fontSize="10">{label}</text>
       <text x="10" y="30" fill={color} fontSize="13" fontWeight="600" style={{ fontVariantNumeric: 'tabular-nums' }}>{value}</text>
     </g>
@@ -106,12 +106,12 @@ export function gearPath(r, teeth, depth = 6) {
 export function Gear({ r, teeth, angle = 0, fill = 'url(#k-steel)', hub = C.bg, spokes = 0, ...rest }) {
   return (
     <g transform={`rotate(${angle})`} {...rest}>
-      <path d={gearPath(r, teeth, Math.max(4, r * 0.12))} fill={fill} stroke="#0b1220" strokeWidth="1" />
-      <circle r={r * 0.62} fill="none" stroke="#0b1220" strokeOpacity=".35" />
+      <path d={gearPath(r, teeth, Math.max(4, r * 0.12))} fill={fill} stroke="#202020" strokeWidth="1" />
+      <circle r={r * 0.62} fill="none" stroke="#202020" strokeOpacity=".35" />
       {Array.from({ length: spokes }, (_, i) => (
         <circle key={i} cx={Math.cos((i / spokes) * Math.PI * 2) * r * 0.42} cy={Math.sin((i / spokes) * Math.PI * 2) * r * 0.42} r={r * 0.1} fill={hub} />
       ))}
-      <circle r={Math.max(5, r * 0.18)} fill={hub} stroke="#0b1220" />
+      <circle r={Math.max(5, r * 0.18)} fill={hub} stroke="#202020" />
     </g>
   );
 }
@@ -120,15 +120,15 @@ export function Gear({ r, teeth, angle = 0, fill = 'url(#k-steel)', hub = C.bg, 
 export function SideWheel({ cx, cy, r, spin = 0 }) {
   return (
     <g transform={`translate(${cx},${cy})`}>
-      <circle r={r} fill="#10141c" stroke="#05070b" strokeWidth="2" />
-      <circle r={r * 0.92} fill="none" stroke="#1d2533" strokeWidth={r * 0.06} />
+      <circle r={r} fill="#1c1c1c" stroke="#0b0b0b" strokeWidth="2" />
+      <circle r={r * 0.92} fill="none" stroke="#323232" strokeWidth={r * 0.06} />
       <circle r={r * 0.66} fill="url(#k-steel)" />
       <g transform={`rotate(${spin})`}>
         {[0, 72, 144, 216, 288].map(a => (
-          <path key={a} d={`M${-r * 0.07},${-r * 0.16}L${-r * 0.1},${-r * 0.6}L${r * 0.1},${-r * 0.6}L${r * 0.07},${-r * 0.16}Z`} fill="#0f1520" transform={`rotate(${a})`} />
+          <path key={a} d={`M${-r * 0.07},${-r * 0.16}L${-r * 0.1},${-r * 0.6}L${r * 0.1},${-r * 0.6}L${r * 0.07},${-r * 0.16}Z`} fill="#202020" transform={`rotate(${a})`} />
         ))}
       </g>
-      <circle r={r * 0.16} fill="#c9d3e3" stroke="#3a4558" />
+      <circle r={r * 0.16} fill="#d5d5d5" stroke="#555555" />
     </g>
   );
 }
@@ -166,12 +166,12 @@ export function smoothPath(pts, close = false) {
 }
 
 // Tube: dark casing, coloured core, soft highlight.
-export function Pipe({ d, w = 12, color = '#3a4558', opacity = 1 }) {
+export function Pipe({ d, w = 12, color = '#555555', opacity = 1 }) {
   return (
     <g opacity={opacity}>
-      <path d={d} fill="none" stroke="#070b12" strokeWidth={w + 3} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={d} fill="none" stroke="#131313" strokeWidth={w + 3} strokeLinecap="round" strokeLinejoin="round" />
       <path d={d} fill="none" stroke={color} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />
-      <path d={d} fill="none" stroke="#fff" strokeOpacity=".14" strokeWidth={w * 0.3} strokeLinecap="round" strokeLinejoin="round" />
+      <path d={d} fill="none" stroke="#ffffff" strokeOpacity=".14" strokeWidth={w * 0.3} strokeLinecap="round" strokeLinejoin="round" />
     </g>
   );
 }
@@ -181,15 +181,11 @@ export function Flow({ d, t, speed = 40, color = C.blueHi, width = 4, gap = 14, 
   return <path d={d} fill="none" stroke={color} strokeWidth={width} strokeLinecap="round" strokeDasharray={`0.1 ${gap}`} strokeDashoffset={-t * speed} opacity={opacity} />;
 }
 
-// Cold-to-hot colour for temperatures and loads (0 = cool blue, 1 = red hot).
+// Cold-to-hot shade for temperatures and loads: dark grey when cool, white when hot.
 export function heatColor(n) {
-  const stops = [[0, [77, 148, 255]], [0.55, [255, 181, 71]], [1, [255, 77, 64]]];
   const x = Math.min(1, Math.max(0, n));
-  for (let i = 0; i < stops.length - 1; i++) {
-    const [a, ca] = stops[i], [b, cb] = stops[i + 1];
-    if (x <= b) { const k = (x - a) / (b - a); return `rgb(${ca.map((c, j) => Math.round(c + (cb[j] - c) * k)).join(',')})`; }
-  }
-  return 'rgb(255,77,64)';
+  const v = Math.round(84 + (250 - 84) * x);
+  return `rgb(${v},${v},${v})`;
 }
 
 export function Arrow({ x1, y1, x2, y2, color = C.blue, w = 3 }) {

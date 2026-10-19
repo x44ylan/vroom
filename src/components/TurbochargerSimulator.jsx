@@ -71,46 +71,46 @@ export default function TurbochargerSimulator() {
             <Stage viewBox="0 0 500 320" label="Turbocharger: exhaust spins a turbine that drives a compressor">
               <ellipse cx="250" cy="306" rx="220" ry="12" fill="url(#k-floor)" />
               {/* Exhaust side */}
-              <Pipe d={exhaustPath} w={22} color="#4a3a36" />
-              <Flow d={exhaustPath} t={t} speed={40 + boostN * 120} color="#ffb08a" width={5} />
-              <Pipe d={wastegatePath} w={10} color="#3a4558" opacity={wastegateOpen ? 1 : 0.45} />
-              {wastegateOpen && <Flow d={wastegatePath} t={t} speed={80} color="#ffb08a" width={4} />}
-              <Callout x={60} y={250} tx={24} ty={222} color="#c9a99a">Hot exhaust</Callout>
+              <Pipe d={exhaustPath} w={22} color="#494949" />
+              <Flow d={exhaustPath} t={t} speed={40 + boostN * 120} color="#d4d4d4" width={5} />
+              <Pipe d={wastegatePath} w={10} color="#555555" opacity={wastegateOpen ? 1 : 0.45} />
+              {wastegateOpen && <Flow d={wastegatePath} t={t} speed={80} color="#d4d4d4" width={4} />}
+              <Callout x={60} y={250} tx={24} ty={222} color="#bababa">Hot exhaust</Callout>
               {/* Turbine housing (snail) */}
-              <path d="M160 108 A 56 56 0 1 1 104 164 L 104 214 L 150 214 A 50 50 0 0 0 160 108 Z" fill="#3a2f2d" opacity=".0" />
-              <circle cx="160" cy="160" r="58" fill="url(#k-iron)" stroke="#0b1220" />
-              <circle cx="160" cy="160" r="44" fill="#0b0f17" />
+              <path d="M160 108 A 56 56 0 1 1 104 164 L 104 214 L 150 214 A 50 50 0 0 0 160 108 Z" fill="#393939" opacity=".0" />
+              <circle cx="160" cy="160" r="58" fill="url(#k-iron)" stroke="#202020" />
+              <circle cx="160" cy="160" r="44" fill="#171717" />
               <g transform={`translate(160 160) rotate(${animAngle})`}>
-                {Array.from({ length: 11 }, (_, i) => <path key={i} d="M0 -6 Q 16 -20 10 -42 L 4 -42 Q 8 -22 -4 -8 Z" fill="#b58c7a" transform={`rotate(${i * (360 / 11)})`} />)}
-                <circle r="8" fill="#e4ebf6" />
+                {Array.from({ length: 11 }, (_, i) => <path key={i} d="M0 -6 Q 16 -20 10 -42 L 4 -42 Q 8 -22 -4 -8 Z" fill="#a6a6a6" transform={`rotate(${i * (360 / 11)})`} />)}
+                <circle r="8" fill="#ebebeb" />
               </g>
               {/* Shaft */}
               <rect x="214" y="150" width="34" height="20" rx="4" fill="url(#k-steel)" />
-              <rect x="208" y="140" width="46" height="40" rx="8" fill="#232c3c" opacity=".6" />
+              <rect x="208" y="140" width="46" height="40" rx="8" fill="#3b3b3b" opacity=".6" />
               {/* Compressor side */}
-              <Pipe d={coldIn} w={22} color="#2c3a54" />
-              <Flow d={coldIn} t={t} speed={40 + boostN * 120} color="#a9cbff" width={5} />
-              <Callout x={460} y={150} tx={476} ty={118} anchor="end" color="#a9cbff">Fresh air</Callout>
-              <circle cx="300" cy="160" r="58" fill="url(#k-iron)" stroke="#0b1220" />
-              <circle cx="300" cy="160" r="44" fill="#0b0f17" />
+              <Pipe d={coldIn} w={22} color="#505050" />
+              <Flow d={coldIn} t={t} speed={40 + boostN * 120} color="#d6d6d6" width={5} />
+              <Callout x={460} y={150} tx={476} ty={118} anchor="end" color="#d6d6d6">Fresh air</Callout>
+              <circle cx="300" cy="160" r="58" fill="url(#k-iron)" stroke="#202020" />
+              <circle cx="300" cy="160" r="44" fill="#171717" />
               <g transform={`translate(300 160) rotate(${animAngle})`}>
-                {Array.from({ length: 12 }, (_, i) => <path key={i} d="M0 -6 Q -16 -20 -10 -42 L -4 -42 Q -8 -22 4 -8 Z" fill="#c9d3e3" transform={`rotate(${i * 30})`} />)}
-                <circle r="8" fill="#e4ebf6" />
+                {Array.from({ length: 12 }, (_, i) => <path key={i} d="M0 -6 Q -16 -20 -10 -42 L -4 -42 Q -8 -22 4 -8 Z" fill="#d5d5d5" transform={`rotate(${i * 30})`} />)}
+                <circle r="8" fill="#ebebeb" />
               </g>
               <Pipe d={toCooler} w={18} color={hotAir} />
-              <Flow d={toCooler} t={t} speed={30 + boostN * 110} color="#fff" width={3} opacity={0.5} />
+              <Flow d={toCooler} t={t} speed={30 + boostN * 110} color="#ffffff" width={3} opacity={0.5} />
               {intercoolerActive && (
                 <g>
-                  <rect x="350" y="236" width="94" height="58" rx="8" fill="#16243a" stroke="#2c4470" />
-                  {Array.from({ length: 10 }, (_, i) => <rect key={i} x={356 + i * 8.6} y="242" width="3" height="46" fill="#3c5c94" />)}
+                  <rect x="350" y="236" width="94" height="58" rx="8" fill="#3a3a3a" stroke="#686868" />
+                  {Array.from({ length: 10 }, (_, i) => <rect key={i} x={356 + i * 8.6} y="242" width="3" height="46" fill="#848484" />)}
                   <Pipe d={toEngine} w={18} color={chargeAir} />
-                  <Flow d={toEngine} t={t} speed={30 + boostN * 110} color="#fff" width={3} opacity={0.5} />
-                  <Callout x={397} y={294} tx={420} ty={312} anchor="end" color="#8f9bb3">Intercooler</Callout>
+                  <Flow d={toEngine} t={t} speed={30 + boostN * 110} color="#ffffff" width={3} opacity={0.5} />
+                  <Callout x={397} y={294} tx={420} ty={312} anchor="end" color="#a5a5a5">Intercooler</Callout>
                 </g>
               )}
-              <text x="160" y="72" fill="#c9a99a" fontSize="12" fontWeight="600" textAnchor="middle">TURBINE</text>
-              <text x="300" y="72" fill="#a9cbff" fontSize="12" fontWeight="600" textAnchor="middle">COMPRESSOR</text>
-              <text x="230" y="110" fill="#8f9bb3" fontSize="11" textAnchor="middle">shared shaft</text>
+              <text x="160" y="72" fill="#bababa" fontSize="12" fontWeight="600" textAnchor="middle">TURBINE</text>
+              <text x="300" y="72" fill="#d6d6d6" fontSize="12" fontWeight="600" textAnchor="middle">COMPRESSOR</text>
+              <text x="230" y="110" fill="#a5a5a5" fontSize="11" textAnchor="middle">shared shaft</text>
             </Stage>
 
             <div className="absolute diagram-footer">
@@ -123,7 +123,7 @@ export default function TurbochargerSimulator() {
             </div>
           </div>
 
-          <div className="w-full mt-3 p-3 rounded-lg bg-[#0f141d] border border-[#262e3d]">
+          <div className="w-full mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
             <div className="flex justify-between text-xs mb-1.5">
               <span className="text-zinc-400">2JZ Engine Speed:</span>
               <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
@@ -135,25 +135,25 @@ export default function TurbochargerSimulator() {
               step="50"
               value={engineRpm}
               onChange={(e) => setEngineRpm(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#262e3d] rounded"
+              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
             />
           </div>
         </div>
 
         <div className="lg:col-span-5 space-y-3">
-          <div className="p-3.5 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-2.5 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-2.5 text-xs">
             <span className="font-medium text-zinc-200 block">Watch the air temperature and power</span>
 
             <div className="space-y-1.5 font-mono">
-              <div className="flex justify-between p-2 rounded bg-[#161c27] border border-[#262e3d]">
+              <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
                 <span className="text-zinc-400">Estimated Power:</span>
                 <span className="text-zinc-100 font-bold">{estimatedHorsepower} HP</span>
               </div>
-              <div className="flex justify-between p-2 rounded bg-[#161c27] border border-[#262e3d]">
+              <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
                 <span className="text-zinc-400">Relative air charge:</span>
                 <span className="text-zinc-200">{volumetricEfficiency}%</span>
               </div>
-              <div className="flex justify-between p-2 rounded bg-[#161c27] border border-[#262e3d]">
+              <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
                 <span className="text-zinc-400">Intake temperature:</span>
                 <span className={intakeAirTempC > 65 ? 'text-red-400' : 'text-zinc-200'}>
                   {intakeAirTempC}°C
@@ -161,7 +161,7 @@ export default function TurbochargerSimulator() {
               </div>
             </div>
 
-            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#161c27]">
+            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#272727]">
               More boost pushes more air into the engine. Cooling that air makes it denser, which is why the power estimate changes when you switch the intercooler. These values illustrate the relationship; they are not a prediction for a real turbo conversion.
             </p>
           </div>

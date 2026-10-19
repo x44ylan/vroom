@@ -35,7 +35,7 @@ function studioEnvironment(renderer) {
   for (const x of [-1.6, 0, 1.6]) { const m = panel(0.9, 9, 9); m.position.set(x, 7, 0); m.rotation.x = Math.PI / 2; env.add(m); }
   const key = panel(6, 3, 6); key.position.set(9, 3, 6); key.lookAt(0, 0.5, 0); env.add(key);
   const fill = panel(4, 2, 2.5); fill.position.set(-9, 2.5, 3); fill.lookAt(0, 0.5, 0); env.add(fill);
-  const rim = panel(10, 1.2, 5, 0x9cc4ff); rim.position.set(0, 2.2, -10); rim.lookAt(0, 0.5, 0); env.add(rim);
+  const rim = panel(10, 1.2, 5, 0xd2d2d2); rim.position.set(0, 2.2, -10); rim.lookAt(0, 0.5, 0); env.add(rim);
   const floorBounce = panel(8, 8, 0.25); floorBounce.position.set(0, -0.2, 0); floorBounce.rotation.x = -Math.PI / 2; env.add(floorBounce);
   const pmrem = new THREE.PMREMGenerator(renderer);
   const tex = pmrem.fromScene(env, 0.02).texture;
@@ -47,26 +47,26 @@ function studioEnvironment(renderer) {
 export function createMaterials() {
   // Lexus "Crystal White"-style solid white under a glossy clearcoat.
   const paint = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#e8e9e6'), metalness: 0.0, roughness: 0.42,
+    color: new THREE.Color('#e9e9e9'), metalness: 0.0, roughness: 0.42,
     clearcoat: 1, clearcoatRoughness: 0.025, envMapIntensity: 1.0,
   });
   return {
     paint,
-    gap: new THREE.MeshPhysicalMaterial({ color: new THREE.Color('#9a9c9a'), roughness: 0.5, clearcoat: 1, clearcoatRoughness: 0.05 }),
-    trimBlack: new THREE.MeshPhysicalMaterial({ color: 0x1b1d21, roughness: 0.45, clearcoat: 0.6, clearcoatRoughness: 0.15 }),
+    gap: new THREE.MeshPhysicalMaterial({ color: new THREE.Color('#9c9c9c'), roughness: 0.5, clearcoat: 1, clearcoatRoughness: 0.05 }),
+    trimBlack: new THREE.MeshPhysicalMaterial({ color: 0x212121, roughness: 0.45, clearcoat: 0.6, clearcoatRoughness: 0.15 }),
     // Side rubbing strips and hood shut lines: a mid grey reads as a seam on white paint, not a stripe.
-    moulding: new THREE.MeshPhysicalMaterial({ color: new THREE.Color('#6f7276'), roughness: 0.5, clearcoat: 0.8, clearcoatRoughness: 0.1 }),
-    underbody: new THREE.MeshStandardMaterial({ color: 0x0b0c0f, roughness: 0.95 }),
-    glass: new THREE.MeshPhysicalMaterial({ color: 0x0b1018, metalness: 0, roughness: 0.03, clearcoat: 1, clearcoatRoughness: 0.02, transparent: true, opacity: 0.82, envMapIntensity: 1.6 }),
-    tyre: new THREE.MeshStandardMaterial({ color: 0x111215, roughness: 0.9 }),
-    chrome: new THREE.MeshStandardMaterial({ color: 0xf0f2f5, metalness: 1, roughness: 0.1 }),
-    lamp: new THREE.MeshPhysicalMaterial({ color: 0xdfe6f2, metalness: 0.6, roughness: 0.12, clearcoat: 1, emissive: 0xdde9ff, emissiveIntensity: 0 }),
-    tailLamp: new THREE.MeshPhysicalMaterial({ color: 0x8a0f16, roughness: 0.18, clearcoat: 1, emissive: 0xff1e2d, emissiveIntensity: 0 }),
-    rim: new THREE.MeshStandardMaterial({ color: 0xc9ced6, metalness: 1, roughness: 0.22 }),
-    caliper: new THREE.MeshStandardMaterial({ color: 0xc8202a, metalness: 0.3, roughness: 0.4 }),
-    chassis: new THREE.MeshStandardMaterial({ color: 0x3a3f48, metalness: 0.7, roughness: 0.5 }),
-    exhaust: new THREE.MeshStandardMaterial({ color: 0xb8bcc4, metalness: 1, roughness: 0.25 }),
-    wiper: new THREE.MeshStandardMaterial({ color: 0x0c0d10, roughness: 0.6 }),
+    moulding: new THREE.MeshPhysicalMaterial({ color: new THREE.Color('#757575'), roughness: 0.5, clearcoat: 0.8, clearcoatRoughness: 0.1 }),
+    underbody: new THREE.MeshStandardMaterial({ color: 0x0f0f0f, roughness: 0.95 }),
+    glass: new THREE.MeshPhysicalMaterial({ color: 0x191919, metalness: 0, roughness: 0.03, clearcoat: 1, clearcoatRoughness: 0.02, transparent: true, opacity: 0.82, envMapIntensity: 1.6 }),
+    tyre: new THREE.MeshStandardMaterial({ color: 0x151515, roughness: 0.9 }),
+    chrome: new THREE.MeshStandardMaterial({ color: 0xf2f2f2, metalness: 1, roughness: 0.1 }),
+    lamp: new THREE.MeshPhysicalMaterial({ color: 0xe7e7e7, metalness: 0.6, roughness: 0.12, clearcoat: 1, emissive: 0xeaeaea, emissiveIntensity: 0 }),
+    tailLamp: new THREE.MeshPhysicalMaterial({ color: 0x777777, roughness: 0.18, clearcoat: 1, emissive: 0xc3c3c3, emissiveIntensity: 0 }),
+    rim: new THREE.MeshStandardMaterial({ color: 0xcfcfcf, metalness: 1, roughness: 0.22 }),
+    caliper: new THREE.MeshStandardMaterial({ color: 0xa1a1a1, metalness: 0.3, roughness: 0.4 }),
+    chassis: new THREE.MeshStandardMaterial({ color: 0x474747, metalness: 0.7, roughness: 0.5 }),
+    exhaust: new THREE.MeshStandardMaterial({ color: 0xbebebe, metalness: 1, roughness: 0.25 }),
+    wiper: new THREE.MeshStandardMaterial({ color: 0x101010, roughness: 0.6 }),
   };
 }
 
@@ -151,7 +151,7 @@ export async function loadCar(renderer, { ghost = [] } = {}) {
 
   const mats = createMaterials();
   const uniforms = {
-    uReveal: { value: 1 }, uScanColor: { value: new THREE.Color('#6fb0ff') },
+    uReveal: { value: 1 }, uScanColor: { value: new THREE.Color('#cdcdcd') },
     uLength: { value: size.z }, uCarInverse: { value: new THREE.Matrix4() },
     uZoneA: { value: Array.from({ length: MAX_ZONES }, () => new THREE.Vector4()) },
     uZoneB: { value: Array.from({ length: MAX_ZONES }, () => new THREE.Vector4()) },
@@ -177,7 +177,7 @@ export function createStage(renderer, { transparent = true } = {}) {
   const scene = new THREE.Scene();
   scene.environment = studioEnvironment(renderer);
   scene.environmentIntensity = 1.0;
-  if (!transparent) scene.background = new THREE.Color(0x070a10);
+  if (!transparent) scene.background = new THREE.Color(0x101010);
 
   const key = new THREE.DirectionalLight(0xffffff, 1.6);
   key.position.set(3.5, 8, 4);
@@ -187,7 +187,7 @@ export function createStage(renderer, { transparent = true } = {}) {
   key.shadow.bias = -0.0003;
   key.shadow.radius = 8;
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x8fbaff, 1.6);
+  const rim = new THREE.DirectionalLight(0xcecece, 1.6);
   rim.position.set(-5, 3, -5);
   scene.add(rim);
 
@@ -209,7 +209,7 @@ export function createStage(renderer, { transparent = true } = {}) {
   scene.add(contact);
 
   // Floor grid that draws outward during the intro.
-  const gridUniforms = { uGrow: { value: 1 }, uColor: { value: new THREE.Color('#3b82f6') } };
+  const gridUniforms = { uGrow: { value: 1 }, uColor: { value: new THREE.Color('#c4c4c4') } };
   const grid = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShaderMaterial({
     uniforms: gridUniforms, transparent: true, depthWrite: false,
     vertexShader: 'varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',

@@ -77,14 +77,14 @@ export default function AerodynamicsSimulator() {
         <div className="lg:col-span-7 flex flex-col items-center">
           <div className="diagram-frame relative w-full aspect-[5/3]">
             <Stage viewBox="0 0 500 280" label={`Air flowing over a ${profile.name.toLowerCase()} at ${speedKmh} km/h`}>
-              <rect x="0" y="250" width="500" height="30" fill="#121a27" />
-              <line x1="0" y1="250" x2="500" y2="250" stroke="#3a4558" strokeWidth="2" />
-              {Array.from({ length: 12 }, (_, i) => <rect key={i} x={((i * 48 + t * flowSpeed * 3) % 576 + 576) % 576 - 40} y="268" width="24" height="3" fill="#2a3446" />)}
+              <rect x="0" y="250" width="500" height="30" fill="#272727" />
+              <line x1="0" y1="250" x2="500" y2="250" stroke="#555555" strokeWidth="2" />
+              {Array.from({ length: 12 }, (_, i) => <rect key={i} x={((i * 48 + t * flowSpeed * 3) % 576 + 576) % 576 - 40} y="268" width="24" height="3" fill="#444444" />)}
               {/* Streamlines bending over the body */}
               {lines.map((d, i) => (
                 <g key={i}>
-                  <path d={d} fill="none" stroke="#4d94ff" strokeWidth="1.5" opacity=".25" />
-                  <path d={d} fill="none" stroke="#a9cbff" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="14 22" strokeDashoffset={-t * flowSpeed} opacity={0.5 + i * 0.08} />
+                  <path d={d} fill="none" stroke="#c9c9c9" strokeWidth="1.5" opacity=".25" />
+                  <path d={d} fill="none" stroke="#d6d6d6" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="14 22" strokeDashoffset={-t * flowSpeed} opacity={0.5 + i * 0.08} />
                 </g>
               ))}
               {/* Turbulent wake behind the car */}
@@ -92,15 +92,15 @@ export default function AerodynamicsSimulator() {
                 {Array.from({ length: 7 }, (_, i) => {
                   const r = (7 + i * 4) * wakeSize, a = t * (2.5 + i * 0.6) + i * 1.7;
                   const baseY = vehicleType === 'suv' ? 160 : 200;
-                  return <circle key={i} cx={430 + i * 9 + Math.cos(a) * 5} cy={baseY + i * 3 + Math.sin(a) * 9 * wakeSize} r={r} fill="none" stroke="#7d8aa3" strokeWidth="1.5" strokeDasharray="4 5" opacity={0.65 - i * 0.07} />;
+                  return <circle key={i} cx={430 + i * 9 + Math.cos(a) * 5} cy={baseY + i * 3 + Math.sin(a) * 9 * wakeSize} r={r} fill="none" stroke="#969696" strokeWidth="1.5" strokeDasharray="4 5" opacity={0.65 - i * 0.07} />;
                 })}
               </g>
-              <text x="480" y="244" fill="#8f9bb3" fontSize="11" textAnchor="end">wake</text>
-              <text x="20" y="24" fill="#8f9bb3" fontSize="11">Airflow →</text>
+              <text x="480" y="244" fill="#a5a5a5" fontSize="11" textAnchor="end">wake</text>
+              <text x="20" y="24" fill="#a5a5a5" fontSize="11">Airflow →</text>
               {/* Car */}
-              <path d={bodyPath} fill="url(#k-iron)" stroke="#5d6a80" strokeWidth="2" />
-              <path d={smoothPath(shape.slice(3, 8))} fill="none" stroke="#a9cbff" strokeWidth="2" opacity=".5" />
-              {vehicleType === 'is300-wing' && <path d="M372 176 L404 172 L406 178 L374 182 Z" fill="#4d94ff" />}
+              <path d={bodyPath} fill="url(#k-iron)" stroke="#787878" strokeWidth="2" />
+              <path d={smoothPath(shape.slice(3, 8))} fill="none" stroke="#d6d6d6" strokeWidth="2" opacity=".5" />
+              {vehicleType === 'is300-wing' && <path d="M372 176 L404 172 L406 178 L374 182 Z" fill="#c9c9c9" />}
               <SideWheel cx={vehicleType === 'suv' ? 110 : 108} cy={232} r={vehicleType === 'suv' ? 26 : 22} spin={t * speedKmh * 4} />
               <SideWheel cx={vehicleType === 'suv' ? 340 : 342} cy={232} r={vehicleType === 'suv' ? 26 : 22} spin={t * speedKmh * 4} />
             </Stage>

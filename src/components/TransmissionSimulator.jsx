@@ -60,8 +60,8 @@ export default function TransmissionSimulator() {
               <g transform={`translate(${175 + centre} ${gy})`}>
                 <Gear r={rOut} teeth={teethOut} angle={outAngle} spokes={rOut > 50 ? 6 : 0} />
               </g>
-              <Callout x={175} y={gy - rIn} tx={24} ty={28} color="#a9cbff">From engine · {engineRpm} RPM</Callout>
-              <Callout x={175 + centre} y={gy - rOut} tx={476} ty={28} anchor="end" color="#c9d3e3">To wheels · {outputRpm} RPM</Callout>
+              <Callout x={175} y={gy - rIn} tx={24} ty={28} color="#d6d6d6">From engine · {engineRpm} RPM</Callout>
+              <Callout x={175 + centre} y={gy - rOut} tx={476} ty={28} anchor="end" color="#d5d5d5">To wheels · {outputRpm} RPM</Callout>
                           </Stage>
 
             <div className="absolute diagram-footer">
@@ -70,7 +70,7 @@ export default function TransmissionSimulator() {
             </div>
           </div>
 
-          <div className="w-full mt-3 p-3 rounded-lg bg-[#0f141d] border border-[#262e3d]">
+          <div className="w-full mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
             <div className="flex justify-between text-xs mb-1.5">
               <span className="text-zinc-400">Engine Speed:</span>
               <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
@@ -82,31 +82,31 @@ export default function TransmissionSimulator() {
               step="50"
               value={engineRpm}
               onChange={(e) => setEngineRpm(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#262e3d] rounded"
+              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
             />
           </div>
         </div>
 
         <div className="lg:col-span-5 space-y-3">
-          <div className="p-3.5 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-2 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-2 text-xs">
             <span className="font-medium text-zinc-200 block">What changes with the gear</span>
 
             <div className="space-y-1.5 font-mono">
-              <div className="flex items-center justify-between p-2 rounded bg-[#161c27] border border-[#262e3d]">
+              <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
                 <span className="text-zinc-400">Gearbox output:</span>
                 <span className="text-zinc-100">{outputRpm} RPM</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-[#161c27] border border-[#262e3d]">
+              <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
                 <span className="text-zinc-400">Road Speed:</span>
                 <span className="text-zinc-100 font-bold">{vehicleSpeed} km/h</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-[#161c27] border border-[#262e3d]">
+              <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
                 <span className="text-zinc-400">Wheel torque:</span>
                 <span className="text-zinc-100 font-bold">{wheelTorque} Nm</span>
               </div>
             </div>
 
-            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#161c27]">
+            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#272727]">
               {current.desc}
             </p>
           </div>

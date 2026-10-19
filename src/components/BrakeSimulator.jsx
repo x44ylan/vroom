@@ -50,34 +50,34 @@ export default function BrakeSimulator() {
             <Stage viewBox="0 0 500 320" label={`Brake disc and caliper at ${pedalForce}% pedal pressure`}>
               <ellipse cx="230" cy="306" rx="200" ry="12" fill="url(#k-floor)" />
               {/* Brake line from the pedal */}
-              <Pipe d={lineD} w={6} color="#2f6fe0" />
-              <Flow d={lineD} t={t} speed={20 + pedalForce * 1.5} color="#cfe2ff" width={3} gap={10} opacity={pedalForce > 2 ? 0.9 : 0} />
-              <Callout x={40} y={30} tx={24} ty={54} color="#a9cbff">From pedal · {linePressureBar} bar</Callout>
+              <Pipe d={lineD} w={6} color="#b7b7b7" />
+              <Flow d={lineD} t={t} speed={20 + pedalForce * 1.5} color="#e4e4e4" width={3} gap={10} opacity={pedalForce > 2 ? 0.9 : 0} />
+              <Callout x={40} y={30} tx={24} ty={54} color="#d6d6d6">From pedal · {linePressureBar} bar</Callout>
               {/* Disc */}
               <g transform="translate(230 180)">
                 <circle r="118" fill="url(#k-steel)" />
                 <circle r="118" fill={heatColor(heat)} opacity={Math.max(0, heat - 0.15) * 0.9} />
-                <circle r="118" fill="none" stroke="#0b1220" strokeWidth="2" />
+                <circle r="118" fill="none" stroke="#202020" strokeWidth="2" />
                 <g transform={`rotate(${discSpin})`}>
                   {Array.from({ length: 24 }, (_, i) => {
                     const a = (i / 24) * Math.PI * 2;
-                    return <circle key={i} cx={Math.cos(a) * 92} cy={Math.sin(a) * 92} r="4" fill="#1d2533" />;
+                    return <circle key={i} cx={Math.cos(a) * 92} cy={Math.sin(a) * 92} r="4" fill="#323232" />;
                   })}
-                  {Array.from({ length: 6 }, (_, i) => <path key={i} d="M 0 -70 A 70 70 0 0 1 30 -63" stroke="#5d6a80" strokeWidth="2" fill="none" transform={`rotate(${i * 60})`} />)}
+                  {Array.from({ length: 6 }, (_, i) => <path key={i} d="M 0 -70 A 70 70 0 0 1 30 -63" stroke="#787878" strokeWidth="2" fill="none" transform={`rotate(${i * 60})`} />)}
                 </g>
-                <circle r="56" fill="url(#k-iron)" stroke="#0b1220" />
-                {Array.from({ length: 5 }, (_, i) => { const a = (i / 5) * Math.PI * 2 + discSpin * Math.PI / 180; return <circle key={i} cx={Math.cos(a) * 32} cy={Math.sin(a) * 32} r="6" fill="#c9d3e3" />; })}
-                <circle r="14" fill="#0b0f17" />
+                <circle r="56" fill="url(#k-iron)" stroke="#202020" />
+                {Array.from({ length: 5 }, (_, i) => { const a = (i / 5) * Math.PI * 2 + discSpin * Math.PI / 180; return <circle key={i} cx={Math.cos(a) * 32} cy={Math.sin(a) * 32} r="6" fill="#d5d5d5" />; })}
+                <circle r="14" fill="#171717" />
               </g>
               {/* Caliper straddling the disc at the top right */}
               <g transform="translate(330 120) rotate(35)">
-                <rect x={-44} y={-24 - squeeze} width="88" height="16" rx="5" fill="#9aa6ba" />
-                <rect x={-44} y={8 + squeeze} width="88" height="16" rx="5" fill="#9aa6ba" />
-                <path d="M -58 -50 H 58 Q 72 -50 72 -36 V 36 Q 72 50 58 50 H -58 Q -72 50 -72 36 V 24 H -48 V -24 H -72 V -36 Q -72 -50 -58 -50 Z" fill="url(#k-blue)" stroke="#0b1220" />
-                <text x="0" y="-30" fill="#e8eefb" fontSize="12" fontWeight="700" textAnchor="middle">CALIPER</text>
+                <rect x={-44} y={-24 - squeeze} width="88" height="16" rx="5" fill="#adadad" />
+                <rect x={-44} y={8 + squeeze} width="88" height="16" rx="5" fill="#adadad" />
+                <path d="M -58 -50 H 58 Q 72 -50 72 -36 V 36 Q 72 50 58 50 H -58 Q -72 50 -72 36 V 24 H -48 V -24 H -72 V -36 Q -72 -50 -58 -50 Z" fill="url(#k-blue)" stroke="#202020" />
+                <text x="0" y="-30" fill="#efefef" fontSize="12" fontWeight="700" textAnchor="middle">CALIPER</text>
               </g>
-              <Callout x={300} y={220} tx={480} ty={268} anchor="end" color="#c9d3e3">{clampingForceN} N squeeze</Callout>
-              {isLockupThreshold && absEnabled && <text x="24" y="300" fill="#ffb547" fontSize="12" fontWeight="600">ABS pulsing pressure</text>}
+              <Callout x={300} y={220} tx={480} ty={268} anchor="end" color="#d5d5d5">{clampingForceN} N squeeze</Callout>
+              {isLockupThreshold && absEnabled && <text x="24" y="300" fill="#e1e1e1" fontSize="12" fontWeight="600">ABS pulsing pressure</text>}
             </Stage>
 
             <div className="absolute diagram-footer">

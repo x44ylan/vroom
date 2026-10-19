@@ -17,6 +17,7 @@ import AudioEngineSynth from './components/AudioEngineSynth.jsx';
 import EvVsIceComparison from './components/EvVsIceComparison.jsx';
 import CarQuiz from './components/CarQuiz.jsx';
 import { lessons } from './data/lessons.js';
+import { useIsMobile } from './lib/useMediaQuery.js';
 
 const TOPICS = [
   { id: 'chassis', group: 'Start here', component: ChassisViewer3D },
@@ -44,6 +45,8 @@ const POWER_ROUTE = [
   { id: 'differential', label: 'Differential', note: 'Splits it between wheels' },
   { id: 'brakes', label: 'Wheels', note: 'Grip, steer, and stop' },
 ];
+const LAST_LESSON_KEY = 'vroom:lastLesson';
+const readLastLesson = () => { try { return TOPICS.find(topic => topic.id === localStorage.getItem(LAST_LESSON_KEY)); } catch { return undefined; } };
 const readTopic = () => TOPICS.find(topic => `#${topic.id}` === window.location.hash)?.id || HOME;
 
 function TopicNavigation({ active, onSelect, className = '' }) {
@@ -64,17 +67,17 @@ function TopicNavigation({ active, onSelect, className = '' }) {
   </nav>;
 }
 
-function Landing({ onSelect }) {
+function Landing({ onSelect, mobile }) {
   return <>
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
         <p className="eyebrow">An interactive course · 13 lessons</p>
         <h1 id="hero-title" tabIndex={-1}>How a car really works.</h1>
         <p className="hero-lede">Take apart a Lexus IS300, then try the engine, gears, brakes, and more. No experience needed — each lesson takes a few minutes.</p>
-        <div className="hero-actions">
+        {!mobile && <div className="hero-actions">
           <button className="button button-primary" onClick={() => onSelect('chassis')}>Start learning <ArrowRight size={16} aria-hidden="true" /></button>
           <a className="button button-secondary" href="#lessons">See all lessons</a>
-        </div>
+        </div>}
       </div>
       <figure className="hero-visual">
         <HeroCar />
@@ -122,11 +125,80 @@ function Landing({ onSelect }) {
       </nav>
     </section>
 
-    <section className="closing" aria-labelledby="closing-title">
+    {!mobile && <section className="closing" aria-labelledby="closing-title">
       <h2 id="closing-title">Ready to look under the hood?</h2>
       <button className="button button-primary" onClick={() => onSelect('chassis')}>Start with lesson 01 <ArrowRight size={16} aria-hidden="true" /></button>
-    </section>
+    </section>}
   </>;
+}
+
+// Lesson list. On a desktop it is a side panel opened from the header; on a phone it is a bottom sheet
+// opened from the bottom bar, and the grabber at the top can be dragged down to close it.
+function LessonsMenu({ open, onOpenChange, active, onSelect, focusAfterClose, mobile, trigger }) {
+  const panelRef = useRef(null);
+  const drag = useRef(null);
+  const onGrab = event => {
+    drag.current = { y: event.clientY, t: performance.now(), dy: 0 };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    panelRef.current.style.transition = 'none';
+  };
+  const onDrag = event => {
+    const d = drag.current;
+    if (!d) return;
+    d.dy = Math.max(0, event.clientY - d.y);
+    panelRef.current.style.transform = `translateY(${d.dy}px)`;
+  };
+  const onRelease = () => {
+    const d = drag.current;
+    drag.current = null;
+    if (!d) return;
+    const panel = panelRef.current;
+    panel.style.transition = '';
+    // Close on a long drag or a quick flick; otherwise spring back.
+    if (d.dy > 120 || d.dy / (performance.now() - d.t) > 0.5) onOpenChange(false);
+    else panel.style.transform = '';
+  };
+  const grabber = mobile ? { onPointerDown: onGrab, onPointerMove: onDrag, onPointerUp: onRelease, onPointerCancel: onRelease } : {};
+  return <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    {trigger}
+    <Dialog.Portal>
+      <Dialog.Overlay className="menu-overlay" />
+      <Dialog.Content ref={panelRef} className={mobile ? 'menu-panel menu-sheet' : 'menu-panel'} onCloseAutoFocus={event => {
+        if (focusAfterClose.current) { event.preventDefault(); document.getElementById('topic-title')?.focus({ preventScroll: true }); focusAfterClose.current = false; }
+      }}>
+        <div className="menu-heading" {...grabber}>
+          {mobile && <span className="sheet-grabber" aria-hidden="true" />}
+          <Dialog.Title>Lessons</Dialog.Title>
+          <Dialog.Close className="icon-button" aria-label="Close navigation"><X size={18} /></Dialog.Close>
+        </div>
+        <Dialog.Description className="sr-only">Choose a lesson to open it.</Dialog.Description>
+        <TopicNavigation active={active} onSelect={onSelect} />
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>;
+}
+
+// Phone bottom bar: previous, the lesson list, and next, always within thumb reach.
+function MobileDock({ isHome, index, active, onSelect, menu }) {
+  if (isHome) {
+    const last = readLastLesson();
+    return <nav className="mobile-dock" aria-label="Lesson controls">
+      {menu}
+      <button className="dock-primary" onClick={() => onSelect(last?.id || 'chassis')}>
+        {last ? <span><small>Continue</small>{last.label}</span> : 'Start learning'}<ArrowRight size={18} aria-hidden="true" />
+      </button>
+    </nav>;
+  }
+  const prev = TOPICS[index - 1], next = TOPICS[index + 1];
+  return <nav className="mobile-dock" aria-label="Topic sequence">
+    <button className="dock-step" aria-label={prev ? `Previous topic: ${prev.label}` : 'Back to home'} onClick={() => onSelect(prev?.id || HOME)}>
+      <ArrowLeft size={20} aria-hidden="true" />
+    </button>
+    {menu}
+    <button className="dock-step dock-next" aria-label={next ? `Next topic: ${next.label}` : 'Back to overview'} onClick={() => onSelect(next?.id || HOME)}>
+      <span>{next ? 'Next' : 'Done'}</span><ArrowRight size={20} aria-hidden="true" />
+    </button>
+  </nav>;
 }
 
 export default function App() {
@@ -137,6 +209,7 @@ export default function App() {
   const isHome = activeTab === HOME;
   const index = TOPICS.findIndex(topic => topic.id === activeTab);
   const active = TOPICS[index];
+  const mobile = useIsMobile();
 
   useEffect(() => {
     const sync = () => setActiveTab(readTopic());
@@ -147,6 +220,7 @@ export default function App() {
 
   useEffect(() => {
     document.title = isHome ? 'Vroom · How a car really works' : `${active.label} · Vroom`;
+    if (!isHome && active.id !== 'chassis') try { localStorage.setItem(LAST_LESSON_KEY, active.id); } catch { /* private mode */ }
   }, [isHome, active]);
 
   const selectTopic = id => {
@@ -165,8 +239,13 @@ export default function App() {
   };
 
   const Simulator = active?.component;
+  const lessonsMenu = <LessonsMenu open={menuOpen} onOpenChange={setMenuOpen} active={activeTab} onSelect={selectTopic} focusAfterClose={focusAfterClose} mobile={mobile}
+    trigger={<Dialog.Trigger className={mobile ? 'dock-menu' : 'menu-button'} aria-label="Toggle Navigation Menu">
+      <Menu size={mobile ? 18 : 16} aria-hidden="true" />
+      {mobile && !isHome ? <span><small>{active.number} of {TOPICS.length}</small>{active.label}</span> : 'Lessons'}
+    </Dialog.Trigger>} />;
 
-  return <div className={`app-shell ${isHome ? 'is-home' : 'is-lesson'}`}>
+  return <div className={`app-shell ${isHome ? 'is-home' : 'is-lesson'} ${mobile ? 'is-mobile' : 'is-desktop'}`}>
     <a href="#main-content" className="skip-link" onClick={event => { event.preventDefault(); document.getElementById('main-content')?.focus(); }}>Skip to content</a>
     <header className="app-header">
       <div className="app-header-inner">
@@ -176,26 +255,14 @@ export default function App() {
         {!isHome && <span className="header-lesson" aria-hidden="true">{active.label}</span>}
         <div className="header-actions">
           {!isHome && <span className="header-progress" aria-label={`Lesson ${index + 1} of ${TOPICS.length}`}>{active.number}<span> / {TOPICS.length}</span></span>}
-          <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>
-            <Dialog.Trigger className="menu-button" aria-label="Toggle Navigation Menu"><Menu size={16} aria-hidden="true" />Lessons</Dialog.Trigger>
-            <Dialog.Portal>
-              <Dialog.Overlay className="menu-overlay" />
-              <Dialog.Content className="menu-panel" onCloseAutoFocus={event => {
-                if (focusAfterClose.current) { event.preventDefault(); document.getElementById('topic-title')?.focus({ preventScroll: true }); focusAfterClose.current = false; }
-              }}>
-                <div className="menu-heading"><Dialog.Title>Lessons</Dialog.Title><Dialog.Close className="icon-button" aria-label="Close navigation"><X size={18} /></Dialog.Close></div>
-                <Dialog.Description className="sr-only">Choose a lesson to open it.</Dialog.Description>
-                <TopicNavigation active={activeTab} onSelect={selectTopic} />
-              </Dialog.Content>
-            </Dialog.Portal>
-          </Dialog.Root>
+          {!mobile && lessonsMenu}
         </div>
       </div>
       {!isHome && <div className="progress-track" aria-hidden="true"><span style={{ transform: `scaleX(${(index + 1) / TOPICS.length})` }} /></div>}
     </header>
 
     <main id="main-content" tabIndex={-1}>
-      {isHome ? <Landing onSelect={selectTopic} /> : <article className="lesson" key={activeTab}>
+      {isHome ? <Landing onSelect={selectTopic} mobile={mobile} /> : <article className="lesson" key={activeTab}>
         <header className="lesson-header">
           <p className="eyebrow">Lesson {active.number} · {active.label}</p>
           <h1 id="topic-title" ref={headingRef} tabIndex={-1}>{active.title}</h1>
@@ -220,14 +287,15 @@ export default function App() {
           {active.source && <a href={active.source.url} target="_blank" rel="noopener noreferrer">{active.source.label} <ArrowUpRight size={14} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}
         </section>}
 
-        <nav className="topic-pagination" aria-label="Topic sequence">
+        {!mobile && <nav className="topic-pagination" aria-label="Topic sequence">
           {index > 0
             ? <button className="pager pager-previous" aria-label={`Previous topic: ${TOPICS[index - 1].label}`} onClick={() => selectTopic(TOPICS[index - 1].id)}><ArrowLeft size={18} aria-hidden="true" /><span><small>Previous</small>{TOPICS[index - 1].label}</span></button>
             : <button className="pager pager-previous" aria-label="Back to home" onClick={() => selectTopic(HOME)}><ArrowLeft size={18} aria-hidden="true" /><span><small>Back</small>Home</span></button>}
           <button className="pager pager-next" aria-label={index === TOPICS.length - 1 ? 'Back to overview' : `Next topic: ${TOPICS[index + 1].label}`} onClick={() => selectTopic(TOPICS[index + 1]?.id || HOME)}><span><small>{index === TOPICS.length - 1 ? 'Finished' : 'Next'}</small>{TOPICS[index + 1]?.label || 'Back to overview'}</span><ArrowRight size={18} aria-hidden="true" /></button>
-        </nav>
+        </nav>}
       </article>}
     </main>
+    {mobile && <MobileDock isHome={isHome} index={index} active={active} onSelect={selectTopic} menu={lessonsMenu} />}
     <footer className="app-footer"><span>Vroom</span><span>Simplified learning models · Independent enthusiast guide · Car model “Toyota Altezza 2001” by <a href="https://sketchfab.com/3d-models/draft-request-toyota-altezza-2001-0396aafda6294dc4843250d979783656" target="_blank" rel="noopener noreferrer">Chai</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></span></footer>
   </div>;
 }

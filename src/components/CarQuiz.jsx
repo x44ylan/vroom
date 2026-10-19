@@ -91,9 +91,9 @@ export default function CarQuiz() {
 
                 if (hasAnswered) {
                   if (opt.isCorrect) {
-                    btnStyle = 'bg-emerald-950/40 border-emerald-500/80 text-emerald-200 ring-1 ring-emerald-500';
+                    btnStyle = 'quiz-correct';
                   } else if (isSelected && !opt.isCorrect) {
-                    btnStyle = 'bg-red-950/40 border-red-500/80 text-red-200 ring-1 ring-red-500';
+                    btnStyle = 'quiz-wrong';
                   } else {
                     btnStyle = 'bg-slate-950/30 border-slate-800/50 text-slate-500 opacity-60';
                   }
@@ -108,10 +108,10 @@ export default function CarQuiz() {
                   >
                     <span className="leading-relaxed">{opt.text}</span>
                     {hasAnswered && opt.isCorrect && (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" aria-label="Correct answer" />
                     )}
                     {hasAnswered && isSelected && !opt.isCorrect && (
-                      <XCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                      <XCircle className="w-4 h-4 shrink-0 mt-0.5" aria-label="Your answer" />
                     )}
                   </button>
                 );
@@ -140,7 +140,7 @@ export default function CarQuiz() {
                     onClick={() => setCurrentIdx(idx)}
                     className={`w-7 h-7 rounded-lg text-xs font-mono font-bold transition-[background-color,color,transform] duration-150 ${
                       currentIdx === idx
-                        ? 'bg-amber-600 text-white'
+                        ? 'bg-(--accent) text-(--accent-ink)'
                         : selectedAnswers[idx] !== undefined
                         ? 'bg-slate-700 text-slate-300'
                         : 'bg-slate-800/50 text-slate-500 hover:bg-slate-800'

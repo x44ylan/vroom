@@ -104,31 +104,31 @@ export default function SuspensionSimulator() {
           <div className="diagram-frame relative w-full aspect-[25/16]">
             <Stage viewBox="0 0 500 320" label="Quarter-car suspension: body, spring, damper and wheel">
               {/* Road */}
-              <path d={`${roadPath} V320 H0 Z`} fill="#141c2b" />
-              <path d={roadPath} fill="none" stroke="#3a4558" strokeWidth="3" />
+              <path d={`${roadPath} V320 H0 Z`} fill="#2b2b2b" />
+              <path d={roadPath} fill="none" stroke="#555555" strokeWidth="3" />
               {/* Car body (sprung mass) */}
               <g transform={`translate(0 ${bodyY - 70})`}>
-                <rect x="80" y="40" width="240" height="66" rx="14" fill="url(#k-blue)" stroke="#0b1220" />
-                <rect x="80" y="40" width="240" height="18" rx="9" fill="#fff" opacity=".12" />
-                <text x="200" y="80" fill="#0b1630" fontSize="13" fontWeight="700" textAnchor="middle">CAR BODY</text>
+                <rect x="80" y="40" width="240" height="66" rx="14" fill="url(#k-blue)" stroke="#202020" />
+                <rect x="80" y="40" width="240" height="18" rx="9" fill="#ffffff" opacity=".12" />
+                <text x="200" y="80" fill="#2f2f2f" fontSize="13" fontWeight="700" textAnchor="middle">CAR BODY</text>
               </g>
               {/* Upper and lower arms to the wheel */}
-              <line x1="96" y1={bodyY + 50} x2="182" y2={wheelY - 24} stroke="#5d6a80" strokeWidth="7" strokeLinecap="round" />
-              <line x1="96" y1={bodyY + 86} x2="186" y2={wheelY + 10} stroke="#5d6a80" strokeWidth="9" strokeLinecap="round" />
+              <line x1="96" y1={bodyY + 50} x2="182" y2={wheelY - 24} stroke="#787878" strokeWidth="7" strokeLinecap="round" />
+              <line x1="96" y1={bodyY + 86} x2="186" y2={wheelY + 10} stroke="#787878" strokeWidth="9" strokeLinecap="round" />
               {/* Spring */}
-              <polyline points={springPts} fill="none" stroke="#4d94ff" strokeWidth="6" strokeLinejoin="round" strokeLinecap="round" />
+              <polyline points={springPts} fill="none" stroke="#c9c9c9" strokeWidth="6" strokeLinejoin="round" strokeLinecap="round" />
               {/* Damper: body tube on the wheel, shaft from the car */}
               <rect x="252" y={springTop} width="8" height={Math.max(10, springBottom - springTop - 40)} fill="url(#k-steel-h)" />
-              <rect x="244" y={springBottom - 60} width="24" height="60" rx="5" fill="#2a3446" stroke="#0b1220" />
-              <line x1="256" y1={springBottom} x2="220" y2={wheelY} stroke="#5d6a80" strokeWidth="5" />
-              <Callout x={222} y={(springTop + springBottom) / 2} tx={130} ty={160} anchor="end" color="#a9cbff">Spring</Callout>
-              <Callout x={268} y={springBottom - 30} tx={300} ty={238} color="#c9d3e3">Damper</Callout>
+              <rect x="244" y={springBottom - 60} width="24" height="60" rx="5" fill="#444444" stroke="#202020" />
+              <line x1="256" y1={springBottom} x2="220" y2={wheelY} stroke="#787878" strokeWidth="5" />
+              <Callout x={222} y={(springTop + springBottom) / 2} tx={130} ty={160} anchor="end" color="#d6d6d6">Spring</Callout>
+              <Callout x={268} y={springBottom - 30} tx={300} ty={238} color="#d5d5d5">Damper</Callout>
               <SideWheel cx={200} cy={wheelY} r={36} spin={frame * 4} />
               {/* Live trace of body movement */}
-              <rect x="362" y="96" width="128" height="108" rx="10" fill="#0d1421" stroke="#22304a" />
-              <line x1="370" y1="150" x2="484" y2="150" stroke="#22304a" />
-              <path d={tracePath} fill="none" stroke="#4d94ff" strokeWidth="2" />
-              <text x="370" y="114" fill="#8f9bb3" fontSize="10">Body movement</text>
+              <rect x="362" y="96" width="128" height="108" rx="10" fill="#212121" stroke="#474747" />
+              <line x1="370" y1="150" x2="484" y2="150" stroke="#474747" />
+              <path className="body-trace" d={tracePath} fill="none" stroke="#c9c9c9" strokeWidth="2" />
+              <text x="370" y="114" fill="#a5a5a5" fontSize="10">Body movement</text>
             </Stage>
 
             <div className="absolute diagram-footer">

@@ -90,13 +90,13 @@ export default function AudioEngineSynth() {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 sm:p-5">
-        <div className="p-3 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-1.5">
+        <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1.5">
           <span className="text-xs text-zinc-400">Engine type:</span>
           <Segmented size="sm" label="Engine type" value={engineType} onChange={setEngineType}
             options={[{ value: '2jz', label: '2JZ I6' }, { value: '3sge', label: '3S-GE I4' }, { value: '1uz', label: '1UZ V8' }]} />
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-1.5">
+        <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1.5">
           <div className="flex justify-between text-xs">
             <span className="text-zinc-400">Engine Speed:</span>
             <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
@@ -108,11 +108,11 @@ export default function AudioEngineSynth() {
             step="100"
             value={rpm}
             onChange={(e) => setRpm(Number(e.target.value))}
-            className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#262e3d] rounded"
+            className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
           />
         </div>
 
-        <div className="p-3 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-1 text-xs">
+        <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1 text-xs">
           <span className="text-zinc-400">Firing frequency:</span>
           <div className="text-sm font-mono font-medium text-zinc-100">
             {fundamentalFreqHz.toFixed(1)} Hz

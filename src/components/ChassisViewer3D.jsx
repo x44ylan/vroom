@@ -236,9 +236,9 @@ export default function ChassisViewer3D() {
     container.appendChild(renderer.domElement);
 
     const { scene } = createStage(renderer);
-    scene.fog = new THREE.Fog(0x070a10, 11, 26);
+    scene.fog = new THREE.Fog(0x101010, 11, 26);
     // The mechanical parts are darker than the paint; a soft fill keeps them readable inside the x-ray window.
-    const fill = new THREE.PointLight(0x9cc4ff, 4, 7, 1.6);
+    const fill = new THREE.PointLight(0xd2d2d2, 4, 7, 1.6);
     fill.position.set(0, 2.2, 1.6);
     scene.add(fill);
 
@@ -445,7 +445,7 @@ export default function ChassisViewer3D() {
         const on = highlightRef.current === name;
         const target = on ? 0.8 + flash * 0.9 : 0;
         for (const m of part.userData.materials) {
-          m.emissive.setHex(0x2f7bff);
+          m.emissive.setHex(0xc9c9c9);
           m.emissiveIntensity += (target - m.emissiveIntensity) * (on ? 1 - Math.exp(-dt * 14) : k);
         }
       }
@@ -548,7 +548,7 @@ export default function ChassisViewer3D() {
         </div>
       </div>
       <div className="part-picker" role="group" aria-label="Explore chassis parts">
-        {Object.keys(COMPONENT_DETAILS).map(key => <button key={key} className="part-button" aria-pressed={activeHighlight === key} onClick={() => selectPart(key)}>{partLabels[key]}</button>)}
+        {Object.keys(COMPONENT_DETAILS).map(key => <button key={key} className="part-button" aria-pressed={activeHighlight === key} onClick={event => { selectPart(key); event.currentTarget.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); }}>{partLabels[key]}</button>)}
       </div>
       <div className="part-detail" aria-live="polite" aria-atomic="true">
         <div className="part-detail-heading"><h3>{currentDetail.name}</h3><span className="part-detail-tag">{currentDetail.tag}</span></div>

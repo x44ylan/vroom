@@ -68,7 +68,7 @@ export default function EngineSimulator() {
   const intakeLift = lift(0), exhaustLift = lift(540);
   const sparking = cycleAngle >= 352 && cycleAngle <= 380;
   const burnT = isCombustionActive ? Math.max(0, 1 - (cycleAngle - 360) / 70) : 0;
-  const gasFill = strokeIndex === 0 ? '#4d94ff' : strokeIndex === 1 ? '#7fb2ff' : strokeIndex === 2 ? '#ff8a3d' : '#6b7488';
+  const gasFill = strokeIndex === 0 ? '#c9c9c9' : strokeIndex === 1 ? '#cccccc' : strokeIndex === 2 ? '#d5d5d5' : '#7f7f7f';
   const gasOpacity = strokeIndex === 0 ? 0.28 : strokeIndex === 1 ? 0.22 + (cycleAngle - 180) / 180 * 0.35 : strokeIndex === 2 ? 0.25 + burnT * 0.55 : 0.32;
 
   return (
@@ -109,20 +109,20 @@ export default function EngineSimulator() {
               {/* Ports: intake on the left, exhaust on the right */}
               <path d="M4 70 H96 Q120 70 128 96" fill="none" stroke="url(#k-iron)" strokeWidth="30" />
               <path d="M356 70 H264 Q240 70 232 96" fill="none" stroke="url(#k-iron)" strokeWidth="30" />
-              {intakeLift > 1 && [0, 1, 2].map(i => <circle key={i} r="3" fill="#8fbcff" opacity=".8" cx={20 + ((cycleAngle * 1.6 + i * 34) % 100)} cy={70 + Math.sin(i + cycleAngle / 20) * 6} />)}
-              {exhaustLift > 1 && [0, 1, 2].map(i => <circle key={i} r="3.5" fill="#a5afc2" opacity=".6" cx={340 - ((cycleAngle * 1.6 + i * 34) % 100)} cy={70 + Math.sin(i + cycleAngle / 20) * 6} />)}
-              <text x="10" y="44" fill={intakeLift > 1 ? '#8fbcff' : '#5a6680'} fontSize="11" fontWeight="600">AIR + FUEL IN</text>
-              <text x="350" y="44" fill={exhaustLift > 1 ? '#c9d3e3' : '#5a6680'} fontSize="11" fontWeight="600" textAnchor="end">EXHAUST OUT</text>
+              {intakeLift > 1 && [0, 1, 2].map(i => <circle key={i} r="3" fill="#cfcfcf" opacity=".8" cx={20 + ((cycleAngle * 1.6 + i * 34) % 100)} cy={70 + Math.sin(i + cycleAngle / 20) * 6} />)}
+              {exhaustLift > 1 && [0, 1, 2].map(i => <circle key={i} r="3.5" fill="#b5b5b5" opacity=".6" cx={340 - ((cycleAngle * 1.6 + i * 34) % 100)} cy={70 + Math.sin(i + cycleAngle / 20) * 6} />)}
+              <text x="10" y="44" fill={intakeLift > 1 ? '#cfcfcf' : '#777777'} fontSize="11" fontWeight="600">AIR + FUEL IN</text>
+              <text x="350" y="44" fill={exhaustLift > 1 ? '#d5d5d5' : '#777777'} fontSize="11" fontWeight="600" textAnchor="end">EXHAUST OUT</text>
 
               {/* Cylinder head and block walls with water jackets */}
-              <path d="M96 48 H264 V108 H232 L226 96 H134 L128 108 H96 Z" fill="url(#k-iron)" stroke="#0b1220" />
+              <path d="M96 48 H264 V108 H232 L226 96 H134 L128 108 H96 Z" fill="url(#k-iron)" stroke="#202020" />
               <rect x="62" y="108" width="54" height="226" rx="6" fill="url(#k-iron)" />
               <rect x="244" y="108" width="54" height="226" rx="6" fill="url(#k-iron)" />
-              <rect x="74" y="122" width="14" height="150" rx="7" fill="#123058" opacity=".9" />
-              <rect x="272" y="122" width="14" height="150" rx="7" fill="#123058" opacity=".9" />
-              <rect x="116" y="108" width="128" height="226" fill="#070b12" />
-              <rect x="116" y="108" width="4" height="226" fill="#2a3446" />
-              <rect x="240" y="108" width="4" height="226" fill="#2a3446" />
+              <rect x="74" y="122" width="14" height="150" rx="7" fill="#585858" opacity=".9" />
+              <rect x="272" y="122" width="14" height="150" rx="7" fill="#585858" opacity=".9" />
+              <rect x="116" y="108" width="128" height="226" fill="#131313" />
+              <rect x="116" y="108" width="4" height="226" fill="#444444" />
+              <rect x="240" y="108" width="4" height="226" fill="#444444" />
 
               {/* Gas in the chamber */}
               <rect x="120" y={chamberTop} width="120" height={gasHeight} fill={gasFill} opacity={gasOpacity} />
@@ -138,33 +138,33 @@ export default function EngineSimulator() {
                 <path d="M196 98 H232 L224 90 H204 Z" fill="url(#k-steel)" />
               </g>
               {/* Cam lobes pushing the valves */}
-              <ellipse cx="146" cy="14" rx="14" ry={12 + intakeLift * 0.5} fill="#2a3446" />
-              <ellipse cx="214" cy="14" rx="14" ry={12 + exhaustLift * 0.5} fill="#2a3446" />
+              <ellipse cx="146" cy="14" rx="14" ry={12 + intakeLift * 0.5} fill="#444444" />
+              <ellipse cx="214" cy="14" rx="14" ry={12 + exhaustLift * 0.5} fill="#444444" />
 
               {/* Spark plug */}
-              <rect x="174" y="20" width="12" height="40" rx="2" fill="#e8eefb" />
+              <rect x="174" y="20" width="12" height="40" rx="2" fill="#efefef" />
               <rect x="176" y="60" width="8" height="36" fill="url(#k-steel-h)" />
-              {sparking && <g filter="url(#k-bloom)"><circle cx="180" cy="100" r="7" fill="#fff" /><path d="M180 92 L176 100 L183 99 L179 108" stroke="#a9cbff" strokeWidth="2" fill="none" /></g>}
+              {sparking && <g filter="url(#k-bloom)"><circle cx="180" cy="100" r="7" fill="#ffffff" /><path d="M180 92 L176 100 L183 99 L179 108" stroke="#d6d6d6" strokeWidth="2" fill="none" /></g>}
 
               {/* Piston with rings */}
               <g data-testid="engine-piston" transform={`translate(${crankCenterX - pistonWidth / 2}, ${pistonTopY})`}>
-                <rect width={pistonWidth} height="62" rx="5" fill="url(#k-steel)" stroke="#0b1220" />
-                {[8, 15, 22].map(y => <rect key={y} x="0" y={y} width={pistonWidth} height="3" fill="#3a4558" />)}
-                <circle cx={pistonWidth / 2} cy="30" r="8" fill="#1d2533" stroke="#8c97ab" strokeWidth="2" />
+                <rect width={pistonWidth} height="62" rx="5" fill="url(#k-steel)" stroke="#202020" />
+                {[8, 15, 22].map(y => <rect key={y} x="0" y={y} width={pistonWidth} height="3" fill="#555555" />)}
+                <circle cx={pistonWidth / 2} cy="30" r="8" fill="#323232" stroke="#a0a0a0" strokeWidth="2" />
               </g>
 
               {/* Connecting rod */}
-              <path d={`M${crankCenterX - 8} ${pistonPinY} L${crankPinX - 12} ${crankPinY} L${crankPinX + 12} ${crankPinY} L${crankCenterX + 8} ${pistonPinY} Z`} fill="url(#k-steel-h)" stroke="#0b1220" />
-              <circle cx={crankCenterX} cy={pistonPinY} r="6" fill="#c9d3e3" />
+              <path d={`M${crankCenterX - 8} ${pistonPinY} L${crankPinX - 12} ${crankPinY} L${crankPinX + 12} ${crankPinY} L${crankCenterX + 8} ${pistonPinY} Z`} fill="url(#k-steel-h)" stroke="#202020" />
+              <circle cx={crankCenterX} cy={pistonPinY} r="6" fill="#d5d5d5" />
 
               {/* Crankcase and crankshaft: web toward the pin, counterweight opposite */}
               <path d="M62 334 H298 V372 Q298 396 274 396 H86 Q62 396 62 372 Z" fill="url(#k-iron)" opacity=".85" />
               <g transform={`translate(${crankCenterX} ${crankCenterY}) rotate(${(Math.atan2(crankPinY - crankCenterY, crankPinX - crankCenterX) * 180) / Math.PI})`}>
-                <path d="M -6 -50 A 50 50 0 0 0 -6 50 L 0 16 L 0 -16 Z" fill="#5d6a80" stroke="#0b1220" />
-                <rect x="-4" y="-17" width={crankRadius + 18} height="34" rx="17" fill="url(#k-steel)" stroke="#0b1220" />
-                <circle r="12" fill="#c9d3e3" stroke="#3a4558" strokeWidth="2" />
+                <path d="M -6 -50 A 50 50 0 0 0 -6 50 L 0 16 L 0 -16 Z" fill="#787878" stroke="#202020" />
+                <rect x="-4" y="-17" width={crankRadius + 18} height="34" rx="17" fill="url(#k-steel)" stroke="#202020" />
+                <circle r="12" fill="#d5d5d5" stroke="#555555" strokeWidth="2" />
               </g>
-              <circle cx={crankPinX} cy={crankPinY} r="10" fill="#e4ebf6" stroke="#3a4558" strokeWidth="2" />
+              <circle cx={crankPinX} cy={crankPinY} r="10" fill="#ebebeb" stroke="#555555" strokeWidth="2" />
             </Stage>
 
             <div className="absolute diagram-footer">
@@ -173,7 +173,7 @@ export default function EngineSimulator() {
             </div>
           </div>
 
-          <div className="w-full max-w-[460px] mt-3 p-3 rounded-lg bg-[#0f141d] border border-[#262e3d]">
+          <div className="w-full max-w-[460px] mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
             <div className="flex justify-between text-xs mb-1.5">
               <span className="text-zinc-400">Engine Speed:</span>
               <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
@@ -185,7 +185,7 @@ export default function EngineSimulator() {
               step="100"
               value={rpm}
               onChange={(e) => setRpm(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#262e3d] rounded"
+              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
             />
           </div>
         </div>
@@ -210,8 +210,8 @@ export default function EngineSimulator() {
                   }}
                   className={`p-2.5 rounded-lg text-left border transition-[background-color,color,transform] duration-150 ${
                     isActive
-                      ? 'bg-[#161c27] border-zinc-600 text-zinc-100'
-                      : 'bg-[#0f141d] border-[#262e3d] text-zinc-400 hover:text-zinc-200 hover:bg-[#0f141d]'
+                      ? 'bg-[#272727] border-zinc-600 text-zinc-100'
+                      : 'bg-[#1d1d1d] border-[#3c3c3c] text-zinc-400 hover:text-zinc-200 hover:bg-[#1d1d1d]'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mb-0.5">
@@ -224,7 +224,7 @@ export default function EngineSimulator() {
             })}
           </div>
 
-          <div className="p-3.5 rounded-lg bg-[#0f141d] border border-[#262e3d] space-y-2 text-xs">
+          <div className="p-3.5 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-2 text-xs">
             <span className="font-medium text-zinc-200 block">How the cycle keeps going</span>
             <p className="text-zinc-400 leading-relaxed text-[11px]">
               The crankshaft keeps turning between power strokes. A heavy rotating disc called the flywheel helps smooth out the pulses. In a running engine, the other cylinders also take turns producing power.

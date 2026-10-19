@@ -115,22 +115,22 @@ export default function EvVsIceComparison() {
             <div className="lg:col-span-7">
               <div className="relative w-full aspect-[16/10] bg-slate-950/80 rounded-2xl border border-slate-800 p-4">
                 <svg viewBox="0 0 450 250" className="w-full h-full select-none">
-                  <line x1="50" y1="210" x2="430" y2="210" stroke="#262e3d" strokeWidth="1.5" />
-                  <line x1="50" y1="30" x2="50" y2="210" stroke="#262e3d" strokeWidth="1.5" />
+                  <line x1="50" y1="210" x2="430" y2="210" stroke="#3c3c3c" strokeWidth="1.5" />
+                  <line x1="50" y1="30" x2="50" y2="210" stroke="#3c3c3c" strokeWidth="1.5" />
 
-                  <text x="50" y="225" fill="#6b7488" fontSize="10" textAnchor="middle">0 RPM</text>
-                  <text x="145" y="225" fill="#6b7488" fontSize="10" textAnchor="middle">2,000</text>
-                  <text x="240" y="225" fill="#6b7488" fontSize="10" textAnchor="middle">4,000</text>
-                  <text x="335" y="225" fill="#6b7488" fontSize="10" textAnchor="middle">6,000</text>
-                  <text x="430" y="225" fill="#6b7488" fontSize="10" textAnchor="middle">12,000+ EV</text>
+                  <text x="50" y="225" fill="#7f7f7f" fontSize="10" textAnchor="middle">0 RPM</text>
+                  <text x="145" y="225" fill="#7f7f7f" fontSize="10" textAnchor="middle">2,000</text>
+                  <text x="240" y="225" fill="#7f7f7f" fontSize="10" textAnchor="middle">4,000</text>
+                  <text x="335" y="225" fill="#7f7f7f" fontSize="10" textAnchor="middle">6,000</text>
+                  <text x="430" y="225" fill="#7f7f7f" fontSize="10" textAnchor="middle">12,000+ EV</text>
 
-                  <path d="M 50 195 Q 120 180, 200 90 T 310 100 T 360 170" fill="none" stroke="#4d94ff" strokeWidth="3.5" />
-                  <circle cx="240" cy="95" r="5" fill="#4d94ff" />
-                  <text x="245" y="85" fill="#4d94ff" fontSize="10" fontWeight="bold">Gasoline: peak at higher RPM</text>
+                  <path d="M 50 195 Q 120 180, 200 90 T 310 100 T 360 170" fill="none" stroke="#c9c9c9" strokeWidth="3.5" />
+                  <circle cx="240" cy="95" r="5" fill="#c9c9c9" />
+                  <text x="245" y="85" fill="#c9c9c9" fontSize="10" fontWeight="bold">Gasoline: peak at higher RPM</text>
 
-                  <path d="M 50 60 L 220 60 Q 300 70, 420 160" fill="none" stroke="#10b981" strokeWidth="3.5" />
-                  <circle cx="50" cy="60" r="5" fill="#10b981" />
-                  <text x="65" y="50" fill="#34d399" fontSize="10" fontWeight="bold">Electric: strong torque at low RPM</text>
+                  <path d="M 50 60 L 220 60 Q 300 70, 420 160" fill="none" stroke="#c8c8c8" strokeWidth="3.5" />
+                  <circle cx="50" cy="60" r="5" fill="#c8c8c8" />
+                  <text x="65" y="50" fill="#d3d3d3" fontSize="10" fontWeight="bold">Electric: strong torque at low RPM</text>
                 </svg>
               </div>
             </div>

@@ -53,36 +53,36 @@ export default function CoolingLubricationSimulator() {
             <Stage viewBox="0 0 500 320" label={`Cooling system with the thermostat ${thermostatOpen ? 'open' : 'closed'}`}>
               <ellipse cx="260" cy="306" rx="220" ry="12" fill="url(#k-floor)" />
               {/* Radiator */}
-              <rect x="22" y="70" width="70" height="190" rx="8" fill="#121a27" stroke="#2c4470" strokeWidth="2" />
-              {Array.from({ length: 16 }, (_, i) => <line key={i} x1="28" y1={80 + i * 11} x2="86" y2={80 + i * 11} stroke={thermostatOpen ? '#3c5c94' : '#26324a'} strokeWidth="2" />)}
-              {thermostatOpen && [0, 1, 2].map(i => <path key={i} d={`M18 ${110 + i * 50} q -10 -8 0 -16`} fill="none" stroke="#a9cbff" strokeWidth="2" opacity={0.3 + 0.3 * Math.sin(t * 3 + i)} />)}
-              <text x="57" y="56" fill="#a9cbff" fontSize="12" fontWeight="600" textAnchor="middle">RADIATOR</text>
+              <rect x="22" y="70" width="70" height="190" rx="8" fill="#272727" stroke="#686868" strokeWidth="2" />
+              {Array.from({ length: 16 }, (_, i) => <line key={i} x1="28" y1={80 + i * 11} x2="86" y2={80 + i * 11} stroke={thermostatOpen ? '#848484' : '#474747'} strokeWidth="2" />)}
+              {thermostatOpen && [0, 1, 2].map(i => <path key={i} d={`M18 ${110 + i * 50} q -10 -8 0 -16`} fill="none" stroke="#d6d6d6" strokeWidth="2" opacity={0.3 + 0.3 * Math.sin(t * 3 + i)} />)}
+              <text x="57" y="56" fill="#d6d6d6" fontSize="12" fontWeight="600" textAnchor="middle">RADIATOR</text>
               {/* Engine block with cylinders and water jacket */}
-              <rect x="196" y="96" width="220" height="150" rx="14" fill="url(#k-iron)" stroke="#0b1220" />
+              <rect x="196" y="96" width="220" height="150" rx="14" fill="url(#k-iron)" stroke="#202020" />
               <rect x="208" y="108" width="196" height="126" rx="10" fill={hot} opacity={0.18 + heat * 0.3} />
-              {[0, 1, 2, 3, 4, 5].map(i => <rect key={i} x={218 + i * 31} y="120" width="24" height="96" rx="6" fill="#0b0f17" stroke="#3a4558" />)}
-              <text x="306" y="264" fill="#8f9bb3" fontSize="12" fontWeight="600" textAnchor="middle">ENGINE · {heatGeneratedKw} kW of heat</text>
+              {[0, 1, 2, 3, 4, 5].map(i => <rect key={i} x={218 + i * 31} y="120" width="24" height="96" rx="6" fill="#171717" stroke="#555555" />)}
+              <text x="306" y="264" fill="#a5a5a5" fontSize="12" fontWeight="600" textAnchor="middle">ENGINE · {heatGeneratedKw} kW of heat</text>
               {/* Pipes */}
               <Pipe d={engineOut} w={12} color={hot} />
-              <Flow d={engineOut} t={t} speed={30 + engineLoad} color="#fff" width={3} opacity={0.6} />
-              <Pipe d={radiatorFeed} w={12} color={thermostatOpen ? hot : '#2a3446'} />
-              <Pipe d={radiatorReturn} w={12} color={thermostatOpen ? cool : '#2a3446'} />
-              {thermostatOpen && <Flow d={radiatorReturn} t={t} speed={30 + engineLoad} color="#fff" width={3} opacity={0.6} />}
+              <Flow d={engineOut} t={t} speed={30 + engineLoad} color="#ffffff" width={3} opacity={0.6} />
+              <Pipe d={radiatorFeed} w={12} color={thermostatOpen ? hot : '#444444'} />
+              <Pipe d={radiatorReturn} w={12} color={thermostatOpen ? cool : '#444444'} />
+              {thermostatOpen && <Flow d={radiatorReturn} t={t} speed={30 + engineLoad} color="#ffffff" width={3} opacity={0.6} />}
               {!thermostatOpen && <Pipe d={bypass} w={8} color={hot} />}
               <Pipe d={loop} w={12} color={thermostatOpen ? cool : hot} />
-              <Flow d={loop} t={t} speed={30 + engineLoad} color="#fff" width={3} opacity={0.6} />
+              <Flow d={loop} t={t} speed={30 + engineLoad} color="#ffffff" width={3} opacity={0.6} />
               {/* Thermostat valve */}
-              <circle cx="130" cy="96" r="16" fill="#121a27" stroke={thermostatOpen ? '#4d94ff' : '#ff5a4f'} strokeWidth="3" />
-              <line x1="130" y1="96" x2={thermostatOpen ? 130 : 118} y2={thermostatOpen ? 84 : 96} stroke="#e8eefb" strokeWidth="4" strokeLinecap="round" transform={thermostatOpen ? '' : 'rotate(0)'} />
-              <Callout x={130} y={80} tx={150} ty={36} color={thermostatOpen ? '#a9cbff' : '#ff8a80'}>Thermostat {thermostatOpen ? 'open' : 'closed'}</Callout>
+              <circle cx="130" cy="96" r="16" fill="#272727" stroke={thermostatOpen ? '#c9c9c9' : '#c0c0c0'} strokeWidth="3" />
+              <line x1="130" y1="96" x2={thermostatOpen ? 130 : 118} y2={thermostatOpen ? 84 : 96} stroke="#efefef" strokeWidth="4" strokeLinecap="round" transform={thermostatOpen ? '' : 'rotate(0)'} />
+              <Callout x={130} y={80} tx={150} ty={36} color={thermostatOpen ? '#d6d6d6' : '#c5c5c5'}>Thermostat {thermostatOpen ? 'open' : 'closed'}</Callout>
               {/* Pump */}
-              <circle cx="150" cy="248" r="20" fill="#121a27" stroke="#4d94ff" strokeWidth="2" />
-              <g transform={`translate(150 248) rotate(${t * 240})`}>{[0, 90, 180, 270].map(a => <path key={a} d="M0 0 L12 -4 L12 4 Z" fill="#a9cbff" transform={`rotate(${a})`} />)}</g>
-              <Callout x={170} y={256} tx={196} ty={290} color="#8f9bb3">Pump</Callout>
+              <circle cx="150" cy="248" r="20" fill="#272727" stroke="#c9c9c9" strokeWidth="2" />
+              <g transform={`translate(150 248) rotate(${t * 240})`}>{[0, 90, 180, 270].map(a => <path key={a} d="M0 0 L12 -4 L12 4 Z" fill="#d6d6d6" transform={`rotate(${a})`} />)}</g>
+              <Callout x={170} y={256} tx={196} ty={290} color="#a5a5a5">Pump</Callout>
               {/* Oil sump */}
-              <path d="M220 246 H392 L380 284 H232 Z" fill="#2a2618" stroke="#5c4f2a" />
-              <path d={`M226 ${262 + Math.sin(t * 2) * 1.5} Q306 ${258 + Math.sin(t * 2 + 1) * 2} 386 ${262 + Math.sin(t * 2) * 1.5} L380 284 H232 Z`} fill="#c08a2e" opacity=".75" />
-              <text x="306" y="300" fill="#c9a96b" fontSize="11" textAnchor="middle">Oil · {oilGrade}</text>
+              <path d="M220 246 H392 L380 284 H232 Z" fill="#313131" stroke="#696969" />
+              <path d={`M226 ${262 + Math.sin(t * 2) * 1.5} Q306 ${258 + Math.sin(t * 2 + 1) * 2} 386 ${262 + Math.sin(t * 2) * 1.5} L380 284 H232 Z`} fill="#bfbfbf" opacity=".75" />
+              <text x="306" y="300" fill="#c2c2c2" fontSize="11" textAnchor="middle">Oil · {oilGrade}</text>
             </Stage>
 
             <div className="absolute diagram-footer">

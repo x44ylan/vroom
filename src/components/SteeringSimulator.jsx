@@ -55,38 +55,38 @@ export default function SteeringSimulator() {
             <Stage viewBox="0 0 500 340" label={`Front wheels seen from above, steered ${steeringAngle} degrees`}>
               <clipPath id="steer-clip"><rect width="500" height="340" /></clipPath>
               {/* Car outline from above */}
-              <path d="M128 340 L134 70 Q140 24 250 20 Q360 24 366 70 L372 340 Z" fill="#101827" stroke="#22304a" strokeWidth="2" />
-              <line x1="128" y1={frontY + wheelbase} x2="372" y2={frontY + wheelbase} stroke="#22304a" strokeWidth="2" strokeDasharray="4 6" />
-              <text x="250" y={frontY + wheelbase + 18} fill="#5a6680" fontSize="11" textAnchor="middle">rear axle: both lines meet here</text>
+              <path d="M128 340 L134 70 Q140 24 250 20 Q360 24 366 70 L372 340 Z" fill="#272727" stroke="#474747" strokeWidth="2" />
+              <line x1="128" y1={frontY + wheelbase} x2="372" y2={frontY + wheelbase} stroke="#474747" strokeWidth="2" strokeDasharray="4 6" />
+              <text x="250" y={frontY + wheelbase + 18} fill="#777777" fontSize="11" textAnchor="middle">rear axle: both lines meet here</text>
               {/* Lines from each front wheel to the shared turning point */}
               {showCentre && (
-                <g stroke="#4d94ff" strokeWidth="1.5" strokeDasharray="5 6" opacity=".75" clipPath="url(#steer-clip)">
+                <g stroke="#c9c9c9" strokeWidth="1.5" strokeDasharray="5 6" opacity=".75" clipPath="url(#steer-clip)">
                   <line x1={cx - half} y1={frontY} x2={turnX} y2={frontY + wheelbase} />
                   <line x1={cx + half} y1={frontY} x2={turnX} y2={frontY + wheelbase} />
                 </g>
               )}
-              {showCentre && Math.abs(turnX - 250) < 400 && <circle cx={turnX} cy={frontY + wheelbase} r="5" fill="#4d94ff" />}
+              {showCentre && Math.abs(turnX - 250) < 400 && <circle cx={turnX} cy={frontY + wheelbase} r="5" fill="#c9c9c9" />}
               {/* Steering column and rack */}
               <rect x={cx - 92 + rackShift} y={frontY + 34} width="184" height="12" rx="6" fill="url(#k-steel)" />
-              <circle cx={cx} cy={frontY + 40} r="12" fill="url(#k-blue)" stroke="#0b1220" />
-              <line x1={cx} y1={frontY + 40} x2={cx} y2={frontY + 130} stroke="#5d6a80" strokeWidth="6" strokeLinecap="round" />
+              <circle cx={cx} cy={frontY + 40} r="12" fill="url(#k-blue)" stroke="#202020" />
+              <line x1={cx} y1={frontY + 40} x2={cx} y2={frontY + 130} stroke="#787878" strokeWidth="6" strokeLinecap="round" />
               {/* Tie rods from the rack ends to the steering-arm tips */}
               {[[-1, leftWheelVisual], [1, rightWheelVisual]].map(([side, ang]) => {
                 const r = (ang * Math.PI) / 180, lx = -side * 34, ly = 30;
                 const tipX = cx + side * half + lx * Math.cos(r) - ly * Math.sin(r);
                 const tipY = frontY + lx * Math.sin(r) + ly * Math.cos(r);
-                return <line key={side} x1={cx + side * 92 + rackShift} y1={frontY + 40} x2={tipX} y2={tipY} stroke="#c9d3e3" strokeWidth="5" strokeLinecap="round" />;
+                return <line key={side} x1={cx + side * 92 + rackShift} y1={frontY + 40} x2={tipX} y2={tipY} stroke="#d5d5d5" strokeWidth="5" strokeLinecap="round" />;
               })}
               {/* Wheels */}
               {[[-1, leftWheelVisual], [1, rightWheelVisual]].map(([side, ang]) => (
                 <g key={side} transform={`translate(${cx + side * half} ${frontY}) rotate(${ang})`}>
-                  <rect x="-17" y="-44" width="34" height="88" rx="10" fill="#10141c" stroke="#05070b" strokeWidth="2" />
-                  {Array.from({ length: 6 }, (_, i) => <rect key={i} x="-15" y={-40 + i * 14} width="30" height="3" fill="#232b38" />)}
-                  <line x1={-side * 17} y1="0" x2={-side * 34} y2="30" stroke="#8c97ab" strokeWidth="5" strokeLinecap="round" />
+                  <rect x="-17" y="-44" width="34" height="88" rx="10" fill="#1c1c1c" stroke="#0b0b0b" strokeWidth="2" />
+                  {Array.from({ length: 6 }, (_, i) => <rect key={i} x="-15" y={-40 + i * 14} width="30" height="3" fill="#373737" />)}
+                  <line x1={-side * 17} y1="0" x2={-side * 34} y2="30" stroke="#a0a0a0" strokeWidth="5" strokeLinecap="round" />
                 </g>
               ))}
-              <Callout x={cx - half} y={frontY - 48} tx={60} ty={22} color={steeringAngle < 0 ? '#a9cbff' : '#c9d3e3'}>Left {Math.round(Math.abs(leftWheelVisual))}°</Callout>
-              <Callout x={cx + half} y={frontY - 48} tx={440} ty={22} anchor="end" color={steeringAngle > 0 ? '#a9cbff' : '#c9d3e3'}>Right {Math.round(Math.abs(rightWheelVisual))}°</Callout>
+              <Callout x={cx - half} y={frontY - 48} tx={60} ty={22} color={steeringAngle < 0 ? '#d6d6d6' : '#d5d5d5'}>Left {Math.round(Math.abs(leftWheelVisual))}°</Callout>
+              <Callout x={cx + half} y={frontY - 48} tx={440} ty={22} anchor="end" color={steeringAngle > 0 ? '#d6d6d6' : '#d5d5d5'}>Right {Math.round(Math.abs(rightWheelVisual))}°</Callout>
             </Stage>
 
             <div className="absolute diagram-footer">

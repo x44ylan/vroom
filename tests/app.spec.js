@@ -382,7 +382,7 @@ test('every lesson diagram responds to its controls', async ({ page }) => {
   await expect(page.locator('.diagram-footer')).toContainText('Too little');
   // Retry the bump until the trace shows it; under heavy load a single frame can be skipped.
   const swing = async () => {
-    const d = await page.locator('.simulation-content .diagram path[stroke="#4d94ff"]').last().getAttribute('d');
+    const d = await page.locator('.simulation-content .diagram .body-trace').getAttribute('d');
     const ys = (d.match(/,(-?[\d.]+)/g) || []).map(v => Number(v.slice(1)));
     return ys.length ? Math.max(...ys) - Math.min(...ys) : 0;
   };
@@ -482,4 +482,44 @@ test('landing car loads the compressed model and credits its author', async ({ p
   expect(responses[0]?.status).toBe(200);
   expect(responses[0].size).toBeLessThan(1_000_000);
   await expect(page.locator('.app-footer')).toContainText('CC BY 4.0');
+});
+
+
+test.describe('phone layout', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+
+  test('bottom bar moves between lessons, the sheet drags closed, and home offers to continue', async ({ page }) => {
+    test.setTimeout(90000);
+    await page.goto('/');
+    const dock = page.locator('.mobile-dock');
+    await expect(dock).toBeVisible();
+    await expect(page.locator('.app-header .menu-button')).toHaveCount(0);
+    await dock.getByRole('button', { name: 'Start learning' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Take the car apart');
+
+    await dock.getByRole('button', { name: 'Next topic: Engine' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+    await expect(dock).toContainText('02 of 13');
+    await dock.getByRole('button', { name: 'Previous topic: Car overview' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Take the car apart');
+
+    // The lesson list opens as a bottom sheet; dragging its grabber down closes it.
+    await dock.getByRole('button', { name: 'Toggle Navigation Menu' }).click();
+    const sheet = page.getByRole('dialog');
+    await expect(sheet).toHaveClass(/menu-sheet/);
+    const handle = await sheet.locator('.menu-heading').boundingBox();
+    await page.mouse.move(handle.x + 40, handle.y + 20);
+    await page.mouse.down();
+    await page.mouse.move(handle.x + 40, handle.y + 260, { steps: 8 });
+    await page.mouse.up();
+    await expect(sheet).toHaveCount(0);
+
+    await dock.getByRole('button', { name: 'Toggle Navigation Menu' }).click();
+    await page.getByRole('dialog').getByRole('link', { name: 'Brakes & ABS', exact: true }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('How pressing a pedal slows the car');
+
+    await page.goto('/');
+    await expect(dock.getByRole('button', { name: /Continue/ })).toContainText('Brakes & ABS');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+  });
 });

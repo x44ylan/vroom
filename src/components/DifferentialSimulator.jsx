@@ -55,11 +55,11 @@ export default function DifferentialSimulator() {
               {/* Path of each wheel through the bend */}
               {bend !== 0 && (
                 <g fill="none" strokeDasharray="6 8" strokeWidth="2">
-                  {[[50, '#5a6680'], [450, '#4d94ff']].map(([x, color]) => {
+                  {[[50, '#777777'], [450, '#c9c9c9']].map(([x, color]) => {
                     // Both wheels circle the same point far off to the side of the bend.
                     const centreX = bend < 0 ? -650 : 1150, R = Math.abs(x - centreX);
                     const pts = Array.from({ length: 33 }, (_, i) => { const y = i * 10; return `${i ? 'L' : 'M'}${(centreX + Math.sign(x - centreX) * Math.sqrt(R * R - (y - 160) ** 2)).toFixed(1)},${y}`; }).join('');
-                    return <path key={x} d={pts} stroke={(bend < 0 ? x > 250 : x < 250) ? '#4d94ff' : '#5a6680'} />;
+                    return <path key={x} d={pts} stroke={(bend < 0 ? x > 250 : x < 250) ? '#c9c9c9' : '#777777'} />;
                   })}
                 </g>
               )}
@@ -67,12 +67,12 @@ export default function DifferentialSimulator() {
               <rect x="70" y="151" width="360" height="18" rx="9" fill="url(#k-steel)" />
               {/* Driveshaft and pinion coming from the front */}
               <rect x="241" y="236" width="18" height="84" rx="9" fill="url(#k-steel-h)" />
-              <Callout x={259} y={290} tx={300} ty={290} color="#a9cbff">From gearbox</Callout>
+              <Callout x={259} y={290} tx={300} ty={290} color="#d6d6d6">From gearbox</Callout>
               {/* Housing with ring gear and spider gears */}
-              <circle cx="250" cy="160" r="78" fill="url(#k-iron)" stroke="#0b1220" />
+              <circle cx="250" cy="160" r="78" fill="url(#k-iron)" stroke="#202020" />
               <g transform="translate(250 160)">
-                <Gear r={66} teeth={36} angle={ringAngle} fill="url(#k-blue)" spokes={0} hub="#121a27" />
-                <circle r="44" fill="#121a27" />
+                <Gear r={66} teeth={36} angle={ringAngle} fill="url(#k-blue)" spokes={0} hub="#272727" />
+                <circle r="44" fill="#272727" />
                 <g transform={`rotate(${ringAngle})`}>
                   <g transform="translate(0 -28)"><Gear r={12} teeth={10} angle={spiderAngle} /></g>
                   <g transform="translate(0 28)"><Gear r={12} teeth={10} angle={-spiderAngle} /></g>
@@ -83,10 +83,10 @@ export default function DifferentialSimulator() {
               {/* Tyres, top-down */}
               {[[50, spinL, leftWheelSpeed, 'Left'], [450, spinR, rightWheelSpeed, 'Right']].map(([x, spin, rpm, label]) => (
                 <g key={label}>
-                  <rect x={x - 26} y="102" width="52" height="116" rx="14" fill="#10141c" stroke="#05070b" strokeWidth="2" />
-                  {Array.from({ length: 7 }, (_, i) => <rect key={i} x={x - 24} y={104 + ((i * 17 + spin * 0.3) % 112)} width="48" height="3" fill="#232b38" />)}
-                  <text x={x} y="244" fill={rpm > driveshaftSpeed ? '#a9cbff' : rpm < driveshaftSpeed ? '#8f9bb3' : '#e8eefb'} fontSize="15" fontWeight="600" textAnchor="middle">{rpm} RPM</text>
-                  <text x={x} y="92" fill="#8f9bb3" fontSize="11" textAnchor="middle">{label} wheel</text>
+                  <rect x={x - 26} y="102" width="52" height="116" rx="14" fill="#1c1c1c" stroke="#0b0b0b" strokeWidth="2" />
+                  {Array.from({ length: 7 }, (_, i) => <rect key={i} x={x - 24} y={104 + ((i * 17 + spin * 0.3) % 112)} width="48" height="3" fill="#373737" />)}
+                  <text x={x} y="244" fill={rpm > driveshaftSpeed ? '#d6d6d6' : rpm < driveshaftSpeed ? '#a5a5a5' : '#efefef'} fontSize="15" fontWeight="600" textAnchor="middle">{rpm} RPM</text>
+                  <text x={x} y="92" fill="#a5a5a5" fontSize="11" textAnchor="middle">{label} wheel</text>
                 </g>
               ))}
             </Stage>
