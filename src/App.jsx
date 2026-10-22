@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench, CircleDot } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
 import HeroCar from './components/HeroCar.jsx';
@@ -10,6 +10,7 @@ import BrakeSimulator from './components/BrakeSimulator.jsx';
 import SteeringSimulator from './components/SteeringSimulator.jsx';
 import TurbochargerSimulator from './components/TurbochargerSimulator.jsx';
 import SuspensionSimulator from './components/SuspensionSimulator.jsx';
+import TyreGripSimulator from './components/TyreGripSimulator.jsx';
 import CoolingLubricationSimulator from './components/CoolingLubricationSimulator.jsx';
 import AerodynamicsSimulator from './components/AerodynamicsSimulator.jsx';
 import ElectricalEcuSimulator from './components/ElectricalEcuSimulator.jsx';
@@ -29,6 +30,7 @@ const TOPICS = [
   { id: 'brakes', group: 'On the road', component: BrakeSimulator },
   { id: 'steering', group: 'On the road', component: SteeringSimulator },
   { id: 'suspension', group: 'On the road', component: SuspensionSimulator },
+  { id: 'grip', group: 'On the road', component: TyreGripSimulator },
   { id: 'cooling', group: 'Supporting systems', component: CoolingLubricationSimulator },
   { id: 'aero', group: 'Supporting systems', component: AerodynamicsSimulator },
   { id: 'electronics', group: 'Supporting systems', component: ElectricalEcuSimulator },
@@ -36,7 +38,7 @@ const TOPICS = [
   { id: 'ev', group: 'Review', component: EvVsIceComparison },
   { id: 'quiz', group: 'Review', component: CarQuiz },
 ].map((topic, index) => ({ ...topic, ...lessons[topic.id], number: String(index + 1).padStart(2, '0') }));
-const ICONS = { chassis: CarFront, engine: Cog, turbo: Fan, transmission: Settings2, differential: Split, brakes: Disc3, steering: Navigation2, suspension: ArrowDownUp, cooling: Thermometer, aero: Wind, electronics: Cpu, addons: Wrench, ev: Zap, quiz: GraduationCap };
+const ICONS = { chassis: CarFront, engine: Cog, turbo: Fan, transmission: Settings2, differential: Split, brakes: Disc3, steering: Navigation2, suspension: ArrowDownUp, grip: CircleDot, cooling: Thermometer, aero: Wind, electronics: Cpu, addons: Wrench, ev: Zap, quiz: GraduationCap };
 TOPICS.forEach(topic => { topic.Icon = ICONS[topic.id]; });
 const GROUPS = [...new Set(TOPICS.map(topic => topic.group))];
 const HOME = 'home';

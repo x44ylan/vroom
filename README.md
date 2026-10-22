@@ -12,7 +12,7 @@
          V  R  O  O  M  ·  how a car works
 ```
 
-How a car really works, explained with interactive models of a Lexus IS300. Fourteen short lessons cover the engine, turbo, gears, differential, brakes, steering, suspension, cooling, aerodynamics, electronics, add-ons and EVs, then finish with a quiz.
+How a car really works, explained with interactive models of a Lexus IS300. Fifteen short lessons cover the engine, turbo, gears, differential, brakes, steering, suspension, tyre grip, cooling, aerodynamics, electronics, add-ons and EVs, then finish with a quiz.
 
 ## Comprehensive Interactive Modules
 

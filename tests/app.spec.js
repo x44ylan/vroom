@@ -173,7 +173,7 @@ test('every topic fits a narrow phone and loads without runtime errors', async (
   await page.setViewportSize({ width: 375, height: 812 });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
-  for (const topic of ['home', 'chassis', 'engine', 'turbo', 'transmission', 'differential', 'brakes', 'steering', 'suspension', 'cooling', 'aero', 'electronics', 'addons', 'ev', 'quiz']) {
+  for (const topic of ['home', 'chassis', 'engine', 'turbo', 'transmission', 'differential', 'brakes', 'steering', 'suspension', 'grip', 'cooling', 'aero', 'electronics', 'addons', 'ev', 'quiz']) {
     await page.goto('/#' + topic);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), topic).toBeTruthy();
@@ -256,7 +256,7 @@ test('landing leads into lessons and the home logo returns to it', async ({ page
   await expect(page.getByRole('heading', { name: 'Pick any lesson, or start at one.' })).toBeInViewport();
   await page.locator('#lessons').getByRole('link', { name: /^Brakes & ABS:/ }).click();
   await expect(page).toHaveURL(/#brakes$/);
-  await expect(page.getByLabel('Lesson 6 of 14')).toBeVisible();
+  await expect(page.getByLabel('Lesson 6 of 15')).toBeVisible();
   await page.getByRole('link', { name: 'Vroom home' }).click();
   await expect(page).not.toHaveURL(/#/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
@@ -375,6 +375,15 @@ test('every lesson diagram responds to its controls', async ({ page }) => {
   await page.goto('/#electronics');
   await page.getByRole('button', { name: 'Wheel sensor' }).click();
   await expect(page.locator('.diagram-footer')).toContainText('C0200');
+
+  // Tyre grip: combined demand uses grip, and a slippery surface shrinks the circle.
+  await page.goto('/#grip');
+  await page.getByRole('slider', { name: 'Cornering force' }).fill('90');
+  await page.getByRole('slider', { name: 'Braking or accelerating' }).fill('-90');
+  await expect(page.locator('.diagram-footer')).toContainText('the tyre slides');
+  const dryGrip = await snapshot();
+  await page.getByRole('button', { name: 'Ice', exact: true }).click();
+  expect(await snapshot()).not.toEqual(dryGrip);
 
   // Suspension: weak damping should keep the body moving after a bump.
   await page.goto('/#suspension');
@@ -499,7 +508,7 @@ test.describe('phone layout', () => {
 
     await dock.getByRole('button', { name: 'Next topic: Engine' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
-    await expect(dock).toContainText('02 of 14');
+    await expect(dock).toContainText('02 of 15');
     await dock.getByRole('button', { name: 'Previous topic: Car overview' }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Take the car apart');
 

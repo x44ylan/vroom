@@ -31,7 +31,7 @@ export function printConsoleBanner() {
   const ink = 'color:#fafafa;font-family:monospace;font-size:12px;line-height:1.25;';
   const dim = 'color:#8a8a8a;font-family:monospace;font-size:11px;';
   console.log(`%c${WORDMARK}`, ink);
-  console.log('%cHow a car really works — 14 interactive lessons.', dim);
-  console.log('%c> engine · gearbox · diff · brakes · aero · ecu · ev', dim);
+  console.log('%cHow a car really works — 15 interactive lessons.', dim);
+  console.log('%c> engine · gearbox · diff · brakes · grip · aero · ecu · ev', dim);
   console.log('%c> peek the source: https://github.com/x44ylan/vroom', dim);
 }

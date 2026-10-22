@@ -58,6 +58,13 @@ export const lessons = {
     takeaway: 'Springs support the car and allow movement. Dampers control how quickly that movement settles. Making both stiffer is not always more comfortable.',
     terms: [['Spring rate', 'How much force it takes to compress a spring by a given distance. A higher number means a stiffer spring.'], ['Damping', 'Resistance to movement, supplied by the damper. It reduces bouncing.']],
   },
+  grip: {
+    label: 'Tyres & grip', title: 'How much grip a tyre really has',
+    description: 'A tyre has one grip budget, and it is shared between turning and braking or accelerating. The friction circle shows that budget. As long as the combined demand stays inside the circle the tyre holds the road. Cross the edge and it slides.',
+    tip: 'Set a hard turn, then add heavy braking and watch the dot cross the circle. Now switch the surface to Wet or Ice to see the circle shrink.',
+    takeaway: 'Grip is one budget split between cornering and braking. On a slippery road that budget is smaller, so inputs that were fine on dry tarmac can break the tyre loose.',
+    terms: [['Friction circle', 'A picture of a tyre\'s total grip. The arrow inside shows how much is being used and in which direction.'], ['Grip (traction)', 'The friction between tyre and road that lets a car turn, stop, and accelerate.'], ['Coefficient of friction', 'A number for how much grip two surfaces give. Dry tarmac is high; ice is very low.']],
+  },
   cooling: {
     label: 'Cooling & oil', title: 'How the engine manages heat and friction',
     description: 'Coolant carries heat from the engine to the radiator, where it can escape into the air. Oil forms a film between moving metal parts to reduce friction. These are separate systems with different jobs.',
