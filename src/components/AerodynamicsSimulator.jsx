@@ -125,7 +125,7 @@ export default function AerodynamicsSimulator() {
               step="5"
               value={speedKmh}
               onChange={(e) => setSpeedKmh(Number(e.target.value))}
-              className="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full cursor-pointer"
             />
           </div>
         </div>

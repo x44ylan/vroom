@@ -151,7 +151,7 @@ export default function SuspensionSimulator() {
                 max="100"
                 value={springStiffness}
                 onChange={(e) => setSpringStiffness(Number(e.target.value))}
-                className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                className="w-full cursor-pointer"
               />
             </div>
 
@@ -166,7 +166,7 @@ export default function SuspensionSimulator() {
                 max="90"
                 value={damperRate}
                 onChange={(e) => setDamperRate(Number(e.target.value))}
-                className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                className="w-full cursor-pointer"
               />
             </div>
           </div>

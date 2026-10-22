@@ -110,7 +110,7 @@ export default function BrakeSimulator() {
               step="2"
               value={pedalForce}
               onChange={(e) => setPedalForce(Number(e.target.value))}
-              className="w-full accent-pink-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full cursor-pointer"
             />
           </div>
         </div>

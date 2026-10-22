@@ -185,7 +185,7 @@ export default function EngineSimulator() {
               step="100"
               value={rpm}
               onChange={(e) => setRpm(Number(e.target.value))}
-              className="w-full accent-slate-200 cursor-pointer h-1.5 bg-slate-800 rounded"
+              className="w-full cursor-pointer"
             />
           </div>
         </div>

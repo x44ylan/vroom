@@ -111,7 +111,7 @@ export default function SteeringSimulator() {
               step="1"
               value={steeringAngle}
               onChange={(e) => setSteeringAngle(Number(e.target.value))}
-              className="w-full accent-teal-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full cursor-pointer"
             />
           </div>
         </div>

@@ -110,7 +110,7 @@ export default function CoolingLubricationSimulator() {
               max="100"
               value={engineLoad}
               onChange={(e) => setEngineLoad(Number(e.target.value))}
-              className="w-full accent-blue-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+              className="w-full cursor-pointer"
             />
           </div>
         </div>

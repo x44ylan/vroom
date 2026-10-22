@@ -105,7 +105,7 @@ export default function TyreGripSimulator() {
                 type="range" aria-label="Cornering force"
                 min="-100" max="100" value={corner}
                 onChange={(e) => setCorner(Number(e.target.value))}
-                className="w-full accent-amber-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                className="w-full cursor-pointer"
               />
             </div>
 
@@ -118,7 +118,7 @@ export default function TyreGripSimulator() {
                 type="range" aria-label="Braking or accelerating"
                 min="-100" max="100" value={drive}
                 onChange={(e) => setDrive(Number(e.target.value))}
-                className="w-full accent-cyan-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                className="w-full cursor-pointer"
               />
             </div>
           </div>
