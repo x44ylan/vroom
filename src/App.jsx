@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench, CircleDot, Check, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench, CircleDot, Check, RotateCcw, Keyboard } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
 import HeroCar from './components/HeroCar.jsx';
@@ -221,9 +221,41 @@ function MobileDock({ isHome, index, active, onSelect, menu }) {
   </nav>;
 }
 
+const SHORTCUTS = [
+  { keys: ['→', 'L'], label: 'Next lesson' },
+  { keys: ['←', 'H'], label: 'Previous lesson' },
+  { keys: ['Home'], label: 'Back to the overview' },
+  { keys: ['?'], label: 'Show this list' },
+  { keys: ['Esc'], label: 'Close a panel' },
+];
+
+// A quiet reference card for the keyboard shortcuts, opened with "?" or the
+// header button. It is a modal dialog so Escape and focus handling come free.
+function ShortcutsDialog({ open, onOpenChange }) {
+  return <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Portal>
+      <Dialog.Overlay className="menu-overlay" />
+      <Dialog.Content className="shortcuts-dialog">
+        <div className="menu-heading">
+          <Dialog.Title>Keyboard shortcuts</Dialog.Title>
+          <Dialog.Close className="icon-button" aria-label="Close shortcuts"><X size={18} /></Dialog.Close>
+        </div>
+        <Dialog.Description className="sr-only">A list of keyboard shortcuts for moving between lessons.</Dialog.Description>
+        <dl className="shortcuts-list">
+          {SHORTCUTS.map(row => <div key={row.label}>
+            <dt>{row.label}</dt>
+            <dd>{row.keys.map(k => <kbd key={k}>{k}</kbd>)}</dd>
+          </div>)}
+        </dl>
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>;
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState(readTopic);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const headingRef = useRef(null);
   const focusAfterClose = useRef(false);
   const isHome = activeTab === HOME;
@@ -262,6 +294,32 @@ export default function App() {
     });
   };
 
+  // Keyboard shortcuts for quick navigation. Left/right page between lessons,
+  // and "?" opens the shortcut list. Typing in a field or dragging a slider is
+  // left alone, and modifier combos stay with the browser.
+  useEffect(() => {
+    const onKey = event => {
+      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
+      const el = event.target;
+      const typing = el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName) || el.getAttribute?.('role') === 'slider');
+      if (typing) return;
+      if (event.key === '?' || (event.key === '/' && event.shiftKey)) { event.preventDefault(); setShortcutsOpen(v => !v); return; }
+      if (shortcutsOpen) return;
+      if (event.key === 'ArrowRight' || event.key === 'l') {
+        event.preventDefault();
+        selectTopic(isHome ? TOPICS[0].id : (TOPICS[index + 1]?.id || HOME));
+      } else if (event.key === 'ArrowLeft' || event.key === 'h') {
+        event.preventDefault();
+        if (!isHome) selectTopic(index > 0 ? TOPICS[index - 1].id : HOME);
+      } else if (event.key === 'Home' && !isHome) {
+        event.preventDefault();
+        selectTopic(HOME);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isHome, index, shortcutsOpen]);
+
   const Simulator = active?.component;
   const lessonsMenu = <LessonsMenu open={menuOpen} onOpenChange={setMenuOpen} active={activeTab} onSelect={selectTopic} focusAfterClose={focusAfterClose} mobile={mobile} visited={visited}
     trigger={<Dialog.Trigger className={mobile ? 'dock-menu' : 'menu-button'} aria-label="Toggle Navigation Menu">
@@ -279,6 +337,7 @@ export default function App() {
         {!isHome && <span className="header-lesson" aria-hidden="true">{active.label}</span>}
         <div className="header-actions">
           {!isHome && <span className="header-progress" aria-label={`Lesson ${index + 1} of ${TOPICS.length}`}>{active.number}<span> / {TOPICS.length}</span></span>}
+          {!mobile && <button className="icon-button shortcuts-button" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)" onClick={() => setShortcutsOpen(true)}><Keyboard size={16} aria-hidden="true" /></button>}
           {!mobile && lessonsMenu}
         </div>
       </div>
@@ -320,6 +379,7 @@ export default function App() {
       </article>}
     </main>
     {mobile && <MobileDock isHome={isHome} index={index} active={active} onSelect={selectTopic} menu={lessonsMenu} />}
+    {!mobile && <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />}
     <footer className="app-footer"><span>Vroom</span><span>Simplified learning models · Independent enthusiast guide · Car model “Toyota Altezza 2001” by <a href="https://sketchfab.com/3d-models/draft-request-toyota-altezza-2001-0396aafda6294dc4843250d979783656" target="_blank" rel="noopener noreferrer">Chai</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></span></footer>
   </div>;
 }

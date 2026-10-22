@@ -588,3 +588,20 @@ details[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
 .progress-reset:active { transform: scale(.97); }
 @media (hover: hover) and (pointer: fine) { .progress-reset:hover { color: var(--text); background: var(--surface-2); } }
 @media (prefers-reduced-motion: reduce) { .hero-progress-meter { animation: none; } .hero-progress-meter .progress-bar span { transition: none; } }
+
+/* ============================================================
+   Keyboard shortcuts dialog
+   A small centred card listing the navigation keys, opened with
+   "?" or the header button. Matches the menu panel's surface.
+   ============================================================ */
+.shortcuts-button { color: var(--muted); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); }
+.shortcuts-dialog { position: fixed; left: 50%; top: 50%; z-index: 51; width: min(380px, calc(100% - 32px)); transform: translate(-50%, -50%); padding: 16px 16px 20px; border-radius: var(--radius-lg); background: var(--surface-1); box-shadow: var(--shadow-lg), inset 0 0 0 1px var(--line); outline: none; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out); }
+.shortcuts-dialog[data-state='closed'] { opacity: 0; transform: translate(-50%, -48%) scale(.98); }
+@starting-style { .shortcuts-dialog[data-state='open'] { opacity: 0; transform: translate(-50%, -48%) scale(.98); } }
+.shortcuts-list { display: grid; gap: 2px; }
+.shortcuts-list > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 40px; padding: 0 4px; }
+.shortcuts-list > div + div { border-top: 1px solid var(--line); }
+.shortcuts-list dt { font-size: 14px; color: var(--text); }
+.shortcuts-list dd { display: inline-flex; gap: 6px; margin: 0; }
+.shortcuts-list kbd { display: inline-grid; place-content: center; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 7px; font-family: var(--font-mono); font-size: 12px; color: var(--text); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 0 hsl(0 0% 0% / .4); }
+@media (prefers-reduced-motion: reduce) { .shortcuts-dialog { transition: opacity 150ms ease; } .shortcuts-dialog[data-state='closed'] { transform: translate(-50%, -50%); } @starting-style { .shortcuts-dialog[data-state='open'] { transform: translate(-50%, -50%); } } }

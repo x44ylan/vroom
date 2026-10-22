@@ -499,6 +499,34 @@ test('segmented controls and switches work from the keyboard', async ({ page }) 
   await expect(page.locator('.diagram')).toContainText('Thermostat closed');
 });
 
+test('keyboard shortcuts page between lessons, open the help, and never hijack a slider', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 860 });
+  await page.goto('/#engine');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+
+  // Right/left arrows move between lessons when focus is not in a field.
+  await page.locator('body').click({ position: { x: 5, y: 5 } });
+  await page.keyboard.press('ArrowRight');
+  await expect(page).toHaveURL(/#turbo$/);
+  await page.keyboard.press('ArrowLeft');
+  await expect(page).toHaveURL(/#engine$/);
+
+  // "?" opens the shortcuts dialog and Escape closes it.
+  await page.keyboard.press('Shift+/');
+  const dialog = page.getByRole('dialog', { name: 'Keyboard shortcuts' });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+
+  // A focused slider keeps its own arrow-key behaviour; the lesson does not change.
+  const slider = page.getByRole('slider', { name: 'Engine speed', exact: true });
+  await slider.focus();
+  const before = await slider.inputValue();
+  await page.keyboard.press('ArrowRight');
+  await expect(slider).not.toHaveValue(before);
+  await expect(page).toHaveURL(/#engine$/);
+});
+
 test('reduced motion keeps the landing content fully visible', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
