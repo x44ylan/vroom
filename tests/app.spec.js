@@ -266,6 +266,31 @@ test('landing leads into lessons and the home logo returns to it', async ({ page
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How a car really works.');
 });
 
+test('progress tracking records visited lessons and reset clears it', async ({ page }) => {
+  await page.goto('/');
+  // No progress yet: the hero shows Start learning and no meter.
+  await expect(page.getByRole('button', { name: 'Start learning' })).toBeVisible();
+  await expect(page.getByLabel(/lessons explored/)).toHaveCount(0);
+
+  // Visit two lessons.
+  await page.goto('/#engine');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the engine makes the wheels turn');
+  await page.goto('/#brakes');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('How pressing a pedal slows the car');
+
+  // Back home, the meter reflects the two visited lessons and the curriculum marks them.
+  await page.goto('/');
+  await expect(page.getByLabel('2 of 15 lessons explored')).toBeVisible();
+  await expect(page.locator('#lessons .lesson-row[data-done]')).toHaveCount(2);
+  await expect(page.locator('.hero-actions').getByRole('button', { name: 'Continue', exact: true })).toBeVisible();
+
+  // Reset clears progress and the meter disappears.
+  await page.getByRole('button', { name: 'Reset progress' }).click();
+  await expect(page.getByLabel(/lessons explored/)).toHaveCount(0);
+  await expect(page.locator('#lessons .lesson-row[data-done]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Start learning' })).toBeVisible();
+});
+
 test('the decorative hero model never blocks scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');

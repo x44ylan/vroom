@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench, CircleDot } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Menu, X, CarFront, Cog, Fan, Settings2, Split, Disc3, Navigation2, ArrowDownUp, Thermometer, Wind, Cpu, Zap, GraduationCap, Wrench, CircleDot, Check, RotateCcw } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import ChassisViewer3D from './components/ChassisViewer3D.jsx';
 import HeroCar from './components/HeroCar.jsx';
@@ -20,6 +20,7 @@ import CarQuiz from './components/CarQuiz.jsx';
 import AddonGarage from './components/AddonGarage.jsx';
 import { lessons } from './data/lessons.js';
 import { useIsMobile } from './lib/useMediaQuery.js';
+import { useProgress, markVisited, clearProgress } from './lib/progress.js';
 
 const TOPICS = [
   { id: 'chassis', group: 'Start here', component: ChassisViewer3D },
@@ -53,33 +54,44 @@ const LAST_LESSON_KEY = 'vroom:lastLesson';
 const readLastLesson = () => { try { return TOPICS.find(topic => topic.id === localStorage.getItem(LAST_LESSON_KEY)); } catch { return undefined; } };
 const readTopic = () => TOPICS.find(topic => `#${topic.id}` === window.location.hash)?.id || HOME;
 
-function TopicNavigation({ active, onSelect, className = '' }) {
+function TopicNavigation({ active, onSelect, visited, className = '' }) {
   return <nav aria-label="Topics" className={`topic-navigation ${className}`}>
     {GROUPS.map(group => <div className="nav-group" key={group}>
       <p className="nav-group-label">{group}</p>
       <ul>
-        {TOPICS.filter(topic => topic.group === group).map(topic => <li key={topic.id}>
-          <a href={`#${topic.id}`} aria-label={topic.label} aria-current={active === topic.id ? 'page' : undefined}
-            onClick={event => { event.preventDefault(); onSelect(topic.id); }} className="topic-link">
+        {TOPICS.filter(topic => topic.group === group).map(topic => {
+          const done = visited?.has(topic.id);
+          return <li key={topic.id}>
+          <a href={`#${topic.id}`} aria-label={`${topic.label}${done ? ', visited' : ''}`} aria-current={active === topic.id ? 'page' : undefined}
+            data-done={done || undefined} onClick={event => { event.preventDefault(); onSelect(topic.id); }} className="topic-link">
             <span className="topic-icon" aria-hidden="true"><topic.Icon size={18} strokeWidth={1.75} /></span>
             <span className="topic-text"><span className="topic-label">{topic.label}</span><span className="topic-title">{topic.title}</span></span>
-            <span className="topic-number" aria-hidden="true">{topic.number}</span>
+            <span className="topic-number" aria-hidden="true">{done ? <Check size={15} strokeWidth={2.5} /> : topic.number}</span>
           </a>
-        </li>)}
+        </li>;
+        })}
       </ul>
     </div>)}
   </nav>;
 }
 
-function Landing({ onSelect, mobile }) {
+function Landing({ onSelect, mobile, visited }) {
+  const doneCount = TOPICS.filter(topic => visited.has(topic.id)).length;
+  const started = doneCount > 0;
+  const complete = doneCount === TOPICS.length;
+  const last = readLastLesson();
   return <>
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
         <p className="eyebrow">An interactive course · {TOPICS.length} lessons</p>
         <h1 id="hero-title" tabIndex={-1}>How a car really works.</h1>
         <p className="hero-lede">Take apart a Lexus IS300, then try the engine, gears, brakes, and more. No experience needed — each lesson takes a few minutes.</p>
+        {started && <div className="hero-progress-meter" aria-label={`${doneCount} of ${TOPICS.length} lessons explored`}>
+          <div className="progress-bar" aria-hidden="true"><span style={{ transform: `scaleX(${doneCount / TOPICS.length})` }} /></div>
+          <p>{complete ? 'All lessons explored. Nice work.' : `${doneCount} of ${TOPICS.length} lessons explored`}</p>
+        </div>}
         {!mobile && <div className="hero-actions">
-          <button className="button button-primary" onClick={() => onSelect('chassis')}>Start learning <ArrowRight size={16} aria-hidden="true" /></button>
+          <button className="button button-primary" onClick={() => onSelect(started ? (last?.id || 'chassis') : 'chassis')}>{started && !complete ? 'Continue' : started ? 'Review lessons' : 'Start learning'} <ArrowRight size={16} aria-hidden="true" /></button>
           <a className="button button-secondary" href="#lessons">See all lessons</a>
         </div>}
       </div>
@@ -117,28 +129,32 @@ function Landing({ onSelect, mobile }) {
         {GROUPS.map(group => <div className="lesson-group" key={group}>
           <h3>{group}</h3>
           <ul>
-            {TOPICS.filter(topic => topic.group === group).map(topic => <li key={topic.id}>
-              <a href={`#${topic.id}`} className="lesson-row" aria-label={`${topic.label}: ${topic.title}`} onClick={event => { event.preventDefault(); onSelect(topic.id); }}>
+            {TOPICS.filter(topic => topic.group === group).map(topic => {
+              const done = visited.has(topic.id);
+              return <li key={topic.id}>
+              <a href={`#${topic.id}`} className="lesson-row" data-done={done || undefined} aria-label={`${topic.label}: ${topic.title}${done ? ' (visited)' : ''}`} onClick={event => { event.preventDefault(); onSelect(topic.id); }}>
                 <span className="lesson-row-icon" aria-hidden="true"><topic.Icon size={18} strokeWidth={1.75} /></span>
                 <span className="lesson-row-text"><span className="lesson-row-label">{topic.label}</span><span className="lesson-row-title">{topic.title}</span></span>
-                <span className="lesson-row-number" aria-hidden="true">{topic.number}</span>
+                <span className="lesson-row-number" aria-hidden="true">{done ? <Check size={16} strokeWidth={2.5} /> : topic.number}</span>
               </a>
-            </li>)}
+            </li>;
+            })}
           </ul>
         </div>)}
       </nav>
     </section>
 
     {!mobile && <section className="closing" aria-labelledby="closing-title">
-      <h2 id="closing-title">Ready to look under the hood?</h2>
-      <button className="button button-primary" onClick={() => onSelect('chassis')}>Start with lesson 01 <ArrowRight size={16} aria-hidden="true" /></button>
+      <h2 id="closing-title">{complete ? 'You have explored every lesson.' : 'Ready to look under the hood?'}</h2>
+      <button className="button button-primary" onClick={() => onSelect(started ? (last?.id || 'chassis') : 'chassis')}>{started && !complete ? 'Continue where you left off' : started ? 'Review from lesson 01' : 'Start with lesson 01'} <ArrowRight size={16} aria-hidden="true" /></button>
+      {started && <button className="progress-reset" onClick={clearProgress}><RotateCcw size={14} aria-hidden="true" />Reset progress</button>}
     </section>}
   </>;
 }
 
 // Lesson list. On a desktop it is a side panel opened from the header; on a phone it is a bottom sheet
 // opened from the bottom bar, and the grabber at the top can be dragged down to close it.
-function LessonsMenu({ open, onOpenChange, active, onSelect, focusAfterClose, mobile, trigger }) {
+function LessonsMenu({ open, onOpenChange, active, onSelect, focusAfterClose, mobile, trigger, visited }) {
   const panelRef = useRef(null);
   const drag = useRef(null);
   const onGrab = event => {
@@ -176,7 +192,7 @@ function LessonsMenu({ open, onOpenChange, active, onSelect, focusAfterClose, mo
           <Dialog.Close className="icon-button" aria-label="Close navigation"><X size={18} /></Dialog.Close>
         </div>
         <Dialog.Description className="sr-only">Choose a lesson to open it.</Dialog.Description>
-        <TopicNavigation active={active} onSelect={onSelect} />
+        <TopicNavigation active={active} onSelect={onSelect} visited={visited} />
       </Dialog.Content>
     </Dialog.Portal>
   </Dialog.Root>;
@@ -214,6 +230,7 @@ export default function App() {
   const index = TOPICS.findIndex(topic => topic.id === activeTab);
   const active = TOPICS[index];
   const mobile = useIsMobile();
+  const visited = useProgress();
 
   useEffect(() => {
     const sync = () => setActiveTab(readTopic());
@@ -224,7 +241,10 @@ export default function App() {
 
   useEffect(() => {
     document.title = isHome ? 'Vroom · How a car really works' : `${active.label} · Vroom`;
-    if (!isHome && active.id !== 'chassis') try { localStorage.setItem(LAST_LESSON_KEY, active.id); } catch { /* private mode */ }
+    if (!isHome) {
+      markVisited(active.id);
+      if (active.id !== 'chassis') try { localStorage.setItem(LAST_LESSON_KEY, active.id); } catch { /* private mode */ }
+    }
   }, [isHome, active]);
 
   const selectTopic = id => {
@@ -243,7 +263,7 @@ export default function App() {
   };
 
   const Simulator = active?.component;
-  const lessonsMenu = <LessonsMenu open={menuOpen} onOpenChange={setMenuOpen} active={activeTab} onSelect={selectTopic} focusAfterClose={focusAfterClose} mobile={mobile}
+  const lessonsMenu = <LessonsMenu open={menuOpen} onOpenChange={setMenuOpen} active={activeTab} onSelect={selectTopic} focusAfterClose={focusAfterClose} mobile={mobile} visited={visited}
     trigger={<Dialog.Trigger className={mobile ? 'dock-menu' : 'menu-button'} aria-label="Toggle Navigation Menu">
       <Menu size={mobile ? 18 : 16} aria-hidden="true" />
       {mobile && !isHome ? <span><small>{active.number} of {TOPICS.length}</small>{active.label}</span> : 'Lessons'}
@@ -266,7 +286,7 @@ export default function App() {
     </header>
 
     <main id="main-content" tabIndex={-1}>
-      {isHome ? <Landing onSelect={selectTopic} mobile={mobile} /> : <article className="lesson" key={activeTab}>
+      {isHome ? <Landing onSelect={selectTopic} mobile={mobile} visited={visited} /> : <article className="lesson" key={activeTab}>
         <header className="lesson-header">
           <p className="eyebrow">Lesson {active.number} · {active.label}</p>
           <h1 id="topic-title" ref={headingRef} tabIndex={-1}>{active.title}</h1>

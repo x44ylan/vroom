@@ -569,3 +569,22 @@ details[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
 @media (prefers-reduced-motion: reduce) {
   .hero-car-loading .hero-car-ascii { animation: none; }
 }
+
+/* ============================================================
+   Progress: visited lessons, hero meter, reset
+   A learner's opened lessons are remembered and shown as a thin
+   meter on the hero and a check beside each visited lesson.
+   ============================================================ */
+.hero-progress-meter { margin-top: 24px; max-width: 30em; animation: enter 400ms var(--ease-out); }
+.hero-progress-meter .progress-bar { height: 4px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.hero-progress-meter .progress-bar span { display: block; height: 100%; border-radius: 999px; background: var(--accent); transform-origin: left; transition: transform 500ms var(--ease-out); }
+.hero-progress-meter p { margin-top: 8px; font-size: 13px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* A visited row swaps its number for a check and lifts the label out of grey. */
+.topic-link[data-done] .topic-number, .lesson-row[data-done] .lesson-row-number { color: var(--accent); }
+.topic-link[data-done] .topic-label, .lesson-row[data-done] .lesson-row-label { color: var(--text); }
+
+.progress-reset { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--muted); background: transparent; transition: color 150ms ease, background-color 150ms ease, transform 160ms var(--ease-out); }
+.progress-reset:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .progress-reset:hover { color: var(--text); background: var(--surface-2); } }
+@media (prefers-reduced-motion: reduce) { .hero-progress-meter { animation: none; } .hero-progress-meter .progress-bar span { transition: none; } }
