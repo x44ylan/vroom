@@ -537,3 +537,33 @@ details[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
 @media (prefers-contrast: more) {
   :root { --line: hsl(0 0% 100% / .22); --muted: hsl(0 0% 78%); }
 }
+
+/* ============================================================
+   ASCII art: hero loading frame + WebGL fallback
+   Monospace line-art that keeps the black/white palette and
+   fills the quiet moments before (or instead of) the 3D car.
+   ============================================================ */
+.hero-car-ascii {
+  position: absolute; inset: 0; z-index: 0; margin: 0;
+  display: grid; place-content: center;
+  font-family: var(--font-mono);
+  font-size: clamp(6px, 1.35vw, 11px); line-height: 1.15; letter-spacing: 0;
+  white-space: pre; text-align: center; color: var(--faint);
+  pointer-events: none; user-select: none;
+  opacity: 0; transition: opacity 400ms var(--ease-out);
+}
+/* Fade the ASCII up while the WebGL car is still loading, then hand off. */
+.hero-car-loading .hero-car-ascii { opacity: .5; animation: ascii-pulse 2.4s var(--ease-in-out) infinite; }
+.hero-car-failed .hero-car-ascii { opacity: .55; }
+.hero-car-ready .hero-car-ascii { opacity: 0; }
+@keyframes ascii-pulse { 50% { opacity: .22; } }
+
+.viewer-fallback-ascii {
+  margin: 0 0 4px; font-family: var(--font-mono);
+  font-size: clamp(6px, 1.6vw, 11px); line-height: 1.15;
+  white-space: pre; color: var(--faint); user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-car-loading .hero-car-ascii { animation: none; }
+}

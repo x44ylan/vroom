@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { loadCar, createStage } from '../three/heroCar.js';
+import { CAR } from '../lib/ascii.js';
 
 const easeOut = t => 1 - Math.pow(1 - t, 3);
 const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -144,6 +145,7 @@ export default function HeroCar() {
 
   return (
     <div className={`hero-car hero-car-${state}`} aria-hidden="true">
+      <pre className="hero-car-ascii">{CAR}</pre>
       <div ref={mountRef} className="hero-car-canvas" />
     </div>
   );

@@ -5,6 +5,7 @@ import { buildCar, EXPLODE_OFFSETS } from '../three/carModel.js';
 import { loadCar, createStage, MAX_ZONES } from '../three/heroCar.js';
 import { Segmented } from './controls/Controls.jsx';
 import { RotateCw, Layers, Eye } from 'lucide-react';
+import { CAR } from '../lib/ascii.js';
 
 const view = (p, t) => ({ position: new THREE.Vector3(...p), target: new THREE.Vector3(...t) });
 const CAMERA_VIEWS = {
@@ -527,7 +528,7 @@ export default function ChassisViewer3D() {
   return (
     <section className="chassis-viewer" aria-label="Interactive chassis explorer">
       <div className="chassis-stage">
-        {webglUnavailable ? <div className="viewer-fallback" role="status"><h3>3D view unavailable</h3><p>Your browser could not start the 3D model. You can still read about every part below.</p></div> : <>
+        {webglUnavailable ? <div className="viewer-fallback" role="status"><pre className="viewer-fallback-ascii" aria-hidden="true">{CAR}</pre><h3>3D view unavailable</h3><p>Your browser could not start the 3D model. You can still read about every part below.</p></div> : <>
           <div ref={mountRef} className="viewer-canvas" role="img" aria-label="Rotatable model of the Lexus IS300. The selected part is shown through the body." />
           <div ref={calloutRef} className="part-callout" aria-hidden="true">
             <span className="part-callout-dot" />

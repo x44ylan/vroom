@@ -1,6 +1,18 @@
 # Vroom
 
-How a car really works, explained with interactive models of a Lexus IS300. Thirteen short lessons cover the engine, gears, brakes, steering, suspension, cooling, aerodynamics, electronics and EVs, then finish with a quiz.
+```
+                 ______________
+            ____/ |   |   |    \___
+       ____/      |   |   |        \____
+   ,--/___________|___|___|_____________\--,
+  //  _    .-------------------------.    _  \\
+ ||  / \  /                           \  / \  ||
+  \\_\o/_/_____________________________\_\o/_//
+     '-'                                 '-'
+         V  R  O  O  M  ·  how a car works
+```
+
+How a car really works, explained with interactive models of a Lexus IS300. Fourteen short lessons cover the engine, turbo, gears, differential, brakes, steering, suspension, cooling, aerodynamics, electronics, add-ons and EVs, then finish with a quiz.
 
 ## Comprehensive Interactive Modules
 
