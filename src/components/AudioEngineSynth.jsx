@@ -90,16 +90,16 @@ export default function AudioEngineSynth() {
       </CardHeader>
 
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 sm:p-5">
-        <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1.5">
-          <span className="text-xs text-zinc-400">Engine type:</span>
+        <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
+          <span className="text-xs text-slate-400">Engine type:</span>
           <Segmented size="sm" label="Engine type" value={engineType} onChange={setEngineType}
             options={[{ value: '2jz', label: '2JZ I6' }, { value: '3sge', label: '3S-GE I4' }, { value: '1uz', label: '1UZ V8' }]} />
         </div>
 
-        <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1.5">
+        <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
           <div className="flex justify-between text-xs">
-            <span className="text-zinc-400">Engine speed:</span>
-            <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
+            <span className="text-slate-400">Engine speed:</span>
+            <span className="text-slate-100 font-mono font-medium">{rpm} RPM</span>
           </div>
           <input
             type="range" aria-label="Audio engine speed"
@@ -108,16 +108,16 @@ export default function AudioEngineSynth() {
             step="100"
             value={rpm}
             onChange={(e) => setRpm(Number(e.target.value))}
-            className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
+            className="w-full accent-slate-200 cursor-pointer h-1.5 bg-slate-800 rounded"
           />
         </div>
 
-        <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1 text-xs">
-          <span className="text-zinc-400">Firing frequency:</span>
-          <div className="text-sm font-mono font-medium text-zinc-100">
+        <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1 text-xs">
+          <span className="text-slate-400">Firing frequency:</span>
+          <div className="text-sm font-mono font-medium text-slate-100">
             {fundamentalFreqHz.toFixed(1)} Hz
           </div>
-          <p className="text-[11px] text-zinc-500">
+          <p className="text-[11px] text-slate-500">
             Each cylinder fires once every two crankshaft turns. More cylinders or a higher engine speed create more firing pulses each second, changing the pitch of the sound.
           </p>
         </div>

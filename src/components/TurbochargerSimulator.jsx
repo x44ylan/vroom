@@ -114,19 +114,19 @@ export default function TurbochargerSimulator() {
             </Stage>
 
             <div className="absolute diagram-footer">
-              <span className="text-zinc-400 font-mono">
-                Shaft: <span className="text-zinc-100">{turboRpm.toLocaleString()} RPM</span>
+              <span className="text-slate-400 font-mono">
+                Shaft: <span className="text-slate-100">{turboRpm.toLocaleString()} RPM</span>
               </span>
-              <span className="font-mono text-zinc-200">
+              <span className="font-mono text-slate-200">
                 Boost: +{boostPsi} PSI ({boostBar} Bar)
               </span>
             </div>
           </div>
 
-          <div className="w-full mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
+          <div className="w-full mt-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-zinc-400">Engine speed:</span>
-              <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
+              <span className="text-slate-400">Engine speed:</span>
+              <span className="text-slate-100 font-mono font-medium">{engineRpm} RPM</span>
             </div>
             <input
               type="range" aria-label="Engine speed"
@@ -135,33 +135,33 @@ export default function TurbochargerSimulator() {
               step="50"
               value={engineRpm}
               onChange={(e) => setEngineRpm(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
+              className="w-full accent-slate-200 cursor-pointer h-1.5 bg-slate-800 rounded"
             />
           </div>
         </div>
 
         <div className="lg:col-span-5 space-y-3">
-          <div className="p-3.5 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-2.5 text-xs">
-            <span className="font-medium text-zinc-200 block">Watch the air temperature and power</span>
+          <div className="p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-2.5 text-xs">
+            <span className="font-medium text-slate-200 block">Watch the air temperature and power</span>
 
             <div className="space-y-1.5 font-mono">
-              <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Estimated power:</span>
-                <span className="text-zinc-100 font-bold">{estimatedHorsepower} HP</span>
+              <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="text-slate-400">Estimated power:</span>
+                <span className="text-slate-100 font-bold">{estimatedHorsepower} HP</span>
               </div>
-              <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Relative air charge:</span>
-                <span className="text-zinc-200">{volumetricEfficiency}%</span>
+              <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="text-slate-400">Relative air charge:</span>
+                <span className="text-slate-200">{volumetricEfficiency}%</span>
               </div>
-              <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Intake temperature:</span>
-                <span className={intakeAirTempC > 65 ? 'text-red-400' : 'text-zinc-200'}>
+              <div className="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="text-slate-400">Intake temperature:</span>
+                <span className={intakeAirTempC > 65 ? 'text-red-400' : 'text-slate-200'}>
                   {intakeAirTempC}°C
                 </span>
               </div>
             </div>
 
-            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#272727]">
+            <p className="text-[11px] text-slate-400 leading-relaxed pt-1 border-t border-[#272727]">
               More boost pushes more air into the engine. Cooling that air makes it denser, which is why the power estimate changes when you switch the intercooler. These values illustrate the relationship; they are not a prediction for a real turbo conversion.
             </p>
           </div>

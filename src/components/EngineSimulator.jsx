@@ -173,10 +173,10 @@ export default function EngineSimulator() {
             </div>
           </div>
 
-          <div className="w-full max-w-[460px] mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
+          <div className="w-full max-w-[460px] mt-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-zinc-400">Engine speed:</span>
-              <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
+              <span className="text-slate-400">Engine speed:</span>
+              <span className="text-slate-100 font-mono font-medium">{rpm} RPM</span>
             </div>
             <input
               type="range" aria-label="Engine speed"
@@ -185,7 +185,7 @@ export default function EngineSimulator() {
               step="100"
               value={rpm}
               onChange={(e) => setRpm(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
+              className="w-full accent-slate-200 cursor-pointer h-1.5 bg-slate-800 rounded"
             />
           </div>
         </div>
@@ -210,28 +210,28 @@ export default function EngineSimulator() {
                   }}
                   className={`p-2.5 rounded-lg text-left border transition-[background-color,color,transform] duration-150 ${
                     isActive
-                      ? 'bg-[#272727] border-zinc-600 text-zinc-100'
-                      : 'bg-[#1d1d1d] border-[#3c3c3c] text-zinc-400 hover:text-zinc-200 hover:bg-[#1d1d1d]'
+                      ? 'bg-slate-900 border-slate-700 text-slate-100'
+                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mb-0.5">
-                    <span className="text-xs font-medium text-zinc-200">{step.name}</span>
-                    <span className="text-[10px] font-mono text-zinc-500">{step.range}</span>
+                    <span className="text-xs font-medium text-slate-200">{step.name}</span>
+                    <span className="text-[10px] font-mono text-slate-500">{step.range}</span>
                   </div>
-                  <p className="text-[11px] text-zinc-400 leading-normal line-clamp-2">{step.desc}</p>
+                  <p className="text-[11px] text-slate-400 leading-normal line-clamp-2">{step.desc}</p>
                 </button>
               );
             })}
           </div>
 
-          <div className="p-3.5 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-2 text-xs">
-            <span className="font-medium text-zinc-200 block">How the cycle keeps going</span>
-            <p className="text-zinc-400 leading-relaxed text-[11px]">
+          <div className="p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-2 text-xs">
+            <span className="font-medium text-slate-200 block">How the cycle keeps going</span>
+            <p className="text-slate-400 leading-relaxed text-[11px]">
               The crankshaft keeps turning between power strokes. A heavy rotating disc called the flywheel helps smooth out the pulses. In a running engine, the other cylinders also take turns producing power.
             </p>
             <details className="engine-numbers">
               <summary>What do the numbers mean?</summary>
-              <p className="text-zinc-400">RPM counts complete crankshaft turns per minute. The angle above the piston tracks its position in the cycle. One full cycle takes two crankshaft turns, or 720 degrees.</p>
+              <p className="text-slate-400">RPM counts complete crankshaft turns per minute. The angle above the piston tracks its position in the cycle. One full cycle takes two crankshaft turns, or 720 degrees.</p>
             </details>
           </div>
         </div>

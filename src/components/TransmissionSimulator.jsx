@@ -65,15 +65,15 @@ export default function TransmissionSimulator() {
                           </Stage>
 
             <div className="absolute diagram-footer">
-              <span className="text-zinc-300 font-medium truncate">{current.label}: {current.name}</span>
-              <span className="font-mono text-zinc-100 shrink-0 font-medium">Ratio: {current.ratio}:1</span>
+              <span className="text-slate-300 font-medium truncate">{current.label}: {current.name}</span>
+              <span className="font-mono text-slate-100 shrink-0 font-medium">Ratio: {current.ratio}:1</span>
             </div>
           </div>
 
-          <div className="w-full mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
+          <div className="w-full mt-3 p-3 rounded-lg bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-zinc-400">Engine speed:</span>
-              <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
+              <span className="text-slate-400">Engine speed:</span>
+              <span className="text-slate-100 font-mono font-medium">{engineRpm} RPM</span>
             </div>
             <input
               type="range" aria-label="Engine speed"
@@ -82,31 +82,31 @@ export default function TransmissionSimulator() {
               step="50"
               value={engineRpm}
               onChange={(e) => setEngineRpm(Number(e.target.value))}
-              className="w-full accent-zinc-200 cursor-pointer h-1.5 bg-[#3c3c3c] rounded"
+              className="w-full accent-slate-200 cursor-pointer h-1.5 bg-slate-800 rounded"
             />
           </div>
         </div>
 
         <div className="lg:col-span-5 space-y-3">
-          <div className="p-3.5 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-2 text-xs">
-            <span className="font-medium text-zinc-200 block">What changes with the gear</span>
+          <div className="p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-2 text-xs">
+            <span className="font-medium text-slate-200 block">What changes with the gear</span>
 
             <div className="space-y-1.5 font-mono">
-              <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Gearbox output:</span>
-                <span className="text-zinc-100">{outputRpm} RPM</span>
+              <div className="flex items-center justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="text-slate-400">Gearbox output:</span>
+                <span className="text-slate-100">{outputRpm} RPM</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Road speed:</span>
-                <span className="text-zinc-100 font-bold">{vehicleSpeed} km/h</span>
+              <div className="flex items-center justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="text-slate-400">Road speed:</span>
+                <span className="text-slate-100 font-bold">{vehicleSpeed} km/h</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Wheel torque:</span>
-                <span className="text-zinc-100 font-bold">{wheelTorque} Nm</span>
+              <div className="flex items-center justify-between p-2 rounded bg-slate-900 border border-slate-800">
+                <span className="text-slate-400">Wheel torque:</span>
+                <span className="text-slate-100 font-bold">{wheelTorque} Nm</span>
               </div>
             </div>
 
-            <p className="text-[11px] text-zinc-400 leading-relaxed pt-1 border-t border-[#272727]">
+            <p className="text-[11px] text-slate-400 leading-relaxed pt-1 border-t border-[#272727]">
               {current.desc}
             </p>
           </div>
