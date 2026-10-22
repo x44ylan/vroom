@@ -34,7 +34,7 @@ export const lessons = {
     label: 'Differential', title: 'Why the wheels turn at different speeds',
     description: 'On a bend, the outside wheel travels farther than the inside wheel. It must turn faster to cover that distance. The differential lets both driven wheels do this while receiving power.',
     tip: 'Choose Turn left. The right wheel is on the outside of the bend, so its RPM goes up. Choose Turn right and watch the speeds swap.',
-    takeaway: 'Different wheel speeds are normal in a turn. This model shows that speed difference; it does not simulate one tire losing grip.',
+    takeaway: 'Different wheel speeds are normal in a turn. This model shows that speed difference; it does not simulate one tyre losing grip.',
     terms: [['Differential', 'Gears between the driven wheels that let them turn at different speeds.'], ['Limited-slip differential (LSD)', 'A differential that can limit how easily one driven wheel spins relative to the other.']],
   },
   brakes: {
@@ -47,7 +47,7 @@ export const lessons = {
   steering: {
     label: 'Steering', title: 'How the front wheels guide a turn',
     description: 'The steering mechanism turns both front wheels. The inside wheel follows a tighter curve, so it needs to turn through a larger angle than the outside wheel.',
-    tip: 'Move the steering slider away from the center. Compare the angles beside the two wheels, then center the steering again.',
+    tip: 'Move the steering slider away from the centre. Compare the angles beside the two wheels, then centre the steering again.',
     takeaway: 'The front wheels point at slightly different angles on a bend so each can follow its own path.',
     terms: [['Steering rack', 'A sliding bar that moves the links connected to the front wheels.'], ['Ackermann geometry', 'The steering arrangement that turns the inside wheel more sharply than the outside wheel.']],
   },

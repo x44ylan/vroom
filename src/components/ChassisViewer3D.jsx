@@ -128,7 +128,7 @@ export default function ChassisViewer3D() {
     "tag": "Connection to the rear axle",
     "bullets": [
       "A rotating shaft carries power from the gearbox to the rear differential.",
-      "It runs along the center of the car, underneath the passenger compartment."
+      "It runs along the centre of the car, underneath the passenger compartment."
     ],
     "specs": [
       {

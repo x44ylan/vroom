@@ -72,7 +72,7 @@ export default function TransmissionSimulator() {
 
           <div className="w-full mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-zinc-400">Engine Speed:</span>
+              <span className="text-zinc-400">Engine speed:</span>
               <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
             </div>
             <input
@@ -97,7 +97,7 @@ export default function TransmissionSimulator() {
                 <span className="text-zinc-100">{outputRpm} RPM</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Road Speed:</span>
+                <span className="text-zinc-400">Road speed:</span>
                 <span className="text-zinc-100 font-bold">{vehicleSpeed} km/h</span>
               </div>
               <div className="flex items-center justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">

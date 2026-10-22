@@ -98,7 +98,7 @@ export default function AudioEngineSynth() {
 
         <div className="p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c] space-y-1.5">
           <div className="flex justify-between text-xs">
-            <span className="text-zinc-400">Engine Speed:</span>
+            <span className="text-zinc-400">Engine speed:</span>
             <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
           </div>
           <input

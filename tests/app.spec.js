@@ -356,7 +356,7 @@ test('lesson exercises produce the observations described in the text', async ({
   const brake = page.getByRole('slider', { name: 'Brake pedal pressure' });
   await brake.fill('90');
   await page.getByRole('switch', { name: 'ABS' }).click();
-  await expect(page.getByText('Wheel locked: the tire is sliding')).toBeVisible();
+  await expect(page.getByText('Wheel locked: the tyre is sliding')).toBeVisible();
   await page.getByRole('switch', { name: 'ABS' }).click();
   await expect(page.getByText('ABS is adjusting brake pressure')).toBeVisible();
   await page.goto('/#cooling');

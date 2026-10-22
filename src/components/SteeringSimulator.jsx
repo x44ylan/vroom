@@ -92,8 +92,8 @@ export default function SteeringSimulator() {
             <div className="absolute diagram-footer">
               <span className="text-slate-300 font-medium truncate">
                 {steeringAngle === 0
-                  ? 'Steering Centered'
-                  : `Inside Wheel: ${Math.round(insideWheelAngle)}° | Outside Wheel: ${Math.round(outsideWheelAngle)}°`}
+                  ? 'Steering centered'
+                  : `Inside wheel: ${Math.round(insideWheelAngle)}° | Outside wheel: ${Math.round(outsideWheelAngle)}°`}
               </span>
               <span className="font-mono text-teal-400 font-bold shrink-0">Inside wheel turns more</span>
             </div>
@@ -101,7 +101,7 @@ export default function SteeringSimulator() {
 
           <div className="w-full mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">Steering Rack Angle:</span>
+              <span className="text-slate-400">Steering rack angle:</span>
               <span className="text-teal-400 font-mono font-bold">{steeringAngle}°</span>
             </div>
             <input

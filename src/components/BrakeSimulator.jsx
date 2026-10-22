@@ -83,7 +83,7 @@ export default function BrakeSimulator() {
             <div className="absolute diagram-footer">
               {isWheelLocked ? (
                 <div className="flex items-center gap-1.5 text-red-400 font-bold text-xs truncate">
-                  <AlertOctagon className="w-4 h-4 shrink-0" /> Wheel locked: the tire is sliding
+                  <AlertOctagon className="w-4 h-4 shrink-0" /> Wheel locked: the tyre is sliding
                 </div>
               ) : isLockupThreshold && absEnabled ? (
                 <div className="flex items-center gap-1.5 text-amber-400 font-bold text-xs truncate">
@@ -100,8 +100,8 @@ export default function BrakeSimulator() {
 
           <div className="w-full mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">Brake Pedal Pressure:</span>
-              <span className="text-pink-400 font-mono font-bold">{pedalForce}% ({footForceN} N Effort)</span>
+              <span className="text-slate-400">Brake pedal pressure:</span>
+              <span className="text-pink-400 font-mono font-bold">{pedalForce}% ({footForceN} N effort)</span>
             </div>
             <input
               type="range" aria-label="Brake pedal pressure"

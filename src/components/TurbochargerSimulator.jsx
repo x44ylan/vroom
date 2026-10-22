@@ -125,7 +125,7 @@ export default function TurbochargerSimulator() {
 
           <div className="w-full mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-zinc-400">2JZ Engine Speed:</span>
+              <span className="text-zinc-400">Engine speed:</span>
               <span className="text-zinc-100 font-mono font-medium">{engineRpm} RPM</span>
             </div>
             <input
@@ -146,7 +146,7 @@ export default function TurbochargerSimulator() {
 
             <div className="space-y-1.5 font-mono">
               <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">
-                <span className="text-zinc-400">Estimated Power:</span>
+                <span className="text-zinc-400">Estimated power:</span>
                 <span className="text-zinc-100 font-bold">{estimatedHorsepower} HP</span>
               </div>
               <div className="flex justify-between p-2 rounded bg-[#272727] border border-[#3c3c3c]">

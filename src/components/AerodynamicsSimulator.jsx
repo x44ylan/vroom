@@ -115,7 +115,7 @@ export default function AerodynamicsSimulator() {
 
           <div className="w-full mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">Road speed:</span>
+              <span className="text-slate-400">Road speed:</span>
               <span className="text-emerald-400 font-mono font-bold">{speedKmh} km/h ({(speedKmh * 0.621).toFixed(0)} mph)</span>
             </div>
             <input
@@ -149,7 +149,7 @@ export default function AerodynamicsSimulator() {
             </div>
 
             <p className="text-[11px] text-slate-300 leading-relaxed pt-2 border-t border-slate-800">
-              A larger front area or a higher drag coefficient produces more air resistance at the same speed. The power shown covers air resistance only; a real car also uses power to overcome tire resistance and other losses. The body profiles are simplified examples.
+              A larger front area or a higher drag coefficient produces more air resistance at the same speed. The power shown covers air resistance only; a real car also uses power to overcome tyre resistance and other losses. The body profiles are simplified examples.
             </p>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Fuel } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card.jsx';
 import { Segmented } from './controls/Controls.jsx';
 import { Button } from './ui/button.jsx';
@@ -33,13 +33,7 @@ export default function EvVsIceComparison() {
         {activeTab === 'efficiency' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Fuel className="w-5 h-5 text-amber-500" />
-                  <h4 className="text-sm sm:text-base font-bold text-white">Gasoline car</h4>
-                </div>
-
-              </div>
+              <h4 className="text-sm sm:text-base font-bold text-white">Gasoline car</h4>
 
               <div className="space-y-2.5">
                 <div>
@@ -76,13 +70,7 @@ export default function EvVsIceComparison() {
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-emerald-400" />
-                  <h4 className="text-sm sm:text-base font-bold text-white">Electric car</h4>
-                </div>
-
-              </div>
+              <h4 className="text-sm sm:text-base font-bold text-white">Electric car</h4>
 
               <div className="space-y-2.5">
                 <div>

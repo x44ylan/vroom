@@ -101,7 +101,7 @@ export default function CoolingLubricationSimulator() {
 
           <div className="w-full mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
             <div className="flex justify-between text-xs mb-2">
-              <span className="text-slate-400 font-medium">Engine load:</span>
+              <span className="text-slate-400">Engine load:</span>
               <span className="text-blue-400 font-mono font-bold">{engineLoad}% ({heatGeneratedKw} kW)</span>
             </div>
             <input

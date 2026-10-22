@@ -32,7 +32,7 @@ export const LEXUS_IS300_SPECS = {
   },
   drivetrain: {
     layout: 'FR (Front-Engine, Rear-Wheel Drive)',
-    driveshaft: 'Two-piece steel propeller shaft with center support bearing',
+    driveshaft: 'Two-piece steel propeller shaft with centre support bearing',
     differential: 'Optional / Manual-standard Torsen Type-2 (T-2) Torque-Sensing LSD (M85 casing)'
   },
   chassisSuspension: {
@@ -118,7 +118,7 @@ export const QUIZ_QUESTIONS = [
         "isCorrect": true
       },
       {
-        "text": "It is closer to the center of the bend.",
+        "text": "It is closer to the centre of the bend.",
         "isCorrect": false
       },
       {

@@ -104,7 +104,7 @@ export default function DifferentialSimulator() {
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5" />
-              What happens when a tire loses grip?
+              What happens when a tyre loses grip?
             </h4>
             <p className="text-xs text-slate-300 leading-relaxed">
               An open differential lets the wheels turn at different speeds, but the turning force available to both wheels is limited by the wheel with less grip.

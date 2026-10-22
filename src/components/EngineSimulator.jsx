@@ -175,7 +175,7 @@ export default function EngineSimulator() {
 
           <div className="w-full max-w-[460px] mt-3 p-3 rounded-lg bg-[#1d1d1d] border border-[#3c3c3c]">
             <div className="flex justify-between text-xs mb-1.5">
-              <span className="text-zinc-400">Engine Speed:</span>
+              <span className="text-zinc-400">Engine speed:</span>
               <span className="text-zinc-100 font-mono font-medium">{rpm} RPM</span>
             </div>
             <input
