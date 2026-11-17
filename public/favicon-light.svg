@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#1f1f1f" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Vroom">
+  <path d="M5 22H3v-5a2 2 0 0 1 2-2h3l4-5a3 3 0 0 1 2-1h5a3 3 0 0 1 2 1l5 5h1a2 2 0 0 1 2 2v5h-2M11 22h10M9 15h15M16 9v6"/>
+  <circle cx="8" cy="22" r="3"/>
+  <circle cx="24" cy="22" r="3"/>
+</svg>

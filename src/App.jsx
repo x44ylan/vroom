@@ -332,7 +332,7 @@ export default function App() {
     <header className="app-header">
       <div className="app-header-inner">
         <a href="#" className="brand" aria-label="Vroom home" onClick={event => { event.preventDefault(); selectTopic(HOME); }}>
-          <span className="brand-mark" aria-hidden="true" />Vroom
+          <img className="brand-mark" src="/favicon-dark.svg?v=2" width="28" height="28" alt="" aria-hidden="true" />Vroom
         </a>
         {!isHome && <span className="header-lesson" aria-hidden="true">{active.label}</span>}
         <div className="header-actions">
