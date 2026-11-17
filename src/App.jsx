@@ -272,7 +272,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = isHome ? 'Vroom · How a car really works' : `${active.label} · Vroom`;
+    document.title = 'Vroom';
     if (!isHome) {
       markVisited(active.id);
       if (active.id !== 'chassis') try { localStorage.setItem(LAST_LESSON_KEY, active.id); } catch { /* private mode */ }
