@@ -18,14 +18,15 @@ function pngChunk(type, data) {
   return chunk;
 }
 
-// favicon.svg is the editable source. The app has a fixed dark theme, so its
-// explicit dark variant stays white even when the browser uses a light OS theme.
+// The detailed front-view mark is the editable source. Small browser icons drop
+// the fine details; the header and touch icon keep the complete drawing.
 const assets = new URL('../public/', import.meta.url);
-const source = await readFile(new URL('favicon.svg', assets), 'utf8');
-const variant = ink => source.replace(/\s*<style>[\s\S]*?<\/style>/, '').replace('stroke="currentColor"', `stroke="${ink}"`);
-const white = variant('#f5f5f5');
-await writeFile(new URL('favicon-dark.svg', assets), white);
-await writeFile(new URL('favicon-light.svg', assets), variant('#1f1f1f'));
+const white = await readFile(new URL('vroom-mark.svg', assets), 'utf8');
+const compact = white.replace(/\s*<g data-detail="true">[\s\S]*?<\/g>/, '');
+await writeFile(new URL('favicon-dark.svg', assets), compact);
+await writeFile(new URL('favicon-light.svg', assets), compact.replace('stroke="#f5f5f5"', 'stroke="#1f1f1f"'));
+const adaptive = compact.replace('stroke="#f5f5f5"', 'stroke="currentColor"').replace('  <path', '  <style>:root { color: #1f1f1f; } @media (prefers-color-scheme: dark) { :root { color: #f5f5f5; } }</style>\n  <path');
+await writeFile(new URL('favicon.svg', assets), adaptive);
 
 const browser = await chromium.launch();
 try {
@@ -63,4 +64,4 @@ try {
 } finally {
   await browser.close();
 }
-console.log('Generated light/dark SVGs and the transparent 180px touch icon.');
+console.log('Generated compact light/dark favicons and the detailed transparent 180px touch icon.');

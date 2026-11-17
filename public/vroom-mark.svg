@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#f5f5f5" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Vroom">
+  <path d="M7 11 9 7a2 2 0 0 1 2-1h10a2 2 0 0 1 2 1l2 4M7 11h18l2.8 4.2a7 7 0 0 1 1.2 4V22a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2.8a7 7 0 0 1 1.2-4ZM5 23v3h4v-3M23 23v3h4v-3"/>
+  <path d="m6.5 15.5 5.5 1-.8 2.5H7ZM25.5 15.5l-5.5 1 .8 2.5H25ZM14 17h4l-.5 3h-3ZM8 21.5h16"/>
+  <g data-detail="true">
+    <path d="M5.7 13H2v2h2M26.3 13H30v2h-2M11 8.5h10M10 13l3 1M22 13l-3 1M9 16.2v2.3M23 16.2v2.3"/>
+  </g>
+</svg>

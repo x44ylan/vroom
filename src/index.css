@@ -83,7 +83,7 @@ main { flex: 1; outline: none; }
 .app-header { position: sticky; top: 0; z-index: 40; background: hsl(0 0% 5% / .72); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); box-shadow: 0 1px 0 var(--line); }
 .app-header-inner { max-width: var(--page); margin: 0 auto; height: 56px; padding: 0 24px; display: flex; align-items: center; gap: 16px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
-.brand-mark { display: block; width: 28px; height: 28px; flex-shrink: 0; }
+.brand-mark { display: block; width: 32px; height: 32px; flex-shrink: 0; }
 .header-lesson { color: var(--muted); font-size: 14px; padding-left: 16px; border-left: 1px solid var(--line-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .header-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .header-progress { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--text); }
