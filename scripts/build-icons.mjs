@@ -18,14 +18,12 @@ function pngChunk(type, data) {
   return chunk;
 }
 
-// The detailed front-view mark is the editable source. Small browser icons drop
-// the fine details; the header and touch icon keep the complete drawing.
+// One butterfly mark is the editable source for every size and surface.
 const assets = new URL('../public/', import.meta.url);
 const white = await readFile(new URL('vroom-mark.svg', assets), 'utf8');
-const compact = white.replace(/\s*<g data-detail="true">[\s\S]*?<\/g>/, '');
-await writeFile(new URL('favicon-dark.svg', assets), compact);
-await writeFile(new URL('favicon-light.svg', assets), compact.replace('stroke="#f5f5f5"', 'stroke="#1f1f1f"'));
-const adaptive = compact.replace('stroke="#f5f5f5"', 'stroke="currentColor"').replace('  <path', '  <style>:root { color: #1f1f1f; } @media (prefers-color-scheme: dark) { :root { color: #f5f5f5; } }</style>\n  <path');
+await writeFile(new URL('favicon-dark.svg', assets), white);
+await writeFile(new URL('favicon-light.svg', assets), white.replace('stroke="#f5f5f5"', 'stroke="#1f1f1f"'));
+const adaptive = white.replace('stroke="#f5f5f5"', 'stroke="currentColor"').replace('  <path', '  <style>:root { color: #1f1f1f; } @media (prefers-color-scheme: dark) { :root { color: #f5f5f5; } }</style>\n  <path');
 await writeFile(new URL('favicon.svg', assets), adaptive);
 
 const browser = await chromium.launch();
@@ -64,4 +62,4 @@ try {
 } finally {
   await browser.close();
 }
-console.log('Generated compact light/dark favicons and the detailed transparent 180px touch icon.');
+console.log('Generated matching butterfly favicons and the transparent 180px touch icon.');
